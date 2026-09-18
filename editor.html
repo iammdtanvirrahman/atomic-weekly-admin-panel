@@ -242,9 +242,21 @@ document.addEventListener('keydown',e=>{
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();applyHistory(1)}
 });
 
+function contentFromRecord(v){
+  if(typeof v.content==='string'&&v.content.trim())return v.content;
+  if(typeof v.html==='string'&&v.html.trim())return v.html;
+  if(typeof v.body==='string'&&v.body.trim())return v.body;
+  if(typeof v.article==='string'&&v.article.trim())return v.article;
+  if(typeof v.text==='string'&&v.text.trim()){
+    const t=v.text.trim();
+    if(/<([a-z][\\s\\S]*?)>/i.test(t))return t;
+    return t.split(/\\n\\s*\\n/).map(p=>'<p>'+escapeHtml(p).replace(/\\n/g,'<br>')+'</p>').join('');
+  }
+  return '<h1></h1><p></p>';
+}
 function fill(v){
-  $('title').value=v.title||'';$('author').value=v.author||'Atomic Desk';$('section').value=v.section||'Science';$('cover').value=v.cover||'';$('dek').value=v.dek||'';
-  $('editor').innerHTML=v.content||'<h1></h1><p></p>';$('editor').querySelectorAll('.mediaLayer').forEach(layer=>{layer.dataset.x=layer.dataset.x||'0';layer.dataset.y=layer.dataset.y||'0';layer.dataset.rotate=layer.dataset.rotate||'0';mediaTransform(layer)});if(v.cover)$('coverPreview').src=normalizeAsset(v.cover),$('coverPreview').classList.add('show');updateCount();history=[$('editor').innerHTML];historyIndex=0;
+  $('title').value=v.title||v.name||'';$('author').value=v.author||v.byline||'Atomic Desk';$('section').value=v.section||v.category||'Science';$('cover').value=v.cover||v.coverImage||'';$('dek').value=v.dek||v.description||v.shortDescription||'';
+  $('editor').innerHTML=contentFromRecord(v);$('editor').querySelectorAll('.mediaLayer').forEach(layer=>{layer.dataset.x=layer.dataset.x||'0';layer.dataset.y=layer.dataset.y||'0';layer.dataset.rotate=layer.dataset.rotate||'0';mediaTransform(layer)});if(v.cover||v.coverImage)$('coverPreview').src=normalizeAsset(v.cover||v.coverImage),$('coverPreview').classList.add('show');updateCount();history=[$('editor').innerHTML];historyIndex=0;
 }
 if(editId){
   onValue(ref(db,'publishedArticles/'+editId),s=>{if(s.val())fill(s.val())});
