@@ -6,257 +6,59 @@
 <meta name="theme-color" content="#0b0d10">
 <title>Atomic Admin — Pro Article Studio</title>
 <style>
-:root {
-  --bg: #07090c;
-  --panel: #0f1318;
-  --panel2: #161c23;
-  --line: #232a34;
-  --text: #f0f2f5;
-  --muted: #828e9e;
-  --red: #e63946;
-  --red-hover: #ff4d5a;
-  --green: #2a9d8f;
-  --accent: #4cc9f0;
-  --paper-bg: #ffffff;
-  --paper-text: #17191c;
-  --shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+:root{
+  --bg:#07090c;--panel:#0f1318;--panel2:#161c23;--line:#232a34;
+  --text:#f0f2f5;--muted:#828e9e;--red:#e63946;--red-hover:#ff4d5a;
+  --green:#2a9d8f;--accent:#4cc9f0;--paper-bg:#fff;--paper-text:#17191c;
+  --shadow:0 20px 60px rgba(0,0,0,.6)
 }
-
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  margin: 0;
-  background: radial-gradient(1200px 600px at 80% -20%, #1a1528, transparent 70%), var(--bg);
-  color: var(--text);
-  font: 14px Inter, system-ui, -apple-system, sans-serif;
-  overflow-x: hidden;
-}
-
-button, input, select, textarea { font: inherit; }
-button {
-  border: 0;
-  border-radius: 8px;
-  padding: 8px 12px;
-  background: #202731;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-}
-button:hover { background: #2c3644; filter: brightness(1.1); }
-button.active { background: var(--red) !important; color: #fff; }
-button.primary { background: var(--red); }
-button.primary:hover { background: var(--red-hover); }
-button.green { background: var(--green); }
-button.ghost { background: transparent; border: 1px solid var(--line); }
-button.ghost:hover { border-color: var(--muted); }
-button:disabled { opacity: 0.4; cursor: not-allowed; }
-
-/* Top Header Bar */
-.top {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 20px;
-  background: rgba(11, 14, 18, 0.85);
-  border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(16px);
-}
-.brand { font: 900 20px Georgia, serif; letter-spacing: -0.5px; }
-.brand span { color: var(--red); }
-.statusBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  background: #18202a;
-  border: 1px solid var(--line);
-  color: var(--muted);
-}
-.statusDot { width: 8px; height: 8px; border-radius: 50%; background: #e9c46a; }
-.statusDot.synced { background: var(--green); }
-.statusDot.error { background: var(--red); }
-
-.actions { display: flex; gap: 8px; flex-wrap: wrap; }
-
-/* Main Toolbar */
-.toolbarWrap {
-  position: sticky;
-  top: 57px;
-  z-index: 90;
-  background: rgba(18, 23, 30, 0.95);
-  border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-.toolbar, .subbar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  padding: 6px 12px;
-}
-.subbar {
-  border-top: 1px solid rgba(255,255,255,0.05);
-  overflow-x: auto;
-  flex-wrap: nowrap;
-}
-.toolbar select {
-  background: #202731;
-  color: #fff;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 6px 10px;
-  outline: none;
-}
-.toolSep { width: 1px; height: 24px; background: var(--line); margin: 0 4px; }
-.colorBtn {
-  width: 34px; height: 32px;
-  display: inline-flex; align-items: center; justify-content: center;
-  border-radius: 6px; background: #202731; cursor: pointer; position: relative;
-  border: 1px solid transparent;
-}
-.colorBtn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-.count { margin-left: auto; color: var(--muted); font: 600 12px sans-serif; white-space: nowrap; }
-
-/* Layout Grid */
-.layout {
-  display: grid;
-  grid-template-columns: 280px minmax(500px, 1fr) 300px;
-  min-height: calc(100vh - 115px);
-  transition: all 0.3s ease;
-}
-body.focusMode .left, body.focusMode .right, body.focusMode .toolbarWrap { display: none !important; }
-body.focusMode .layout { grid-template-columns: 1fr; }
-body.focusMode .workspace { padding: 40px 0; }
-
-.left, .right { background: var(--panel); padding: 16px; overflow-y: auto; }
-.left { border-right: 1px solid var(--line); }
-.right { border-left: 1px solid var(--line); }
-
-.sectionTitle {
-  font: 800 11px sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-  margin: 12px 0 10px;
-}
-.field { margin-bottom: 12px; }
-.field label { display: block; font: 700 11px sans-serif; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-.field input, .field select, .field textarea {
-  width: 100%; padding: 10px; background: #0b0e12; border: 1px solid var(--line); border-radius: 8px; color: #fff; outline: 0; transition: border 0.2s;
-}
-.field textarea { min-height: 75px; resize: vertical; }
-.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
-
-/* Workspace & Paper */
-.workspace {
-  overflow-y: auto; background: #1a1e24; padding: 40px 20px 120px;
-  display: flex; flex-direction: column; align-items: center;
-}
-.paper {
-  width: 800px; min-height: 1120px; background: var(--paper-bg); color: var(--paper-text);
-  box-shadow: var(--shadow); border-radius: 4px; position: relative; transition: background 0.3s, color 0.3s;
-}
-body.darkPaper .paper { --paper-bg: #12161c; --paper-text: #e2e8f0; }
-
-.articlePage {
-  min-height: 1120px; padding: 80px; outline: 0; font-family: Georgia, serif; font-size: 18px; line-height: 1.8;
-}
-.articlePage h1 { font-size: 44px; line-height: 1.1; margin: 0 0 20px; font-weight: 800; }
-.articlePage h2 { font-size: 30px; line-height: 1.2; margin: 32px 0 14px; }
-.articlePage h3 { font-size: 22px; line-height: 1.3; margin: 24px 0 10px; }
-.articlePage p { margin: 0 0 1.2em; }
-.articlePage blockquote {
-  margin: 24px 0; padding: 16px 24px; border-left: 4px solid var(--red); background: rgba(0,0,0,0.03); font-style: italic;
-}
-body.darkPaper .articlePage blockquote { background: rgba(255,255,255,0.03); }
-.articlePage pre { background: #1e242c; color: #f8f9fa; padding: 16px; border-radius: 8px; font-family: monospace; overflow-x: auto; }
-
-/* Interactive Media Layers */
-.mediaLayer {
-  position: relative; display: inline-block; max-width: 100%; margin: 20px 0; user-select: none; touch-action: none; vertical-align: top;
-}
-.mediaLayer img, .mediaLayer iframe { display: block; width: 100%; height: auto; border-radius: 6px; }
-.mediaLayer iframe { height: 420px; border: 0; }
-.mediaLayer.selectedMedia { outline: 2px solid var(--red); outline-offset: 4px; }
-
-/* Alignment presets */
-.mediaLayer[data-align="left"] { float: left; margin: 10px 24px 16px 0; max-width: 50%; }
-.mediaLayer[data-align="right"] { float: right; margin: 10px 0 16px 24px; max-width: 50%; }
-.mediaLayer[data-align="center"] { display: block; margin: 24px auto; text-align: center; }
-.mediaLayer[data-align="full"] { display: block; width: 100% !important; margin: 28px 0; }
-
-.mediaHandles { position: absolute; inset: -12px; pointer-events: none; z-index: 30; }
-.mediaHandle {
-  position: absolute; width: 12px; height: 12px; background: var(--red); border: 2px solid #fff; border-radius: 50%; pointer-events: auto; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-}
-.mediaHandle[data-action="resizeBR"] { right: -6px; bottom: -6px; cursor: nwse-resize; }
-.mediaHandle[data-action="resizeBL"] { left: -6px; bottom: -6px; cursor: nesw-resize; }
-.mediaHandle[data-action="rotate"] { left: 50%; top: -24px; transform: translateX(-50%); cursor: grab; }
-.mediaHandle[data-action="rotate"]:after { content: "↻"; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); color: var(--red); font-weight: bold; }
-
-.mediaToolbar {
-  position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
-  background: #11151a; border: 1px solid var(--line); border-radius: 8px; padding: 4px; display: flex; gap: 4px;
-  pointer-events: auto; box-shadow: 0 6px 20px rgba(0,0,0,0.5); z-index: 40;
-}
-.mediaToolbar button { padding: 4px 8px; font-size: 11px; height: 26px; }
-.mediaDelete { background: var(--red) !important; color: #fff; }
-
-.mediaOpacity {
-  position: absolute; left: -35px; top: 50%; transform: translateY(-50%) rotate(-90deg);
-  width: 80px; accent-color: var(--red); pointer-events: auto;
-}
-
-/* Tables */
-.articlePage table { width: 100%; border-collapse: collapse; margin: 24px 0; }
-.articlePage td, .articlePage th { border: 1px solid var(--line); padding: 10px 14px; }
-.page-break { break-before: page; border-top: 2px dashed var(--muted); margin: 40px 0; text-align: center; }
-.page-break:after { content: "Page Break"; font-size: 10px; color: var(--muted); text-transform: uppercase; position: relative; top: -10px; background: var(--paper-bg); padding: 0 8px; }
-
-/* Gallery & Asset Upload */
-.gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-height: calc(100vh - 360px); overflow-y: auto; }
-.asset { border: 1px solid var(--line); background: #141920; border-radius: 8px; padding: 6px; cursor: pointer; transition: border 0.2s; }
-.asset:hover { border-color: var(--accent); }
-.asset img { width: 100%; height: 85px; object-fit: cover; border-radius: 4px; display: block; }
-.asset span { display: block; font-size: 10px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 4px; }
-.dropZone { border: 2px dashed var(--line); padding: 14px; text-align: center; border-radius: 8px; color: var(--muted); font-size: 11px; margin-bottom: 12px; cursor: pointer; }
-.dropZone:hover { border-color: var(--accent); color: #fff; }
-
-/* Source View */
-.sourceEditor {
-  display: none; width: 100%; min-height: 1120px; border: 0; outline: 0; padding: 80px; font: 14px ui-monospace, monospace;
-  resize: none; color: #70a1ff; background: #0d1117; line-height: 1.6;
-}
-.sourceMode .sourceEditor { display: block; }
-.sourceMode #editor { display: none; }
-
-/* Modals */
-.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 200; backdrop-filter: blur(4px); }
-.modal.open { display: flex; }
-.modalBox { width: min(680px, 100%); max-height: 90vh; overflow-y: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 24px; box-shadow: var(--shadow); }
-.modalBox h3 { font: 800 20px Georgia; margin: 0 0 16px; }
-
-@media (max-width: 1100px) {
-  .layout { grid-template-columns: 240px 1fr; }
-  .right { display: none; }
-}
-@media (max-width: 768px) {
-  .layout { display: block; }
-  .paper { width: 100%; }
-  .articlePage { padding: 30px 20px; }
-}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 80% -20%,#1a1528,transparent 70%),var(--bg);color:var(--text);font:14px Inter,system-ui,-apple-system,sans-serif;overflow-x:hidden}
+button,input,select,textarea{font:inherit}
+button{border:0;border-radius:8px;padding:8px 12px;background:#202731;color:#fff;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:.2s}
+button:hover{background:#2c3644;filter:brightness(1.08)}
+button.active{background:var(--red)!important}
+button.primary{background:var(--red)}
+button.primary:hover{background:var(--red-hover)}
+button.green{background:var(--green)}
+button.ghost{background:transparent;border:1px solid var(--line)}
+button:disabled{opacity:.4;cursor:not-allowed}
+.top{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;background:rgba(11,14,18,.88);border-bottom:1px solid var(--line);backdrop-filter:blur(16px)}
+.brand{font:900 20px Georgia,serif;letter-spacing:-.5px}.brand span{color:var(--red)}
+.statusBadge{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:20px;background:#18202a;border:1px solid var(--line);color:var(--muted)}
+.statusDot{width:8px;height:8px;border-radius:50%;background:#e9c46a}.statusDot.synced{background:var(--green)}.statusDot.error{background:var(--red)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.toolbarWrap{position:sticky;top:57px;z-index:90;background:rgba(18,23,30,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(10px);box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.toolbar,.subbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 12px}
+.subbar{border-top:1px solid rgba(255,255,255,.05);overflow-x:auto;flex-wrap:nowrap}
+.toolbar select{background:#202731;color:#fff;border:1px solid var(--line);border-radius:6px;padding:6px 10px;outline:none}
+.toolSep{width:1px;height:24px;background:var(--line);margin:0 4px}.colorBtn{width:34px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;background:#202731;cursor:pointer;position:relative;border:1px solid transparent}.colorBtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.count{margin-left:auto;color:var(--muted);font:600 12px sans-serif;white-space:nowrap}
+.layout{display:grid;grid-template-columns:280px minmax(500px,1fr) 300px;min-height:calc(100vh - 115px)}
+body.focusMode .left,body.focusMode .right,body.focusMode .toolbarWrap{display:none!important}body.focusMode .layout{grid-template-columns:1fr}body.focusMode .workspace{padding:40px 0}
+.left,.right{background:var(--panel);padding:16px;overflow-y:auto}.left{border-right:1px solid var(--line)}.right{border-left:1px solid var(--line)}
+.sectionTitle{font:800 11px sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:12px 0 10px}
+.field{margin-bottom:12px}.field label{display:block;font:700 11px sans-serif;text-transform:uppercase;color:var(--muted);margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:10px;background:#0b0e12;border:1px solid var(--line);border-radius:8px;color:#fff;outline:0;transition:border .2s}.field textarea{min-height:75px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.workspace{overflow:auto;background:#1a1e24;padding:40px 20px 120px;display:flex;flex-direction:column;align-items:center}
+.paper{width:800px;min-height:1120px;background:var(--paper-bg);color:var(--paper-text);box-shadow:var(--shadow);border-radius:4px;position:relative}
+body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
+.articlePage{min-height:1120px;padding:80px;outline:0;font-family:Georgia,serif;font-size:18px;line-height:1.8}
+.articlePage h1{font-size:44px;line-height:1.1;margin:0 0 20px;font-weight:800}.articlePage h2{font-size:30px;line-height:1.2;margin:32px 0 14px}.articlePage h3{font-size:22px;line-height:1.3;margin:24px 0 10px}.articlePage p{margin:0 0 1.2em}
+.articlePage blockquote{margin:24px 0;padding:16px 24px;border-left:4px solid var(--red);background:rgba(0,0,0,.03);font-style:italic}.articlePage pre{background:#1e242c;color:#f8f9fa;padding:16px;border-radius:8px;font-family:monospace;overflow:auto}
+.articlePage table{width:100%;border-collapse:collapse;margin:24px 0}.articlePage td,.articlePage th{border:1px solid #9aa2ad;padding:10px 14px}.page-break{break-before:page;border-top:2px dashed var(--muted);margin:40px 0;text-align:center}.page-break:after{content:"Page Break";font-size:10px;color:var(--muted);text-transform:uppercase;position:relative;top:-10px;background:var(--paper-bg);padding:0 8px}
+.mediaLayer{position:relative;display:inline-block;max-width:100%;margin:20px 0;user-select:none;touch-action:none;vertical-align:top}.mediaLayer img,.mediaLayer iframe{display:block;width:100%;height:auto;border-radius:6px}.mediaLayer iframe{height:420px;border:0}.mediaLayer.selectedMedia{outline:2px solid var(--red);outline-offset:4px}
+.mediaLayer[data-align=left]{float:left;margin:10px 24px 16px 0;max-width:50%}.mediaLayer[data-align=right]{float:right;margin:10px 0 16px 24px;max-width:50%}.mediaLayer[data-align=center]{display:block;margin:24px auto;text-align:center}.mediaLayer[data-align=full]{display:block;width:100%!important;margin:28px 0}
+.mediaHandles{position:absolute;inset:-12px;pointer-events:none;z-index:30}.mediaHandle{position:absolute;width:12px;height:12px;background:var(--red);border:2px solid #fff;border-radius:50%;pointer-events:auto;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.mediaHandle[data-action=resizeBR]{right:-6px;bottom:-6px;cursor:nwse-resize}.mediaHandle[data-action=resizeBL]{left:-6px;bottom:-6px;cursor:nesw-resize}.mediaHandle[data-action=rotate]{left:50%;top:-24px;transform:translateX(-50%);cursor:grab}.mediaHandle[data-action=rotate]:after{content:"↻";position:absolute;top:-18px;left:50%;transform:translateX(-50%);color:var(--red);font-weight:bold}
+.mediaToolbar{position:absolute;top:-45px;left:50%;transform:translateX(-50%);background:#11151a;border:1px solid var(--line);border-radius:8px;padding:4px;display:flex;gap:4px;pointer-events:auto;box-shadow:0 6px 20px rgba(0,0,0,.5);z-index:40}.mediaToolbar button{padding:4px 8px;font-size:11px;height:26px}.mediaDelete{background:var(--red)!important}.mediaOpacity{position:absolute;left:-35px;top:50%;transform:translateY(-50%) rotate(-90deg);width:80px;accent-color:var(--red);pointer-events:auto}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:calc(100vh - 360px);overflow-y:auto}.asset{border:1px solid var(--line);background:#141920;border-radius:8px;padding:6px;cursor:pointer;transition:border .2s}.asset:hover{border-color:var(--accent)}.asset img{width:100%;height:85px;object-fit:cover;border-radius:4px;display:block}.asset span{display:block;font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:4px}
+.dropZone{border:2px dashed var(--line);padding:14px;text-align:center;border-radius:8px;color:var(--muted);font-size:11px;margin-bottom:12px;cursor:pointer}.dropZone:hover,.dropZone.dragover{border-color:var(--accent);color:#fff;background:#111821}
+.sourceEditor{display:none;width:100%;min-height:1120px;border:0;outline:0;padding:80px;font:14px ui-monospace,monospace;resize:none;color:#70a1ff;background:#0d1117;line-height:1.6}.sourceMode .sourceEditor{display:block}.sourceMode #editor{display:none}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:20px;z-index:200;backdrop-filter:blur(4px)}.modal.open{display:flex}.modalBox{width:min(680px,100%);max-height:90vh;overflow-y:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px;box-shadow:var(--shadow)}.modalBox h3{font:800 20px Georgia;margin:0 0 16px}
+.previewArticle{font-family:Georgia,serif;line-height:1.75}.previewArticle h1{font-size:42px;line-height:1.15}.previewArticle img{max-width:100%}.previewArticle iframe{width:100%;height:420px;border:0}
+@media(max-width:1100px){.layout{grid-template-columns:240px 1fr}.right{display:none}}@media(max-width:768px){.top{align-items:flex-start;flex-direction:column}.layout{display:block}.left{display:none}.paper{width:100%;min-height:900px}.articlePage{padding:30px 20px}.toolbarWrap{top:0}.count{margin-left:0}}
+@media print{body{background:#fff!important;color:#000}.top,.toolbarWrap,.left,.right{display:none!important}.layout{display:block}.workspace{padding:0;background:#fff}.paper{width:100%;box-shadow:none}.articlePage{padding:20mm}.mediaHandles{display:none!important}}
 </style>
 </head>
 <body>
@@ -265,10 +67,10 @@ body.darkPaper .articlePage blockquote { background: rgba(255,255,255,0.03); }
   <div class="brand">Atomic<span>Admin</span> Studio</div>
   <div class="statusBadge"><span class="statusDot" id="statusDot"></span><span id="statusMsg">Ready</span></div>
   <div class="actions">
-    <button id="togglePaperTheme" title="Switch Paper Theme">🌓 Dark/Light</button>
+    <button id="togglePaperTheme">🌓 Dark/Light</button>
     <button id="undo" title="Undo">↶</button>
     <button id="redo" title="Redo">↷</button>
-    <button id="focus" title="Focus Mode">🧘 Focus</button>
+    <button id="focus">🧘 Focus</button>
     <button id="preview">👁 Preview</button>
     <button id="saveDraft">💾 Draft</button>
     <button class="green" id="publish">🚀 Publish</button>
@@ -277,59 +79,21 @@ body.darkPaper .articlePage blockquote { background: rgba(255,255,255,0.03); }
 
 <div class="toolbarWrap">
   <div class="toolbar" id="toolbar">
-    <select id="fontName">
-      <option value="Georgia">Georgia</option>
-      <option value="Arial">Arial</option>
-      <option value="Times New Roman">Times New Roman</option>
-      <option value="Verdana">Verdana</option>
-      <option value="Courier New">Courier New</option>
-    </select>
-    <select id="fontSize">
-      <option value="2">12px</option>
-      <option value="3" selected>16px</option>
-      <option value="4">18px</option>
-      <option value="5">24px</option>
-      <option value="6">32px</option>
-      <option value="7">48px</option>
-    </select>
-    <select id="block">
-      <option value="p">Paragraph</option>
-      <option value="h1">Heading 1</option>
-      <option value="h2">Heading 2</option>
-      <option value="h3">Heading 3</option>
-      <option value="blockquote">Quote</option>
-      <option value="pre">Code Block</option>
-    </select>
+    <select id="fontName"><option value="Georgia">Georgia</option><option value="Arial">Arial</option><option value="Times New Roman">Times New Roman</option><option value="Verdana">Verdana</option><option value="Courier New">Courier New</option></select>
+    <select id="fontSize"><option value="2">12px</option><option value="3" selected>16px</option><option value="4">18px</option><option value="5">24px</option><option value="6">32px</option><option value="7">48px</option></select>
+    <select id="block"><option value="p">Paragraph</option><option value="h1">Heading 1</option><option value="h2">Heading 2</option><option value="h3">Heading 3</option><option value="blockquote">Quote</option><option value="pre">Code Block</option></select>
     <span class="toolSep"></span>
-    <button data-cmd="bold" title="Bold"><b>B</b></button>
-    <button data-cmd="italic" title="Italic"><i>I</i></button>
-    <button data-cmd="underline" title="Underline"><u>U</u></button>
-    <button data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
+    <button data-cmd="bold"><b>B</b></button><button data-cmd="italic"><i>I</i></button><button data-cmd="underline"><u>U</u></button><button data-cmd="strikeThrough"><s>S</s></button>
     <label class="colorBtn" title="Text Color">A<input id="textColor" type="color" value="#111111"></label>
     <label class="colorBtn" title="Highlight">▰<input id="highlight" type="color" value="#fff19a"></label>
     <span class="toolSep"></span>
-    <button data-cmd="justifyLeft" title="Align Left">⯇</button>
-    <button data-cmd="justifyCenter" title="Align Center">⯎</button>
-    <button data-cmd="justifyRight" title="Align Right">⯈</button>
-    <button data-cmd="justifyFull" title="Justify">☰</button>
+    <button data-cmd="justifyLeft">⯇</button><button data-cmd="justifyCenter">⯎</button><button data-cmd="justifyRight">⯈</button><button data-cmd="justifyFull">☰</button>
     <span class="toolSep"></span>
-    <button data-cmd="insertUnorderedList">• List</button>
-    <button data-cmd="insertOrderedList">1. List</button>
-    <button id="link">🔗 Link</button>
-    <button id="unlink">Unlink</button>
-    <button id="clear">Tx Clean</button>
+    <button data-cmd="insertUnorderedList">• List</button><button data-cmd="insertOrderedList">1. List</button>
+    <button id="link">🔗 Link</button><button id="unlink">Unlink</button><button id="clear">Tx Clean</button>
   </div>
   <div class="subbar">
-    <button id="insertImage">🖼 Image</button>
-    <button id="embedVideo">▶ YouTube</button>
-    <button id="insertTable">▦ Table</button>
-    <button id="addTableRow">+Row</button>
-    <button id="addTableCol">+Col</button>
-    <button id="pageBreak">↵ Page break</button>
-    <button id="exportHtml">📥 HTML</button>
-    <button id="exportMd">📝 MD</button>
-    <button id="print">🖨 Print</button>
-    <button id="source">&lt;&gt; Source</button>
+    <button id="insertImage">🖼 Image</button><button id="embedVideo">▶ YouTube</button><button id="insertTable">▦ Table</button><button id="addTableRow">+Row</button><button id="addTableCol">+Col</button><button id="deleteTableRow">−Row</button><button id="deleteTableCol">−Col</button><button id="pageBreak">↵ Page break</button><button id="exportHtml">📥 HTML</button><button id="exportMd">📝 MD</button><button id="print">🖨 Print</button><button id="source">&lt;&gt; Source</button>
     <span class="count" id="count">0 words · 0 chars · 0 min read</span>
   </div>
 </div>
@@ -339,16 +103,11 @@ body.darkPaper .articlePage blockquote { background: rgba(255,255,255,0.03); }
     <div class="sectionTitle">Metadata</div>
     <div class="field"><label>Article Title</label><input id="title" placeholder="Enter article title..."></div>
     <div class="field"><label>Author</label><input id="author" value="Atomic Desk"></div>
-    <div class="field"><label>Category / Section</label>
-      <select id="section">
-        <option>Science</option><option>Technology</option><option>Cosmos</option><option>Ideas</option><option>News</option>
-      </select>
-    </div>
+    <div class="field"><label>Category / Section</label><select id="section"><option>Science</option><option>Technology</option><option>Cosmos</option><option>Ideas</option><option>News</option></select></div>
     <div class="field"><label>Short Deck / Excerpt</label><textarea id="dek" placeholder="Brief summary for preview cards..."></textarea></div>
-    <div class="field"><label>Cover Asset Path</label><input id="cover" placeholder="e.g. cover.jpg"><img id="coverPreview" style="width:100%;height:100px;object-fit:cover;margin-top:6px;border-radius:6px;display:none"></div>
-    
+    <div class="field"><label>Cover Asset Path / URL</label><input id="cover" placeholder="e.g. assets/cover.jpg or image URL"><img id="coverPreview" style="width:100%;height:100px;object-fit:cover;margin-top:6px;border-radius:6px;display:none"></div>
     <div class="sectionTitle">Structure</div>
-    <div id="tocList" style="font-size:12px;color:var(--muted);line-height:1.6;">No headings added yet.</div>
+    <div id="tocList" style="font-size:12px;color:var(--muted);line-height:1.6">No headings added yet.</div>
   </aside>
 
   <main class="workspace">
@@ -365,313 +124,423 @@ body.darkPaper .articlePage blockquote { background: rgba(255,255,255,0.03); }
     <div class="sectionTitle">Asset Manager</div>
     <div class="dropZone" id="dropZone">📁 Click or Drag Image to Upload Local Asset</div>
     <input type="file" id="localFileInput" accept="image/*" style="display:none">
-    
     <input id="assetSearch" placeholder="Search GitHub assets…" style="width:100%;padding:8px;background:#0c1015;border:1px solid var(--line);border-radius:6px;color:#fff;margin-bottom:10px">
-    <div id="gallery" class="gallery"><div style="color:var(--muted);font-size:12px;">Loading media assets…</div></div>
+    <div id="gallery" class="gallery"><div style="color:var(--muted);font-size:12px">Loading media assets…</div></div>
   </aside>
 </div>
 
-<!-- Modals -->
-<div id="linkModal" class="modal"><div class="modalBox"><h3>Insert Link</h3><div class="field"><label>URL</label><input id="linkUrl" placeholder="https://"></div><div class="actions"><button id="closeLink">Cancel</button><button class="primary" id="applyLink">Apply</button></div></div></div>
-<div id="previewModal" class="modal"><div class="modalBox" style="width:800px"><h3>Article Preview</h3><div id="previewContent" style="background:#fff;color:#111;padding:40px;border-radius:8px;"></div><button id="closePreview" style="margin-top:14px">Close</button></div></div>
+<div id="linkModal" class="modal">
+  <div class="modalBox"><h3>Insert Link</h3>
+    <div class="field"><label>URL</label><input id="linkUrl" placeholder="https://example.com"></div>
+    <div class="actions"><button id="closeLink">Cancel</button><button class="primary" id="applyLink">Apply</button></div>
+  </div>
+</div>
+
+<div id="previewModal" class="modal">
+  <div class="modalBox" style="width:900px"><h3>Article Preview</h3><div id="previewContent" class="previewArticle" style="background:#fff;color:#111;padding:40px;border-radius:8px"></div><button id="closePreview" style="margin-top:14px">Close</button></div>
+</div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getDatabase, ref, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
-const cfg = { apiKey: 'AIzaSyCit_SKjXRUpr8FNY1ahKhiG5sdDyOlW6k', authDomain: 'atomictanvir.firebaseapp.com', projectId: 'atomictanvir', databaseURL: 'https://atomictanvir-default-rtdb.firebaseio.com' };
-const db = getDatabase(initializeApp(cfg)), $ = id => document.getElementById(id);
-const PUBLIC = 'https://iammdtanvirrahman.github.io/atomic-weekly/';
-const ASSET_API = 'https://api.github.com/repos/iammdtanvirrahman/atomic-weekly/contents/assets?ref=main';
+const cfg={
+  apiKey:'AIzaSyCit_SKjXRUpr8FNY1ahKhiG5sdDyOlW6k',
+  authDomain:'atomictanvir.firebaseapp.com',
+  projectId:'atomictanvir',
+  databaseURL:'https://atomictanvir-default-rtdb.firebaseio.com'
+};
+const app=initializeApp(cfg),db=getDatabase(app);
+const $=id=>document.getElementById(id);
+const PUBLIC='https://iammdtanvirrahman.github.io/atomic-weekly/';
+const ASSET_API='https://api.github.com/repos/iammdtanvirrahman/atomic-weekly/contents/assets?ref=main';
 
-let savedRange = null, selectedMedia = null, selectedGalleryUrl = '', sourceMode = false, history = [], historyIndex = -1, saveTimer = null, dragState = null;
+let savedRange=null,selectedMedia=null,selectedGalleryUrl='',sourceMode=false;
+let history=[],historyIndex=-1,saveTimer=null,cloudTimer=null,dragState=null,allAssets=[];
+let suppressHistory=false;
 
-function setStatus(msg, status = 'synced') {
-  $('statusMsg').textContent = msg;
-  $('statusDot').className = 'statusDot ' + status;
+function setStatus(msg,status='synced'){
+  $('statusMsg').textContent=msg;
+  $('statusDot').className='statusDot '+status;
 }
-
-function saveSelection() {
-  const s = getSelection();
-  if (s && s.rangeCount) savedRange = s.getRangeAt(0).cloneRange();
+function saveSelection(){
+  const s=window.getSelection();
+  if(s && s.rangeCount) savedRange=s.getRangeAt(0).cloneRange();
 }
-function restoreSelection() {
-  const s = getSelection();
+function restoreSelection(){
+  const s=window.getSelection();
   s.removeAllRanges();
-  if (savedRange) s.addRange(savedRange);
+  if(savedRange) s.addRange(savedRange);
+  else $('editor').focus();
 }
-
-function cmd(c, v = null) {
+function stripTransient(root){
+  const clone=root.cloneNode(true);
+  clone.querySelectorAll('.mediaHandles').forEach(x=>x.remove());
+  clone.querySelectorAll('.selectedMedia').forEach(x=>x.classList.remove('selectedMedia'));
+  return clone.innerHTML;
+}
+function editorHTML(){return stripTransient($('editor'))}
+function cmd(c,v=null){
   restoreSelection();
-  document.execCommand(c, false, v);
+  document.execCommand(c,false,v);
   $('editor').focus();
   pushHistory();
   updateStats();
+  scheduleLocalSave();
 }
-
-function pushHistory() {
-  if (sourceMode) return;
-  const html = $('editor').innerHTML;
-  if (history[historyIndex] === html) return;
-  history = history.slice(0, historyIndex + 1);
+function pushHistory(){
+  if(sourceMode||suppressHistory)return;
+  const html=editorHTML();
+  if(history[historyIndex]===html)return;
+  history=history.slice(0,historyIndex+1);
   history.push(html);
-  if (history.length > 50) history.shift();
-  historyIndex = history.length - 1;
+  if(history.length>60)history.shift();
+  historyIndex=history.length-1;
 }
-
-function applyHistory(dir) {
-  if (!history.length) return;
-  historyIndex = Math.max(0, Math.min(history.length - 1, historyIndex + dir));
-  $('editor').innerHTML = history[historyIndex] || '';
+function applyHistory(dir){
+  if(!history.length)return;
+  const next=Math.max(0,Math.min(history.length-1,historyIndex+dir));
+  if(next===historyIndex)return;
+  historyIndex=next;
+  suppressHistory=true;
+  clearMediaSelection();
+  $('editor').innerHTML=history[historyIndex]||'';
+  suppressHistory=false;
   updateStats();
+  scheduleLocalSave();
+}
+function updateStats(){
+  const text=(sourceMode?$('sourceEditor').value:$('editor').innerText).trim();
+  const words=text?text.split(/\s+/).length:0;
+  const chars=text.length;
+  const read=Math.max(1,Math.ceil(words/200));
+  $('count').textContent=`${words} words · ${chars} chars · ${read} min read`;
+  const headings=[...$('editor').querySelectorAll('h1,h2,h3')];
+  $('tocList').innerHTML=headings.length
+    ? headings.map(h=>`<div>• ${escapeHtml(h.innerText||'Untitled Heading')}</div>`).join('')
+    : 'No headings present.';
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 }
 
-function updateStats() {
-  const text = (sourceMode ? $('sourceEditor').value :$('editor').innerText).trim();
-  const words = text ? text.split(/\s+/).length : 0;
-  const chars = text.length;
-  const readTime = Math.max(1, Math.ceil(words / 200));
-  $('count').textContent = `${words} words · ${chars} chars · ${readTime} min read`;
-
-  // Auto-generate TOC
-  const headings = Array.from($('editor').querySelectorAll('h1, h2, h3'));
-  if (headings.length) {
-    $('tocList').innerHTML = headings.map(h => `<div>• ${h.innerText || 'Untitled Heading'}</div>`).join('');
-  } else {
-    $('tocList').innerHTML = 'No headings present.';
-  }
-}
-
-/* Media Layer Controls */
-function addMediaToolbar(layer) {
-  if (layer.querySelector('.mediaHandles')) return;
-  const h = document.createElement('div');
-  h.className = 'mediaHandles';
-  h.contentEditable = 'false';
-  h.innerHTML = `
-    <div class="mediaToolbar">
-      <button data-align="left">Left</button>
-      <button data-align="center">Center</button>
-      <button data-align="right">Right</button>
-      <button data-align="full">Full</button>
-      <button class="mediaDelete">✕</button>
-    </div>
+function addMediaToolbar(layer){
+  if(layer.querySelector('.mediaHandles'))return;
+  const h=document.createElement('div');
+  h.className='mediaHandles';h.contentEditable='false';
+  h.innerHTML=`<div class="mediaToolbar">
+    <button data-align="left">Left</button><button data-align="center">Center</button>
+    <button data-align="right">Right</button><button data-align="full">Full</button>
+    <button class="mediaDelete">✕</button></div>
     <span class="mediaHandle" data-action="resizeBR"></span>
     <span class="mediaHandle" data-action="resizeBL"></span>
     <span class="mediaHandle" data-action="rotate"></span>
-    <input class="mediaOpacity" type="range" min="10" max="100" value="100">
-  `;
+    <input class="mediaOpacity" type="range" min="10" max="100" value="${Math.round((parseFloat(layer.style.opacity)||1)*100)}">`;
   layer.appendChild(h);
-
-  h.querySelectorAll('.mediaToolbar button[data-align]').forEach(btn => {
-    btn.onclick = e => { e.stopPropagation(); layer.dataset.align = btn.dataset.align; scheduleLocalSave(); };
+  h.querySelectorAll('[data-align]').forEach(btn=>btn.onclick=e=>{
+    e.stopPropagation();layer.dataset.align=btn.dataset.align;pushHistory();scheduleLocalSave();
   });
-  h.querySelector('.mediaDelete').onclick = e => { e.stopPropagation(); layer.remove(); clearMediaSelection(); pushHistory(); };
-  h.querySelector('.mediaOpacity').oninput = e => { layer.style.opacity = (e.target.value / 100).toFixed(2); };
-  h.querySelectorAll('.mediaHandle').forEach(handle => {
-    handle.onpointerdown = e => startMediaAction(e, layer, handle.dataset.action);
-  });
+  h.querySelector('.mediaDelete').onclick=e=>{
+    e.stopPropagation();layer.remove();clearMediaSelection();pushHistory();scheduleLocalSave();
+  };
+  h.querySelector('.mediaOpacity').oninput=e=>{layer.style.opacity=(e.target.value/100).toFixed(2)};
+  h.querySelectorAll('.mediaHandle').forEach(handle=>handle.onpointerdown=e=>startMediaAction(e,layer,handle.dataset.action));
 }
-
-function selectMedia(layer) {
-  clearMediaSelection();
-  selectedMedia = layer;
-  layer.classList.add('selectedMedia');
-  addMediaToolbar(layer);
+function selectMedia(layer){
+  clearMediaSelection();selectedMedia=layer;layer.classList.add('selectedMedia');addMediaToolbar(layer);
 }
-
-function clearMediaSelection() {
-  if (selectedMedia) {
-    selectedMedia.classList.remove('selectedMedia');
-    selectedMedia.querySelector('.mediaHandles')?.remove();
-  }
-  selectedMedia = null;
+function clearMediaSelection(){
+  if(selectedMedia){selectedMedia.classList.remove('selectedMedia');selectedMedia.querySelector('.mediaHandles')?.remove()}
+  selectedMedia=null;
 }
-
-function startMediaAction(e, layer, action) {
-  e.preventDefault(); e.stopPropagation();
-  const rect = layer.getBoundingClientRect();
-  dragState = { layer, action, startX: e.clientX, startY: e.clientY, startW: rect.width, startR: parseFloat(layer.dataset.rotate || '0') };
-  document.addEventListener('pointermove', mediaPointerMove);
-  document.addEventListener('pointerup', mediaPointerUp, { once: true });
+function startMediaAction(e,layer,action){
+  e.preventDefault();e.stopPropagation();
+  const rect=layer.getBoundingClientRect();
+  dragState={layer,action,startX:e.clientX,startY:e.clientY,startW:rect.width,startH:rect.height,startR:parseFloat(layer.dataset.rotate||'0')};
+  document.addEventListener('pointermove',mediaPointerMove);
+  document.addEventListener('pointerup',mediaPointerUp,{once:true});
 }
-
-function mediaPointerMove(e) {
-  if (!dragState) return;
-  const dx = e.clientX - dragState.startX;
-  if (dragState.action === 'resizeBR') {
-    dragState.layer.style.width = Math.max(100, dragState.startW + dx) + 'px';
-  } else if (dragState.action === 'rotate') {
-    dragState.layer.dataset.rotate = (dragState.startR + dx * 0.5).toFixed(1);
-    dragState.layer.style.transform = `rotate(${dragState.layer.dataset.rotate}deg)`;
+function mediaPointerMove(e){
+  if(!dragState)return;
+  const dx=e.clientX-dragState.startX;
+  if(dragState.action==='resizeBR'){
+    dragState.layer.style.width=Math.max(100,dragState.startW+dx)+'px';
+  }else if(dragState.action==='resizeBL'){
+    dragState.layer.style.width=Math.max(100,dragState.startW-dx)+'px';
+  }else if(dragState.action==='rotate'){
+    const r=dragState.startR+dx*.5;
+    dragState.layer.dataset.rotate=r.toFixed(1);
+    dragState.layer.style.transform=`rotate(${r.toFixed(1)}deg)`;
   }
 }
-
-function mediaPointerUp() {
-  if (dragState) { pushHistory(); scheduleLocalSave(); dragState = null; }
-  document.removeEventListener('pointermove', mediaPointerMove);
+function mediaPointerUp(){
+  if(dragState){pushHistory();scheduleLocalSave();dragState=null}
+  document.removeEventListener('pointermove',mediaPointerMove);
 }
 
-/* Event Listeners */
-$('toolbar').querySelectorAll('[data-cmd]').forEach(b => b.onclick = () => cmd(b.dataset.cmd));$('fontName').onchange = e => cmd('fontName', e.target.value);
-$('fontSize').onchange = e => cmd('fontSize', e.target.value);$('block').onchange = e => cmd('formatBlock', `<${e.target.value}>`);
-$('textColor').oninput = e => cmd('foreColor', e.target.value);
-$('highlight').oninput = e => cmd('hiliteColor', e.target.value);$('undo').onclick = () => applyHistory(-1);
-$('redo').onclick = () => applyHistory(1);$('togglePaperTheme').onclick = () => document.body.classList.toggle('darkPaper');
+$('toolbar').querySelectorAll('[data-cmd]').forEach(b=>b.onclick=()=>cmd(b.dataset.cmd));
+$('fontName').onchange=e=>cmd('fontName',e.target.value);
+$('fontSize').onchange=e=>cmd('fontSize',e.target.value);
+$('block').onchange=e=>cmd('formatBlock',`<${e.target.value}>`);
+$('textColor').oninput=e=>cmd('foreColor',e.target.value);
+$('highlight').oninput=e=>cmd('hiliteColor',e.target.value);
+$('undo').onclick=()=>applyHistory(-1);
+$('redo').onclick=()=>applyHistory(1);
+$('togglePaperTheme').onclick=()=>document.body.classList.toggle('darkPaper');
+$('focus').onclick=()=>document.body.classList.toggle('focusMode');
+$('print').onclick=()=>window.print();
 
-$('editor').addEventListener('click', e => {
-  const layer = e.target.closest('.mediaLayer');
-  if (layer) selectMedia(layer); else clearMediaSelection();
+$('editor').addEventListener('click',e=>{
+  const layer=e.target.closest('.mediaLayer');
+  if(layer)selectMedia(layer);else clearMediaSelection();
 });
+$('editor').addEventListener('keyup',()=>{saveSelection();updateStats();scheduleLocalSave()});
+$('editor').addEventListener('input',()=>{saveSelection();updateStats();scheduleLocalSave();pushHistory()});
+$('editor').addEventListener('mouseup',saveSelection);
+$('editor').addEventListener('blur',saveSelection);
 
-$('editor').addEventListener('keyup', () => { saveSelection(); updateStats(); scheduleLocalSave(); });$('editor').addEventListener('input', () => { updateStats(); scheduleLocalSave(); });
-
-/* Custom Inserts */
-function insertHtml(html) {
+function insertHtml(html){
   restoreSelection();
-  document.execCommand('insertHTML', false, html);
-  $('editor').focus();
-  pushHistory();
-  updateStats();
+  document.execCommand('insertHTML',false,html);
+  $('editor').focus();pushHistory();updateStats();scheduleLocalSave();
 }
-
-$('insertImage').onclick = () => {
-  if (selectedGalleryUrl) insertHtml(`<div class="mediaLayer" data-align="center"><img src="${selectedGalleryUrl}"></div>`);
+$('insertImage').onclick=()=>{
+  if(selectedGalleryUrl)insertHtml(`<div class="mediaLayer" data-align="center"><img src="${escapeAttr(selectedGalleryUrl)}" alt="Article image"></div>`);
   else alert('Please select an asset from the gallery first.');
 };
+function escapeAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+$('embedVideo').onclick=()=>{
+  const url=prompt('Enter YouTube Video URL:');
+  if(!url)return;
+  const id=getYouTubeId(url);
+  if(!id){alert('Invalid YouTube URL.');return}
+  insertHtml(`<div class="mediaLayer" data-align="center"><iframe src="https://www.youtube.com/embed/${id}" allowfullscreen loading="lazy"></iframe></div>`);
+};
+function getYouTubeId(url){
+  try{
+    const u=new URL(url);
+    if(u.hostname.includes('youtu.be'))return u.pathname.slice(1).split('/')[0];
+    if(u.searchParams.get('v'))return u.searchParams.get('v');
+    const m=u.pathname.match(/\/(?:embed|shorts)\/([^/?]+)/);return m?m[1]:null;
+  }catch{return null}
+}
+$('insertTable').onclick=()=>insertHtml(`<table><thead><tr><th>Header 1</th><th>Header 2</th></tr></thead><tbody><tr><td>Data 1</td><td>Data 2</td></tr></tbody></table>`);
+function selectedTable(){
+  const n=window.getSelection()?.anchorNode;
+  return n?.nodeType===3?n.parentElement.closest('table'):n?.closest?.('table');
+}
+$('addTableRow').onclick=()=>{
+  const t=selectedTable();if(!t){alert('Place the cursor inside a table first.');return}
+  const row=t.insertRow();const cols=t.rows[0]?.cells.length||2;
+  for(let i=0;i<cols;i++)row.insertCell().innerText='New Cell';
+  pushHistory();scheduleLocalSave();
+};
+$('addTableCol').onclick=()=>{
+  const t=selectedTable();if(!t){alert('Place the cursor inside a table first.');return}
+  [...t.rows].forEach(r=>r.insertCell().innerText='New Cell');pushHistory();scheduleLocalSave();
+};
+$('deleteTableRow').onclick=()=>{
+  const t=selectedTable();if(!t){alert('Place the cursor inside a table first.');return}
+  const cell=window.getSelection()?.anchorNode?.parentElement?.closest('td,th');
+  const row=cell?.parentElement;if(row)t.deleteRow(row.rowIndex);pushHistory();scheduleLocalSave();
+};
+$('deleteTableCol').onclick=()=>{
+  const t=selectedTable();if(!t){alert('Place the cursor inside a table first.');return}
+  const cell=window.getSelection()?.anchorNode?.parentElement?.closest('td,th');
+  if(!cell)return;
+  const idx=cell.cellIndex;[...t.rows].forEach(r=>{if(r.cells[idx])r.deleteCell(idx)});pushHistory();scheduleLocalSave();
+};
+$('pageBreak').onclick=()=>insertHtml('<div class="page-break"></div>');
 
-$('embedVideo').onclick = () => {
-  const url = prompt('Enter YouTube Video URL:');
-  if (!url) return;
-  const id = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop();
-  insertHtml(`<div class="mediaLayer" data-align="center"><iframe src="https://www.youtube.com/embed/${id}" allowfullscreen></iframe></div>`);
+$('link').onclick=()=>{saveSelection();$('linkUrl').value='';$('linkModal').classList.add('open');setTimeout(()=>$('linkUrl').focus(),50)};
+$('closeLink').onclick=()=>{$('linkModal').classList.remove('open')};
+$('applyLink').onclick=()=>{
+  const url=$('linkUrl').value.trim();if(!url)return;
+  const safe=/^(https?:|mailto:|tel:)/i.test(url)?url:'https://'+url;
+  restoreSelection();document.execCommand('createLink',false,safe);$('editor').focus();
+  pushHistory();scheduleLocalSave();$('linkModal').classList.remove('open');
+};
+$('unlink').onclick=()=>cmd('unlink');
+$('clear').onclick=()=>cmd('removeFormat');
+
+function payload(){
+  return {
+    title:$('title').value.trim()||'Untitled',
+    author:$('author').value.trim()||'Atomic Desk',
+    section:$('section').value,
+    dek:$('dek').value.trim(),
+    cover:$('cover').value.trim(),
+    content:sourceMode?$('sourceEditor').value:editorHTML(),
+    updatedAt:Date.now()
+  };
+}
+function saveLocalNow(){
+  try{localStorage.setItem('atomic_article_draft',JSON.stringify(payload()));setStatus('Draft saved locally','synced')}
+  catch(e){setStatus('Local save failed','error')}
+}
+function scheduleLocalSave(){
+  setStatus('Saving…','error');
+  clearTimeout(saveTimer);saveTimer=setTimeout(saveLocalNow,700);
+}
+function scheduleCloudSave(){
+  clearTimeout(cloudTimer);
+  cloudTimer=setTimeout(async()=>{
+    try{
+      await set(ref(db,'atomicWeekly/autosave'),payload());
+      setStatus('Auto-saved to cloud','synced');
+    }catch(e){setStatus('Cloud autosave failed','error')}
+  },4000);
+}
+$('saveDraft').onclick=async()=>{
+  saveLocalNow();
+  try{
+    await set(ref(db,'atomicWeekly/drafts/'+Date.now()),payload());
+    setStatus('Saved to Cloud','synced');
+  }catch(e){setStatus('Cloud save failed','error');console.error(e)}
+};
+$('publish').onclick=async()=>{
+  const p=payload();
+  if(!p.title||p.title==='Untitled'){alert('Please enter an article title first.');return}
+  if(!p.content.trim()){alert('Article content is empty.');return}
+  try{
+    setStatus('Publishing…','error');
+    const id=Date.now();
+    await set(ref(db,'atomicWeekly/published/'+id),{...p,published:true,publishedAt:id});
+    await set(ref(db,'atomicWeekly/latestPublished'),{...p,published:true,publishedAt:id,id});
+    setStatus('Published successfully','synced');
+    alert('Article published successfully.');
+  }catch(e){setStatus('Publish failed','error');console.error(e)}
 };
 
-$('insertTable').onclick = () => insertHtml(`<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Data 1</td><td>Data 2</td></tr></table>`);
-$('addTableRow').onclick = () => {
-  const sel = getSelection().anchorNode?.parentElement?.closest('table');
-  if (sel) { const row = sel.insertRow(); row.innerHTML = '<td>New Cell</td><td>New Cell</td>'; }
+$('exportHtml').onclick=()=>{
+  const p=payload();
+  const doc=`<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(p.title)}</title><style>body{max-width:800px;margin:40px auto;padding:20px;font:18px Georgia,serif;line-height:1.8}img{max-width:100%}iframe{width:100%;height:420px;border:0}table{width:100%;border-collapse:collapse}td,th{border:1px solid #999;padding:8px}</style></head><body><h1>${escapeHtml(p.title)}</h1><p><em>By ${escapeHtml(p.author)} · ${escapeHtml(p.section)}</em></p><p>${escapeHtml(p.dek)}</p>${p.content}</body></html>`;
+  downloadBlob(doc,'article.html','text/html');
 };
-$('addTableCol').onclick = () => {
-  const sel = getSelection().anchorNode?.parentElement?.closest('table');
-  if (sel) Array.from(sel.rows).forEach(r => r.insertCell().innerText = 'New Cell');
+$('exportMd').onclick=()=>{
+  const p=payload();
+  const md=`# ${p.title}\\n\\n**By:** ${p.author}\\n**Section:** ${p.section}\\n\\n${p.dek}\\n\\n${htmlToMarkdown(p.content)}`;
+  downloadBlob(md,'article.md','text/markdown');
 };
-
-$('pageBreak').onclick = () => insertHtml('<div class="page-break"></div>');
-
-/* Source Code Mode */
-$('source').onclick = () => {
-  sourceMode = !sourceMode;
-  document.body.classList.toggle('sourceMode', sourceMode);
-  if (sourceMode) $('sourceEditor').value =$('editor').innerHTML;
-  else { $('editor').innerHTML =$('sourceEditor').value; pushHistory(); }
-};
-
-/* Assets Loading */
-async function loadAssets() {
-  try {
-    const r = await fetch(ASSET_API);
-    const files = await r.json();
-    const urls = files.filter(x => /\.(png|jpe?g|webp|gif)$/i.test(x.name)).map(x => ({ name: x.name, url: x.download_url }));
-    renderAssets(urls);
-  } catch (e) { $('gallery').innerHTML = '<div style="font-size:11px;color:var(--muted)">Failed to fetch remote assets. You can upload local images below.</div>'; }
+function downloadBlob(data,name,type){
+  const blob=new Blob([data],{type}),a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function htmlToMarkdown(html){
+  const temp=document.createElement('div');temp.innerHTML=html;
+  function walk(n){
+    if(n.nodeType===3)return n.nodeValue;
+    if(n.nodeType!==1)return '';
+    const inner=[...n.childNodes].map(walk).join('');
+    const tag=n.tagName.toLowerCase();
+    if(tag==='h1')return `# ${inner}\\n\\n`;if(tag==='h2')return `## ${inner}\\n\\n`;if(tag==='h3')return `### ${inner}\\n\\n`;
+    if(tag==='p')return `${inner}\\n\\n`;if(tag==='strong'||tag==='b')return `**${inner}**`;if(tag==='em'||tag==='i')return `*${inner}*`;
+    if(tag==='blockquote')return `> ${inner}\\n\\n`;if(tag==='li')return `- ${inner}\\n`;
+    if(tag==='br')return '\\n';if(tag==='img')return `![image](${n.getAttribute('src')||''})\\n\\n`;
+    if(tag==='a')return `[${inner}](${n.getAttribute('href')||''})`;
+    if(tag==='table')return [...n.querySelectorAll('tr')].map(r=>`| ${[...r.cells].map(c=>c.innerText.trim()).join(' | ')} |`).join('\\n')+'\\n\\n';
+    if(['ul','ol','pre','div'].includes(tag))return inner+'\\n';
+    return inner;
+  }
+  return walk(temp).replace(/\\n{3,}/g,'\\n\\n').trim();
 }
 
-function renderAssets(items) {
-  const q = $('assetSearch').value.toLowerCase();$('gallery').innerHTML = '';
-  items.filter(x => x.name.toLowerCase().includes(q)).forEach(x => {
-    const d = document.createElement('div');
-    d.className = 'asset';
-    d.innerHTML = `<img src="${x.url}"><span>${x.name}</span>`;
-    d.onclick = () => {
-      selectedGalleryUrl = x.url;
-      document.querySelectorAll('.asset').forEach(a => a.style.borderColor = '');
-      d.style.borderColor = 'var(--red)';
-    };
+$('source').onclick=()=>{
+  sourceMode=!sourceMode;
+  document.body.classList.toggle('sourceMode',sourceMode);
+  if(sourceMode){$('sourceEditor').value=editorHTML();$('sourceEditor').focus()}
+  else{
+    clearMediaSelection();$('editor').innerHTML=$('sourceEditor').value||'<p></p>';pushHistory();updateStats();scheduleLocalSave();
+  }
+};
+$('sourceEditor').addEventListener('input',()=>{updateStats();scheduleLocalSave()});
+
+$('preview').onclick=()=>{
+  const p=payload();
+  $('previewContent').innerHTML=`<h1>${escapeHtml(p.title)}</h1><p><em>By ${escapeHtml(p.author)} in ${escapeHtml(p.section)}</em></p>${p.cover?`<img src="${escapeAttr(p.cover)}" style="max-width:100%;margin:10px 0 20px">`:''}<p>${escapeHtml(p.dek)}</p><hr>${p.content}`;
+  $('previewModal').classList.add('open');
+};
+$('closePreview').onclick=()=>$('previewModal').classList.remove('open');
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+
+async function loadAssets(){
+  try{
+    const r=await fetch(ASSET_API,{cache:'no-store'});
+    if(!r.ok)throw new Error('GitHub API '+r.status);
+    const files=await r.json();
+    allAssets=files.filter(x=>x.type==='file'&&/\.(png|jpe?g|webp|gif|svg)$/i.test(x.name))
+      .map(x=>({name:x.name,url:x.download_url}));
+    renderAssets();
+  }catch(e){
+    $('gallery').innerHTML='<div style="font-size:11px;color:var(--muted)">Failed to fetch remote assets. You can upload local images below.</div>';
+  }
+}
+function renderAssets(){
+  const q=$('assetSearch').value.toLowerCase().trim();
+  const items=allAssets.filter(x=>x.name.toLowerCase().includes(q));
+  $('gallery').innerHTML='';
+  if(!items.length){$('gallery').innerHTML='<div style="color:var(--muted);font-size:11px">No matching assets.</div>';return}
+  items.forEach(x=>{
+    const d=document.createElement('div');d.className='asset';
+    const img=document.createElement('img');img.src=x.url;img.loading='lazy';img.alt=x.name;
+    const span=document.createElement('span');span.textContent=x.name;
+    d.append(img,span);
+    d.onclick=()=>{selectedGalleryUrl=x.url;document.querySelectorAll('.asset').forEach(a=>a.style.borderColor='');d.style.borderColor='var(--red)'};
     $('gallery').appendChild(d);
   });
 }
-$('assetSearch').oninput = loadAssets;
+$('assetSearch').oninput=renderAssets;
 
-/* Local Upload Handling */
-$('dropZone').onclick = () => $('localFileInput').click();$('localFileInput').onchange = e => {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = ev => {
-      selectedGalleryUrl = ev.target.result;
-      insertHtml(`<div class="mediaLayer" data-align="center"><img src="${selectedGalleryUrl}"></div>`);
-    };
-    reader.readAsDataURL(file);
-  }
-};
-
-/* Auto-Save & Local Payload */
-function payload() {
-  return {
-    title: $('title').value || 'Untitled',
-    author: $('author').value,
-    section: $('section').value,
-    dek: $('dek').value,
-    cover: $('cover').value,
-    content: sourceMode ? $('sourceEditor').value :$('editor').innerHTML,
-    updatedAt: Date.now()
+function handleLocalFiles(files){
+  const file=files?.[0];if(!file)return;
+  if(!file.type.startsWith('image/')){alert('Please choose an image file.');return}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    selectedGalleryUrl=e.target.result;
+    insertHtml(`<div class="mediaLayer" data-align="center"><img src="${escapeAttr(selectedGalleryUrl)}" alt="${escapeAttr(file.name)}"></div>`);
   };
+  reader.readAsDataURL(file);
+}
+$('dropZone').onclick=()=>$('localFileInput').click();
+$('localFileInput').onchange=e=>handleLocalFiles(e.target.files);
+$('dropZone').ondragover=e=>{e.preventDefault();$('dropZone').classList.add('dragover')};
+$('dropZone').ondragleave=()=>$('dropZone').classList.remove('dragover');
+$('dropZone').ondrop=e=>{e.preventDefault();$('dropZone').classList.remove('dragover');handleLocalFiles(e.dataTransfer.files)};
+
+['title','author','section','dek','cover'].forEach(id=>{
+  $(id).addEventListener('input',()=>{
+    if(id==='cover')updateCoverPreview();
+    scheduleLocalSave();
+  });
+  $(id).addEventListener('change',scheduleLocalSave);
+});
+function updateCoverPreview(){
+  const v=$('cover').value.trim(),img=$('coverPreview');
+  if(!v){img.style.display='none';img.removeAttribute('src');return}
+  img.src=v;img.style.display='block';img.onerror=()=>img.style.display='none';
 }
 
-function scheduleLocalSave() {
-  setStatus('Saving...', 'error');
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    localStorage.setItem('atomic_article_draft', JSON.stringify(payload()));
-    setStatus('Draft saved locally', 'synced');
-  }, 800);
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();$('saveDraft').click()}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();applyHistory(-1)}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();applyHistory(1)}
+  if(e.key==='Escape'){document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open'));clearMediaSelection()}
+});
+
+const local=localStorage.getItem('atomic_article_draft');
+if(local){
+  try{
+    const p=JSON.parse(local);
+    $('title').value=p.title||'';
+    $('author').value=p.author||'';
+    $('section').value=p.section||'Science';
+    $('dek').value=p.dek||'';
+    $('cover').value=p.cover||'';
+    $('editor').innerHTML=p.content||'<h1>Heading 1 Title</h1><p>Start writing your amazing story here...</p>';
+  }catch(e){console.warn('Draft restore failed',e)}
 }
-
-$('saveDraft').onclick = async () => {
-  try {
-    const data = payload();
-    await set(ref(db, 'atomicWeekly/drafts/' + Date.now()), data);
-    setStatus('Saved to Cloud', 'synced');
-  } catch (e) { setStatus('Cloud save failed', 'error'); }
-};
-
-/* Exports */
-$('exportHtml').onclick = () => {
-  const blob = new Blob([$('editor').innerHTML], { type: 'text/html' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'article.html'; a.click();
-};
-
-$('exportMd').onclick = () => {
-  let md = $('editor').innerText;
-  const blob = new Blob([md], { type: 'text/markdown' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'article.md'; a.click();
-};
-
-$('print').onclick = () => window.print();$('focus').onclick = () => document.body.classList.toggle('focusMode');
-
-/* Preview Modal */
-$('preview').onclick = () => {
-  const p = payload();
-  $('previewContent').innerHTML = `<h1>${p.title}</h1><p><em>By ${p.author} in ${p.section}</em></p><hr>${p.content}`;
-  $('previewModal').classList.add('open');
-};
-$('closePreview').onclick = () =>$('previewModal').classList.remove('open');
-
-/* Initialize */
-const local = localStorage.getItem('atomic_article_draft');
-if (local) {
-  try {
-    const p = JSON.parse(local);
-    $('title').value = p.title || '';
-    $('author').value = p.author \vert{}\vert{} '';$('section').value = p.section || '';
-    $('dek').value = p.dek \vert{}\vert{} '';$('editor').innerHTML = p.content || '';
-  } catch(e) {}
-}
-
-loadAssets();
-updateStats();
-pushHistory();
+updateCoverPreview();updateStats();pushHistory();loadAssets();
 </script>
 </body>
 </html>
