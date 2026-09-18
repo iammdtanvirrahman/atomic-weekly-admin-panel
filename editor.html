@@ -204,6 +204,8 @@ function fill(v){
 if(editId){
   onValue(ref(db,'publishedArticles/'+editId),s=>{if(s.val())fill(s.val())});
   onValue(ref(db,'atomicWeekly/articles/'+editId),s=>{if(s.val()&&!$('title').value)fill(s.val())});
+  onValue(ref(db,'submissions/'+editId),s=>{if(s.val()&&!$('title').value)fill(s.val())});
+  onValue(ref(db,'atomicWeekly/drafts/'+editId),s=>{if(s.val()&&!$('title').value)fill(s.val())});
 }else{
   const local=localStorage.getItem('atomic-editor-local-draft');if(local){try{fill(JSON.parse(local));setStatus('Restored local draft.')}catch{}}
 }
