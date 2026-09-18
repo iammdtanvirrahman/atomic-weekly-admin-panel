@@ -59,6 +59,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
 .previewArticle{font-family:Georgia,serif;line-height:1.75}.previewArticle h1{font-size:42px;line-height:1.15}.previewArticle img{max-width:100%}.previewArticle iframe{width:100%;height:420px;border:0}
 @media(max-width:1100px){.layout{grid-template-columns:240px 1fr}.right{display:none}}@media(max-width:768px){.top{align-items:flex-start;flex-direction:column}.layout{display:block}.left{display:none}.paper{width:100%;min-height:900px}.articlePage{padding:30px 20px}.toolbarWrap{top:0}.count{margin-left:0}}
 @media print{body{background:#fff!important;color:#000}.top,.toolbarWrap,.left,.right{display:none!important}.layout{display:block}.workspace{padding:0;background:#fff}.paper{width:100%;box-shadow:none}.articlePage{padding:20mm}.mediaHandles{display:none!important}}
+.aiBox{width:min(760px,100%)}.aiGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.aiGrid button{min-height:42px}.aiAuth{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:14px}.aiAuth input,.aiPrompt{width:100%;padding:10px;background:#0b0e12;border:1px solid var(--line);border-radius:8px;color:#fff;outline:0}.aiPrompt{min-height:130px;resize:vertical}.aiResult{margin-top:12px;min-height:150px;max-height:360px;overflow:auto;white-space:pre-wrap;background:#0b0e12;border:1px solid var(--line);border-radius:8px;padding:14px;line-height:1.65}.aiUser{font-size:11px;color:var(--muted);margin:8px 0}.aiActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.aiBusy{opacity:.65;pointer-events:none}@media(max-width:700px){.aiGrid{grid-template-columns:1fr}.aiAuth{grid-template-columns:1fr}.aiBox{padding:16px}}
 </style>
 </head>
 <body>
@@ -72,6 +73,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
     <button id="redo" title="Redo">↷</button>
     <button id="focus">🧘 Focus</button>
     <button id="preview">👁 Preview</button>
+    <button id="aiAssistant" class="primary">✨ AI Assistant</button>
     <button id="saveDraft">💾 Draft</button>
     <button class="green" id="publish">🚀 Publish</button>
   </div>
@@ -129,6 +131,46 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
   </aside>
 </div>
 
+<div id="aiModal" class="modal">
+  <div class="modalBox aiBox">
+    <h3>✨ Atomic AI Assistant</h3>
+    <div id="aiAuthArea">
+      <div class="aiUser" id="aiAuthStatus">Sign in with your Firebase editor account to use AI.</div>
+      <div class="aiAuth">
+        <input id="aiEmail" type="email" placeholder="Admin email">
+        <input id="aiPassword" type="password" placeholder="Firebase password">
+        <button class="primary" id="aiLogin">Sign in</button>
+      </div>
+    </div>
+    <div id="aiPanel" style="display:none">
+      <div class="aiUser" id="aiSignedUser"></div>
+      <div class="aiGrid">
+        <button data-ai-action="Write an article from the current title and topic. Produce a polished Atomic Weekly article.">✍️ Write</button>
+        <button data-ai-action="Improve the selected text. Preserve the meaning and make it clearer, stronger, and publication-ready.">🪄 Improve</button>
+        <button data-ai-action="Shorten the selected text while preserving the important meaning and facts.">✂️ Shorten</button>
+        <button data-ai-action="Expand the selected text with useful context and smooth transitions. Do not invent facts.">📝 Expand</button>
+        <button data-ai-action="Rewrite the selected text in natural Bangla suitable for a magazine article.">🇧🇩 Bangla</button>
+        <button data-ai-action="Rewrite the selected text in polished English suitable for a magazine article.">🇬🇧 English</button>
+        <button data-ai-action="Generate 5 strong, accurate headline options for this article.">📰 Headlines</button>
+        <button data-ai-action="Write a concise 1–2 sentence article excerpt/dek.">📌 Excerpt</button>
+        <button data-ai-action="Fix grammar, spelling, punctuation, and awkward phrasing in the selected text.">🔤 Grammar</button>
+        <button data-ai-action="Summarize the article in 5 concise bullet points.">🧠 Summarize</button>
+        <button data-ai-action="Generate 8 relevant article tags, comma-separated.">🏷️ Tags</button>
+        <button data-ai-action="Continue writing from the end of the current article in the same style.">➕ Continue</button>
+      </div>
+      <div class="field" style="margin-top:14px"><label>Custom instruction</label><textarea id="aiPrompt" class="aiPrompt" placeholder="Example: Rewrite this paragraph in a more scientific magazine tone..."></textarea></div>
+      <div class="aiActions">
+        <button class="primary" id="aiRun">✨ Run AI</button>
+        <button id="aiUseSelection">Use selected text</button>
+        <button id="aiSignOut">Sign out</button>
+        <button id="closeAi">Close</button>
+      </div>
+      <div id="aiResult" class="aiResult">AI result will appear here.</div>
+      <div class="aiActions"><button class="green" id="aiReplace">Replace selected text</button><button id="aiInsert">Insert at cursor</button></div>
+    </div>
+  </div>
+</div>
+
 <div id="linkModal" class="modal">
   <div class="modalBox"><h3>Insert Link</h3>
     <div class="field"><label>URL</label><input id="linkUrl" placeholder="https://example.com"></div>
@@ -143,6 +185,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 const cfg={
   apiKey:'AIzaSyCit_SKjXRUpr8FNY1ahKhiG5sdDyOlW6k',
@@ -150,7 +193,8 @@ const cfg={
   projectId:'atomictanvir',
   databaseURL:'https://atomictanvir-default-rtdb.firebaseio.com'
 };
-const app=initializeApp(cfg),db=getDatabase(app);
+const app=initializeApp(cfg),db=getDatabase(app),auth=getAuth(app);
+const AI_ENDPOINT='https://us-central1-atomictanvir.cloudfunctions.net/atomicAi';
 const $=id=>document.getElementById(id);
 const PUBLIC='https://iammdtanvirrahman.github.io/atomic-weekly/';
 const ASSET_API='https://api.github.com/repos/iammdtanvirrahman/atomic-weekly/contents/assets?ref=main';
@@ -277,6 +321,107 @@ function mediaPointerUp(){
   if(dragState){pushHistory();scheduleLocalSave();dragState=null}
   document.removeEventListener('pointermove',mediaPointerMove);
 }
+
+
+let aiResultText='';
+let aiSelectionText='';
+let aiInstruction='';
+
+function getSelectedEditorText(){
+  const sel=window.getSelection();
+  if(!sel || !sel.rangeCount) return '';
+  const node=sel.anchorNode;
+  if(!node || !$('editor').contains(node)) return '';
+  return sel.toString().trim();
+}
+function openAi(){
+  $('aiModal').classList.add('open');
+  if(auth.currentUser){
+    $('aiPanel').style.display='block';
+    $('aiAuthArea').style.display='none';
+    $('aiSignedUser').textContent='Signed in as '+(auth.currentUser.email||'editor');
+  }
+}
+$('aiAssistant').onclick=openAi;
+$('closeAi').onclick=()=>$('aiModal').classList.remove('open');
+$('aiUseSelection').onclick=()=>{
+  aiSelectionText=getSelectedEditorText();
+  $('aiPrompt').value=aiSelectionText
+    ? 'Work on the selected text. Preserve its meaning and follow my instruction:'
+    : 'Work on the current article. Follow my instruction:';
+};
+document.querySelectorAll('[data-ai-action]').forEach(btn=>btn.onclick=()=>{
+  aiInstruction=btn.dataset.aiAction;
+  $('aiPrompt').value=aiInstruction;
+});
+$('aiLogin').onclick=async()=>{
+  const email=$('aiEmail').value.trim(),password=$('aiPassword').value;
+  if(!email||!password){alert('Enter your Firebase email and password.');return}
+  try{
+    $('aiLogin').disabled=true;
+    await signInWithEmailAndPassword(auth,email,password);
+    setStatus('AI account signed in','synced');
+  }catch(e){
+    alert(e?.message||'Firebase sign-in failed.');
+  }finally{$('aiLogin').disabled=false}
+};
+$('aiSignOut').onclick=()=>signOut(auth);
+onAuthStateChanged(auth,user=>{
+  if(user){
+    $('aiAuthArea').style.display='none';
+    $('aiPanel').style.display='block';
+    $('aiSignedUser').textContent='Signed in as '+(user.email||'editor');
+  }else{
+    $('aiAuthArea').style.display='block';
+    $('aiPanel').style.display='none';
+  }
+});
+$('aiRun').onclick=async()=>{
+  const user=auth.currentUser;
+  if(!user){alert('Sign in first.');return}
+  const instruction=$('aiPrompt').value.trim()||aiInstruction;
+  if(!instruction){alert('Choose an AI action or enter a custom instruction.');return}
+  const selected=getSelectedEditorText();
+  const content=selected||($('editor').innerText||'').trim();
+  $('aiResult').textContent='Thinking…';
+  $('aiRun').classList.add('aiBusy');
+  try{
+    const token=await user.getIdToken();
+    const r=await fetch(AI_ENDPOINT,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({
+        action:aiInstruction||'Custom editorial task',
+        instruction,
+        content,
+        title:$('title').value.trim(),
+        section:$('section').value
+      })
+    });
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(data.error||'AI request failed');
+    aiResultText=String(data.text||'').trim();
+    $('aiResult').textContent=aiResultText||'AI returned an empty result.';
+    setStatus('AI response ready','synced');
+  }catch(e){
+    $('aiResult').textContent='AI error: '+(e?.message||e);
+    setStatus('AI request failed','error');
+  }finally{$('aiRun').classList.remove('aiBusy')}
+};
+function insertAiResult(replaceSelection){
+  if(!aiResultText)return;
+  restoreSelection();
+  if(replaceSelection && getSelectedEditorText()){
+    document.execCommand('insertText',false,aiResultText);
+  }else{
+    document.execCommand('insertText',false,aiResultText);
+  }
+  $('editor').focus();
+  pushHistory();updateStats();scheduleLocalSave();
+  $('aiResult').textContent=aiResultText;
+}
+$('aiReplace').onclick=()=>insertAiResult(true);
+$('aiInsert').onclick=()=>insertAiResult(false);
 
 $('toolbar').querySelectorAll('[data-cmd]').forEach(b=>b.onclick=()=>cmd(b.dataset.cmd));
 $('fontName').onchange=e=>cmd('fontName',e.target.value);
