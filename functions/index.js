@@ -5,6 +5,7 @@ const admin = require("firebase-admin");
 admin.initializeApp();
 
 const OPENAI_API_KEY = defineSecret("OPENAI_API_KEY");
+const GITHUB_TOKEN = defineSecret("GITHUB_TOKEN");
 const AI_ALLOWED_EMAILS = defineString("AI_ALLOWED_EMAILS", {
   default: ""
 });
@@ -118,6 +119,99 @@ exports.atomicAi = onRequest(
     } catch (error) {
       console.error("Atomic AI error:", error);
       return send(res, 500, { error: "AI service failed. Check Firebase Functions logs." });
+    }
+  }
+);
+
+
+function safeAssetName(name) {
+  const raw = String(name || "image").trim();
+  const extMatch = raw.match(/\.(png|jpe?g|webp|gif|svg)$/i);
+  const ext = extMatch ? extMatch[0].toLowerCase() : "";
+  const base = raw.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9_-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80) || "image";
+  return `atomic-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${base}${ext}`;
+}
+
+exports.atomicUploadAsset = onRequest(
+  {
+    region: "us-central1",
+    secrets: [GITHUB_TOKEN],
+    timeoutSeconds: 120,
+    memory: "512MiB"
+  },
+  async (req, res) => {
+    if (req.method === "OPTIONS") {
+      res.set(corsHeaders);
+      return res.status(204).send("");
+    }
+    if (req.method !== "POST") {
+      return send(res, 405, { error: "POST required" });
+    }
+
+    try {
+      const authHeader = req.get("Authorization") || "";
+      if (!authHeader.startsWith("Bearer ")) {
+        return send(res, 401, { error: "Authentication required" });
+      }
+
+      const decoded = await admin.auth().verifyIdToken(authHeader.slice(7));
+      if (!decoded.email || !allowedEmail(decoded.email)) {
+        return send(res, 403, { error: "This Firebase account is not allowed to upload assets." });
+      }
+
+      const { filename, mimeType, data } = req.body || {};
+      const allowedTypes = new Set(["image/png", "image/jpeg", "image/webp", "image/gif", "image/svg+xml"]);
+      if (!allowedTypes.has(String(mimeType || ""))) {
+        return send(res, 400, { error: "Unsupported image type." });
+      }
+      if (typeof data !== "string" || !data) {
+        return send(res, 400, { error: "Missing image data." });
+      }
+
+      const approxBytes = Math.floor(data.length * 3 / 4);
+      if (approxBytes > 8 * 1024 * 1024) {
+        return send(res, 413, { error: "Image must be 8 MB or smaller." });
+      }
+
+      const assetName = safeAssetName(filename);
+      const path = `assets/${assetName}`;
+      const apiUrl = "https://api.github.com/repos/iammdtanvirrahman/atomic-weekly/contents/" +
+        encodeURIComponent(path).replace("%2F", "/");
+
+      const gh = await fetch(apiUrl, {
+        method: "PUT",
+        headers: {
+          "Accept": "application/vnd.github+json",
+          "Authorization": "Bearer " + GITHUB_TOKEN.value(),
+          "X-GitHub-Api-Version": "2022-11-28",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: "Upload magazine asset: " + assetName,
+          content: data,
+          branch: "main"
+        })
+      });
+
+      const result = await gh.json().catch(() => ({}));
+      if (!gh.ok) {
+        console.error("GitHub upload error:", result);
+        return send(res, gh.status, {
+          error: result?.message || "GitHub asset upload failed."
+        });
+      }
+
+      const url = `https://iammdtanvirrahman.github.io/atomic-weekly/assets/${encodeURIComponent(assetName)}`;
+      return send(res, 200, {
+        ok: true,
+        filename: assetName,
+        path,
+        url,
+        githubUrl: result?.content?.html_url || null
+      });
+    } catch (error) {
+      console.error("Atomic asset upload error:", error);
+      return send(res, 500, { error: "Asset upload failed. Check Firebase Functions logs." });
     }
   }
 );
