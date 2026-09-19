@@ -418,8 +418,8 @@ $('publish').onclick=async()=>{
   try{
     setStatus('Publishing…','error');
     const id=Date.now();
-    await set(ref(db,'atomicWeekly/published/'+id),{...p,published:true,publishedAt:id});
-    await set(ref(db,'atomicWeekly/latestPublished'),{...p,published:true,publishedAt:id,id});
+    await set(ref(db,'publishedArticles/'+id),{...p,status:'published',published:true,publishedAt:id,timestamp:id,id});
+    await set(ref(db,'atomicWeekly/latestPublished'),{...p,status:'published',published:true,publishedAt:id,id});
     setStatus('Published successfully','synced');
     alert('Article published successfully.');
   }catch(e){setStatus('Publish failed','error');console.error(e)}
