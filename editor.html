@@ -142,7 +142,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getDatabase, ref, set, get } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 const cfg={
@@ -418,10 +418,16 @@ $('publish').onclick=async()=>{
   try{
     setStatus('Publishing…','error');
     const id=Date.now();
-    await set(ref(db,'publishedArticles/'+id),{...p,status:'published',published:true,publishedAt:id,timestamp:id,id});
-    await set(ref(db,'atomicWeekly/latestPublished'),{...p,status:'published',published:true,publishedAt:id,id});
-    setStatus('Published successfully','synced');
-    alert('Article published successfully.');
+    const publishedRecord={...p,status:'published',published:true,publishedAt:id,timestamp:id,id};
+    await set(ref(db,'publishedArticles/'+id),publishedRecord);
+    const verify=await get(ref(db,'publishedArticles/'+id));
+    if(!verify.exists() || verify.val()?.status!=='published'){
+      throw new Error('Publish verification failed. The article was not confirmed in the public feed.');
+    }
+    await set(ref(db,'atomicWeekly/latestPublished'),publishedRecord);
+    saveLocalNow();
+    setStatus('Published to magazine ✓','synced');
+    alert('Published successfully — the article is now in the public magazine.');
   }catch(e){setStatus('Publish failed','error');console.error(e)}
 };
 
