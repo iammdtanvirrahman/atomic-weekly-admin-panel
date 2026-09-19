@@ -479,15 +479,20 @@ async function loadAssets(){
       .filter(x=>x.type==='blob'&&x.path.startsWith('assets/')&&imageRe.test(x.path))
       .map(x=>{
         const path=x.path.slice('assets/'.length);
-        return {name:path,url:ASSET_PAGES+path.split('/').map(encodeURIComponent).join('/')};
+        const encoded=path.split('/').map(encodeURIComponent).join('/');
+        return {
+          name:path,
+          url:ASSET_RAW+encoded,
+          pagesUrl:ASSET_PAGES+encoded
+        };
       });
     renderAssets();
     if(!allAssets.length)throw new Error('No image assets found');
   }catch(e){
     console.error('Asset gallery load failed:',e);
     allAssets=[
-      {name:'atom.jpeg',url:ASSET_PAGES+'atom.jpeg'},
-      {name:'nafiz1.jpeg',url:ASSET_PAGES+'nafiz1.jpeg'}
+      {name:'atom.jpeg',url:ASSET_RAW+'atom.jpeg',pagesUrl:ASSET_PAGES+'atom.jpeg'},
+      {name:'nafiz1.jpeg',url:ASSET_RAW+'nafiz1.jpeg',pagesUrl:ASSET_PAGES+'nafiz1.jpeg'}
     ];
     renderAssets();
   }
@@ -500,6 +505,7 @@ function renderAssets(){
   items.forEach(x=>{
     const d=document.createElement('div');d.className='asset';
     const img=document.createElement('img');img.src=x.url;img.loading='lazy';img.alt=x.name;
+    img.onerror=()=>{if(x.pagesUrl&&img.src!==x.pagesUrl){img.onerror=null;img.src=x.pagesUrl}else{img.style.display='none'}};
     const span=document.createElement('span');span.textContent=x.name;
     d.append(img,span);
     d.draggable=true;
