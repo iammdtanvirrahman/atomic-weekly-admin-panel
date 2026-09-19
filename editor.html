@@ -304,6 +304,16 @@ $('togglePaperTheme').onclick=()=>document.body.classList.toggle('darkPaper');
 $('focus').onclick=()=>document.body.classList.toggle('focusMode');
 $('print').onclick=()=>window.print();
 
+$('editor').addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='copy';$('editor').style.outline='2px dashed var(--accent)'});
+$('editor').addEventListener('dragleave',e=>{if(!$('editor').contains(e.relatedTarget))$('editor').style.outline=''});
+$('editor').addEventListener('drop',e=>{
+  e.preventDefault();$('editor').style.outline='';
+  const url=e.dataTransfer.getData('text/plain');
+  if(!url)return;
+  const r=document.caretRangeFromPoint?document.caretRangeFromPoint(e.clientX,e.clientY):null;
+  if(r){const s=window.getSelection();s.removeAllRanges();s.addRange(r);savedRange=r.cloneRange()}
+  insertHtml('<div class="mediaLayer" data-align="center"><img src="'+escapeAttr(url)+'" alt="Article image"></div>');
+});
 $('editor').addEventListener('click',e=>{
   const layer=e.target.closest('.mediaLayer');
   if(layer)selectMedia(layer);else clearMediaSelection();
@@ -510,7 +520,7 @@ function renderAssets(){
     const span=document.createElement('span');span.textContent=x.name;
     d.append(img,span);
     d.draggable=true;
-    d.ondragstart=e=>{e.dataTransfer.setData('text/plain',x.url);e.dataTransfer.effectAllowed='copy'};
+    d.ondragstart=e=>{e.dataTransfer.setData('text/plain',x.url);e.dataTransfer.effectAllowed='copy';selectedGalleryUrl=x.url};
     d.onclick=()=>{selectedGalleryUrl=x.url;document.querySelectorAll('.asset').forEach(a=>a.style.borderColor='');d.style.borderColor='var(--red)'};
     $('gallery').appendChild(d);
   });
