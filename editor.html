@@ -439,43 +439,35 @@ onAuthStateChanged(auth,user=>{ setStatus(user?'Admin signed in ✓':'Please sig
 // NEW ASSET LOAD LOGIC (Fixed using Git Trees API instead of Recursive Contents API)
 async function loadAssets(){
   const imageRe=/\\.(png|jpe?g|webp|gif|svg)$/i;
-  const TREE_API='https://api.github.com/repos/iammdtanvirrahman/atomic-weekly/git/trees/main?recursive=1';
+  const MANIFEST='https://raw.githubusercontent.com/iammdtanvirrahman/atomic-weekly/main/assets/assets.json';
+  const RAW_BASE='https://raw.githubusercontent.com/iammdtanvirrahman/atomic-weekly/main/assets/';
+  const PAGE_BASE='https://iammdtanvirrahman.github.io/atomic-weekly/assets/';
 
-  $('assetCount').textContent='Loading assets…';$('gallery').innerHTML='<div style="color:var(--muted);font-size:11px">Connecting to GitHub…</div>';
+  $('assetCount').textContent='Loading assets…';
+  $('gallery').innerHTML='<div style="color:var(--muted);font-size:11px">Loading GitHub assets…</div>';
 
   try{
-    const r=await fetch(TREE_API,{cache:'no-store'});
-    if(!r.ok)throw new Error('GitHub API Error: '+r.status);
+    const r=await fetch(MANIFEST+'?t='+Date.now(),{cache:'no-store'});
+    if(!r.ok)throw new Error('Manifest HTTP '+r.status);
     const data=await r.json();
-
-    allAssets=[];
-    if(data.tree){
-      data.tree.forEach(item=>{
-        if(item.type==='blob' && item.path.startsWith('assets/') && imageRe.test(item.path)){
-          allAssets.push({
-            name:item.path.replace('assets/',''), // Remove assets/ prefix for display
-            url:'https://raw.githubusercontent.com/iammdtanvirrahman/atomic-weekly/main/'+item.path,
-            pagesUrl:'https://iammdtanvirrahman.github.io/atomic-weekly/'+item.path
-          });
-        }
-      });
-    }
-    
-    allAssets.sort((a,b)=>a.name.localeCompare(b.name));
+    const list=Array.isArray(data.assets)?data.assets:[];
+    allAssets=list.filter(p=>imageRe.test(p)).map(p=>({
+      name:p,
+      url:RAW_BASE+p.split('/').map(encodeURIComponent).join('/'),
+      pagesUrl:PAGE_BASE+p.split('/').map(encodeURIComponent).join('/')
+    })).sort((a,b)=>a.name.localeCompare(b.name));
     renderAssets();
-
     if(!allAssets.length){
-      $('gallery').innerHTML='<div class="assetEmpty">No image files found in <b>assets/</b> on the Atomic Weekly GitHub repository.</div>';
+      $('gallery').innerHTML='<div class="assetEmpty">No images found in <b>assets/</b>.</div>';
       $('assetCount').textContent='0 images';
     }
-  }catch(e){
-    console.error('Asset gallery load failed:',e);
+  }catch(err){
+    console.error('Asset manifest load failed:',err);
     allAssets=[];
-    $('gallery').innerHTML='<div class="assetEmpty"><b>GitHub assets could not be loaded.</b><br>Network error or rate limit hit.<br><br>Click ↻ Refresh to try again.</div>';
+    $('gallery').innerHTML='<div class="assetEmpty"><b>GitHub Asset Library could not load.</b><br>Use ↻ Refresh after GitHub finishes updating the asset manifest.</div>';
     $('assetCount').textContent='Load failed';
   }
 }
-
 function renderAssets(){
   const q=$('assetSearch').value.toLowerCase().trim();
   const items=allAssets.filter(x=>x.name.toLowerCase().includes(q));
