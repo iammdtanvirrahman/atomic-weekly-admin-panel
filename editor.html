@@ -142,7 +142,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getDatabase, ref, set, get } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 const cfg={
@@ -258,6 +258,7 @@ function addMediaToolbar(layer){
   };
   h.querySelector('.mediaOpacity').oninput=e=>{layer.style.opacity=(e.target.value/100).toFixed(2)};
   h.querySelectorAll('.mediaHandle').forEach(handle=>handle.onpointerdown=e=>startMediaAction(e,layer,handle.dataset.action));
+  layer.onpointerdown=e=>{if(e.target.closest('.mediaHandles'))return; selectMedia(layer); startMediaAction(e,layer,'move')};
 }
 function selectMedia(layer){
   clearMediaSelection();selectedMedia=layer;layer.classList.add('selectedMedia');addMediaToolbar(layer);
@@ -303,6 +304,16 @@ $('togglePaperTheme').onclick=()=>document.body.classList.toggle('darkPaper');
 $('focus').onclick=()=>document.body.classList.toggle('focusMode');
 $('print').onclick=()=>window.print();
 
+$('editor').addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='copy';$('editor').style.outline='2px dashed var(--accent)'});
+$('editor').addEventListener('dragleave',e=>{if(!$('editor').contains(e.relatedTarget))$('editor').style.outline=''});
+$('editor').addEventListener('drop',e=>{
+  e.preventDefault();$('editor').style.outline='';
+  const url=e.dataTransfer.getData('text/plain');
+  if(!url)return;
+  const r=document.caretRangeFromPoint?document.caretRangeFromPoint(e.clientX,e.clientY):null;
+  if(r){const s=window.getSelection();s.removeAllRanges();s.addRange(r);savedRange=r.cloneRange()}
+  insertHtml('<div class="mediaLayer" data-align="center"><img src="'+escapeAttr(url)+'" alt="Article image"></div>');
+});
 $('editor').addEventListener('click',e=>{
   const layer=e.target.closest('.mediaLayer');
   if(layer)selectMedia(layer);else clearMediaSelection();
@@ -394,6 +405,7 @@ function saveLocalNow(){
 function scheduleLocalSave(){
   setStatus('Saving…','error');
   clearTimeout(saveTimer);saveTimer=setTimeout(saveLocalNow,700);
+  scheduleCloudSave();
 }
 function scheduleCloudSave(){
   clearTimeout(cloudTimer);
@@ -418,12 +430,16 @@ $('publish').onclick=async()=>{
   try{
     setStatus('Publishing…','error');
     const id=Date.now();
-    await set(ref(db,'atomicWeekly/published/'+id),{...p,published:true,publishedAt:id});
-    await set(ref(db,'atomicWeekly/latestPublished'),{...p,published:true,publishedAt:id,id});
-    await set(ref(db,'publishedArticles/'+id),{...p,status:'published',published:true,publishedAt:id,timestamp:id,id});
-    await set(ref(db,'atomicWeekly/latestPublished'),{...p,status:'published',published:true,publishedAt:id,id});
-    setStatus('Published successfully','synced');
-    alert('Article published successfully.');
+    const publishedRecord={...p,status:'published',published:true,publishedAt:id,timestamp:id,id};
+    await set(ref(db,'publishedArticles/'+id),publishedRecord);
+    const verify=await get(ref(db,'publishedArticles/'+id));
+    if(!verify.exists() || verify.val()?.status!=='published'){
+      throw new Error('Publish verification failed. The article was not confirmed in the public feed.');
+    }
+    await set(ref(db,'atomicWeekly/latestPublished'),publishedRecord);
+    saveLocalNow();
+    setStatus('Published to magazine ✓','synced');
+    alert('Published successfully — the article is now in the public magazine.');
   }catch(e){setStatus('Publish failed','error');console.error(e)}
 };
 
@@ -479,6 +495,8 @@ $('preview').onclick=()=>{
 $('closePreview').onclick=()=>$('previewModal').classList.remove('open');
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
 
+onAuthStateChanged(auth,user=>{ setStatus(user?'Admin signed in ✓':'Please sign in to publish/upload','synced'); });
+
 async function loadAssets(){
   try{
     const r=await fetch(ASSET_API,{cache:'no-store'});
@@ -503,6 +521,7 @@ function renderAssets(){
     d.append(img,span);
     d.draggable=true;
     d.ondragstart=e=>{e.dataTransfer.setData('text/plain',x.url);e.dataTransfer.effectAllowed='copy'};
+    d.ondragstart=e=>{e.dataTransfer.setData('text/plain',x.url);e.dataTransfer.effectAllowed='copy';selectedGalleryUrl=x.url};
     d.onclick=()=>{selectedGalleryUrl=x.url;document.querySelectorAll('.asset').forEach(a=>a.style.borderColor='');d.style.borderColor='var(--red)'};
     $('gallery').appendChild(d);
   });
@@ -535,7 +554,7 @@ async function uploadImageToGitHub(file){
   const data=await fileToBase64(file);
   const response=await fetch(UPLOAD_API,{
     method:'POST',
-    headers:{'Content-Type':'application/json','Authorization:'Bearer '+token},
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
     body:JSON.stringify({filename:file.name,mimeType:file.type,data})
   });
   const result=await response.json().catch(()=>({}));
