@@ -258,6 +258,7 @@ function addMediaToolbar(layer){
   };
   h.querySelector('.mediaOpacity').oninput=e=>{layer.style.opacity=(e.target.value/100).toFixed(2)};
   h.querySelectorAll('.mediaHandle').forEach(handle=>handle.onpointerdown=e=>startMediaAction(e,layer,handle.dataset.action));
+  layer.onpointerdown=e=>{if(e.target.closest('.mediaHandles'))return; selectMedia(layer); startMediaAction(e,layer,'move')};
 }
 function selectMedia(layer){
   clearMediaSelection();selectedMedia=layer;layer.classList.add('selectedMedia');addMediaToolbar(layer);
@@ -394,6 +395,7 @@ function saveLocalNow(){
 function scheduleLocalSave(){
   setStatus('Saving…','error');
   clearTimeout(saveTimer);saveTimer=setTimeout(saveLocalNow,700);
+  scheduleCloudSave();
 }
 function scheduleCloudSave(){
   clearTimeout(cloudTimer);
@@ -483,6 +485,8 @@ $('preview').onclick=()=>{
 $('closePreview').onclick=()=>$('previewModal').classList.remove('open');
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
 
+onAuthStateChanged(auth,user=>{ setStatus(user?'Admin signed in ✓':'Please sign in to publish/upload','synced'); });
+
 async function loadAssets(){
   try{
     const r=await fetch(ASSET_API,{cache:'no-store'});
@@ -539,7 +543,7 @@ async function uploadImageToGitHub(file){
   const data=await fileToBase64(file);
   const response=await fetch(UPLOAD_API,{
     method:'POST',
-    headers:{'Content-Type':'application/json','Authorization:'Bearer '+token},
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
     body:JSON.stringify({filename:file.name,mimeType:file.type,data})
   });
   const result=await response.json().catch(()=>({}));
