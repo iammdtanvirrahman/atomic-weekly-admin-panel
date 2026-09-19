@@ -54,7 +54,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
 .mediaToolbar{position:absolute;top:-45px;left:50%;transform:translateX(-50%);background:#11151a;border:1px solid var(--line);border-radius:8px;padding:4px;display:flex;gap:4px;pointer-events:auto;box-shadow:0 6px 20px rgba(0,0,0,.5);z-index:40}.mediaToolbar button{padding:4px 8px;font-size:11px;height:26px}.mediaDelete{background:var(--red)!important}.mediaOpacity{position:absolute;left:-35px;top:50%;transform:translateY(-50%) rotate(-90deg);width:80px;accent-color:var(--red);pointer-events:auto}
 .gallery{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:calc(100vh - 360px);overflow-y:auto}.asset{border:1px solid var(--line);background:#141920;border-radius:8px;padding:6px;cursor:pointer;transition:border .2s}.asset:hover{border-color:var(--accent)}.asset img{width:100%;height:85px;object-fit:cover;border-radius:4px;display:block}.asset span{display:block;font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:4px}
 .dropZone{border:2px dashed var(--line);padding:14px;text-align:center;border-radius:8px;color:var(--muted);font-size:11px;margin-bottom:12px;cursor:pointer}.dropZone:hover,.dropZone.dragover{border-color:var(--accent);color:#fff;background:#111821}
-.sourceEditor{display:none;width:100%;min-height:1120px;border:0;outline:0;padding:80px;font:14px ui-monospace,monospace;resize:none;color:#70a1ff;background:#0d1117;line-height:1.6}.sourceMode .sourceEditor{display:block}.sourceMode #editor{display:none}
+.sourceEditor{display:none;width:100%;min-height:1120px;border:0;outline:0;padding:80px;font:14px ui-monospace,monospace;resize:none;color:#70a1ff;background:#0d1117;line-height:1.6}.sourceMode .sourceEditor{display:block}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:20px;z-index:200;backdrop-filter:blur(4px)}.modal.open{display:flex}.modalBox{width:min(680px,100%);max-height:90vh;overflow-y:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px;box-shadow:var(--shadow)}.modalBox h3{font:800 20px Georgia;margin:0 0 16px}
 .previewArticle{font-family:Georgia,serif;line-height:1.75}.previewArticle h1{font-size:42px;line-height:1.15}.previewArticle img{max-width:100%}.previewArticle iframe{width:100%;height:420px;border:0}
 @media(max-width:1100px){.layout{grid-template-columns:240px 1fr}.right{display:none}}@media(max-width:768px){.top{align-items:flex-start;flex-direction:column}.layout{display:block}.left{display:none}.paper{width:100%;min-height:900px}.articlePage{padding:30px 20px}.toolbarWrap{top:0}.count{margin-left:0}}
@@ -93,7 +93,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
     <button id="link">🔗 Link</button><button id="unlink">Unlink</button><button id="clear">Tx Clean</button>
   </div>
   <div class="subbar">
-    <button id="insertImage">🖼 Image</button><button id="embedVideo">▶ YouTube</button><button id="insertTable">▦ Table</button><button id="addTableRow">+Row</button><button id="addTableCol">+Col</button><button id="deleteTableRow">−Row</button><button id="deleteTableCol">−Col</button><button id="pageBreak">↵ Page break</button><button id="exportHtml">📥 HTML</button><button id="exportMd">📝 MD</button><button id="print">🖨 Print</button><button id="source">&lt;&gt; Source</button>
+    <button id="insertImage">🖼 Image</button><button id="embedVideo">▶ YouTube</button><button id="insertTable">▦ Table</button>
     <span class="count" id="count">0 words · 0 chars · 0 min read</span>
   </div>
 </div>
@@ -302,7 +302,6 @@ $('undo').onclick=()=>applyHistory(-1);
 $('redo').onclick=()=>applyHistory(1);
 $('togglePaperTheme').onclick=()=>document.body.classList.toggle('darkPaper');
 $('focus').onclick=()=>document.body.classList.toggle('focusMode');
-$('print').onclick=()=>window.print();
 
 $('editor').addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='copy';$('editor').style.outline='2px dashed var(--accent)'});
 $('editor').addEventListener('dragleave',e=>{if(!$('editor').contains(e.relatedTarget))$('editor').style.outline=''});
@@ -353,29 +352,6 @@ function selectedTable(){
   const n=window.getSelection()?.anchorNode;
   return n?.nodeType===3?n.parentElement.closest('table'):n?.closest?.('table');
 }
-$('addTableRow').onclick=()=>{
-  const t=selectedTable();if(!t){alert('Place the cursor inside a table first.');return}
-  const row=t.insertRow();const cols=t.rows[0]?.cells.length||2;
-  for(let i=0;i<cols;i++)row.insertCell().innerText='New Cell';
-  pushHistory();scheduleLocalSave();
-};
-$('addTableCol').onclick=()=>{
-  const t=selectedTable();if(!t){alert('Place the cursor inside a table first.');return}
-  [...t.rows].forEach(r=>r.insertCell().innerText='New Cell');pushHistory();scheduleLocalSave();
-};
-$('deleteTableRow').onclick=()=>{
-  const t=selectedTable();if(!t){alert('Place the cursor inside a table first.');return}
-  const cell=window.getSelection()?.anchorNode?.parentElement?.closest('td,th');
-  const row=cell?.parentElement;if(row)t.deleteRow(row.rowIndex);pushHistory();scheduleLocalSave();
-};
-$('deleteTableCol').onclick=()=>{
-  const t=selectedTable();if(!t){alert('Place the cursor inside a table first.');return}
-  const cell=window.getSelection()?.anchorNode?.parentElement?.closest('td,th');
-  if(!cell)return;
-  const idx=cell.cellIndex;[...t.rows].forEach(r=>{if(r.cells[idx])r.deleteCell(idx)});pushHistory();scheduleLocalSave();
-};
-$('pageBreak').onclick=()=>insertHtml('<div class="page-break"></div>');
-
 $('link').onclick=()=>{saveSelection();$('linkUrl').value='';$('linkModal').classList.add('open');setTimeout(()=>$('linkUrl').focus(),50)};
 $('closeLink').onclick=()=>{$('linkModal').classList.remove('open')};
 $('applyLink').onclick=()=>{
@@ -477,14 +453,6 @@ function htmlToMarkdown(html){
   return walk(temp).replace(/\\n{3,}/g,'\\n\\n').trim();
 }
 
-$('source').onclick=()=>{
-  sourceMode=!sourceMode;
-  document.body.classList.toggle('sourceMode',sourceMode);
-  if(sourceMode){$('sourceEditor').value=editorHTML();$('sourceEditor').focus()}
-  else{
-    clearMediaSelection();$('editor').innerHTML=$('sourceEditor').value||'<p></p>';pushHistory();updateStats();scheduleLocalSave();
-  }
-};
 $('sourceEditor').addEventListener('input',()=>{updateStats();scheduleLocalSave()});
 
 $('preview').onclick=()=>{
