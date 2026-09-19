@@ -47,13 +47,14 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
 .articlePage h1{font-size:44px;line-height:1.1;margin:0 0 20px;font-weight:800}.articlePage h2{font-size:30px;line-height:1.2;margin:32px 0 14px}.articlePage h3{font-size:22px;line-height:1.3;margin:24px 0 10px}.articlePage p{margin:0 0 1.2em}
 .articlePage blockquote{margin:24px 0;padding:16px 24px;border-left:4px solid var(--red);background:rgba(0,0,0,.03);font-style:italic}.articlePage pre{background:#1e242c;color:#f8f9fa;padding:16px;border-radius:8px;font-family:monospace;overflow:auto}
 .articlePage table{width:100%;border-collapse:collapse;margin:24px 0}.articlePage td,.articlePage th{border:1px solid #9aa2ad;padding:10px 14px}.page-break{break-before:page;border-top:2px dashed var(--muted);margin:40px 0;text-align:center}.page-break:after{content:"Page Break";font-size:10px;color:var(--muted);text-transform:uppercase;position:relative;top:-10px;background:var(--paper-bg);padding:0 8px}
-.mediaLayer{position:absolute;display:block;left:80px;top:140px;width:300px;max-width:none;margin:0;user-select:none;touch-action:none;vertical-align:top;z-index:10;cursor:move}.mediaLayer img,.mediaLayer iframe{display:block;width:100%;height:auto;border-radius:6px;pointer-events:none}.mediaLayer iframe{height:420px;border:0}.mediaLayer.selectedMedia{outline:2px solid var(--red);outline-offset:4px}.mediaLayer.scaleMode{outline:2px dashed var(--accent);outline-offset:6px}
+.mediaLayer{position:absolute;display:block;left:80px;top:140px;width:300px;max-width:none;margin:0;user-select:none;touch-action:none;vertical-align:top;z-index:10;cursor:move}.mediaLayer img,.mediaLayer iframe{display:block;width:100%;height:auto;border-radius:6px;pointer-events:none}.mediaLayer iframe{height:420px;border:0}.mediaLayer.selectedMedia{outline:2px solid var(--red);outline-offset:4px}
 .mediaLayer[data-align=left],.mediaLayer[data-align=right],.mediaLayer[data-align=center],.mediaLayer[data-align=full]{margin:0;float:none}
 .mediaHandles{position:absolute;inset:-12px;pointer-events:none;z-index:30}.mediaHandle{position:absolute;width:12px;height:12px;background:var(--red);border:2px solid #fff;border-radius:50%;pointer-events:auto;box-shadow:0 2px 6px rgba(0,0,0,.4)}
 .mediaHandle[data-action=resizeBR]{right:-6px;bottom:-6px;cursor:nwse-resize}.mediaHandle[data-action=resizeBL]{left:-6px;bottom:-6px;cursor:nesw-resize}.mediaHandle[data-action=resizeTR]{right:-6px;top:-6px;cursor:nesw-resize}.mediaHandle[data-action=resizeTL]{left:-6px;top:-6px;cursor:nwse-resize}.mediaHandle[data-action=rotate]{left:50%;top:-34px;transform:translateX(-50%);cursor:grab}.mediaHandle[data-action=rotate]:after{content:"↻";position:absolute;top:-18px;left:50%;transform:translateX(-50%);color:var(--red);font-weight:bold}
 .mediaToolbar{position:absolute;top:-45px;left:50%;transform:translateX(-50%);background:#11151a;border:1px solid var(--line);border-radius:8px;padding:4px;display:flex;gap:4px;pointer-events:auto;box-shadow:0 6px 20px rgba(0,0,0,.5);z-index:40}.mediaToolbar button{padding:4px 8px;font-size:11px;height:26px}.mediaDelete{background:var(--red)!important}.mediaOpacity{position:absolute;left:-35px;top:50%;transform:translateY(-50%) rotate(-90deg);width:80px;accent-color:var(--red);pointer-events:auto}
-.galleryHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.galleryHead small{color:var(--muted);font-size:10px}.gallery{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:calc(100vh - 310px);overflow-y:auto;padding:2px}.asset{border:1px solid var(--line);background:linear-gradient(180deg,#171d25,#10151b);border-radius:10px;padding:6px;cursor:pointer;transition:.18s;position:relative}.asset:hover{border-color:var(--accent);transform:translateY(-1px)}.asset.selected{border-color:var(--red);box-shadow:0 0 0 1px var(--red),0 8px 20px rgba(0,0,0,.22)}.asset img{width:100%;height:90px;object-fit:cover;border-radius:6px;display:block;background:#0b0e12}.asset span{display:block;font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:5px}.asset.selected:after{content:"✓";position:absolute;right:8px;top:8px;background:var(--red);color:#fff;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800}.assetEmpty{grid-column:1/-1;text-align:center;padding:28px 10px;color:var(--muted);font-size:11px;border:1px dashed var(--line);border-radius:10px}.assetHint{margin-top:10px;padding:10px;border-radius:8px;background:#0b1016;border:1px solid var(--line);color:var(--muted);font-size:10px;line-height:1.5}.assetHint b{color:#fff}.assetRefresh{padding:6px 8px;font-size:11px}
-.sourceEditor{display:none;width:100%;min-height:1120px;border:0;outline:0;padding:80px;font:14px ui-monospace,monospace;resize:none;color:#70a1ff;background:#0d1117;line-height:1.6}.sourceMode .sourceEditor{display:block}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:calc(100vh - 360px);overflow-y:auto}.asset{border:1px solid var(--line);background:#141920;border-radius:8px;padding:6px;cursor:pointer;transition:border .2s}.asset:hover{border-color:var(--accent)}.asset img{width:100%;height:85px;object-fit:cover;border-radius:4px;display:block}.asset span{display:block;font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:4px}
+.dropZone{border:2px dashed var(--line);padding:14px;text-align:center;border-radius:8px;color:var(--muted);font-size:11px;margin-bottom:12px;cursor:pointer}.dropZone:hover,.dropZone.dragover{border-color:var(--accent);color:#fff;background:#111821}
+.sourceEditor{display:none;width:100%;min-height:1120px;border:0;outline:0;padding:80px;font:14px ui-monospace,monospace;resize:none;color:#70a1ff;background:#0d1117;line-height:1.6}.sourceMode .sourceEditor{display:block}.sourceMode #editor{display:none}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:20px;z-index:200;backdrop-filter:blur(4px)}.modal.open{display:flex}.modalBox{width:min(680px,100%);max-height:90vh;overflow-y:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px;box-shadow:var(--shadow)}.modalBox h3{font:800 20px Georgia;margin:0 0 16px}
 .previewArticle{font-family:Georgia,serif;line-height:1.75}.previewArticle h1{font-size:42px;line-height:1.15}.previewArticle img{max-width:100%}.previewArticle iframe{width:100%;height:420px;border:0}
 @media(max-width:1100px){.layout{grid-template-columns:240px 1fr}.right{display:none}}@media(max-width:768px){.top{align-items:flex-start;flex-direction:column}.layout{display:block}.left{display:none}.paper{width:100%;min-height:900px}.articlePage{padding:30px 20px}.toolbarWrap{top:0}.count{margin-left:0}}
@@ -92,7 +93,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
     <button id="link">🔗 Link</button><button id="unlink">Unlink</button><button id="clear">Tx Clean</button>
   </div>
   <div class="subbar">
-    <button id="insertImage">🖼 Image</button><button id="embedVideo">▶ YouTube</button><button id="insertTable">▦ Table</button>
+    <button id="insertImage">🖼 Image</button><button id="embedVideo">▶ YouTube</button><button id="insertTable">▦ Table</button><button id="addTableRow">+Row</button><button id="addTableCol">+Col</button><button id="deleteTableRow">−Row</button><button id="deleteTableCol">−Col</button><button id="pageBreak">↵ Page break</button><button id="exportHtml">📥 HTML</button><button id="exportMd">📝 MD</button><button id="print">🖨 Print</button><button id="source">&lt;&gt; Source</button>
     <span class="count" id="count">0 words · 0 chars · 0 min read</span>
   </div>
 </div>
@@ -120,11 +121,11 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
   </main>
 
   <aside class="right">
-    <div class="sectionTitle">GitHub Asset Library</div>
-    <div class="galleryHead"><small id="assetCount">Loading assets…</small><button class="ghost assetRefresh" id="refreshAssets">↻ Refresh</button></div>
-    <input id="assetSearch" placeholder="Search images in assets/…" style="width:100%;padding:9px;background:#0c1015;border:1px solid var(--line);border-radius:7px;color:#fff;margin-bottom:10px">
-    <div id="gallery" class="gallery"><div class="assetEmpty">Loading GitHub assets…</div></div>
-    <div class="assetHint"><b>Workflow:</b> select an image → click <b>🖼 Image</b> above → drag it anywhere on the page. Select it again for <b>Scale</b> and resize handles. Arrow keys move the selected image.</div>
+    <div class="sectionTitle">Asset Manager</div>
+    <div class="dropZone" id="dropZone">📁 Click or Drag Image to Upload Local Asset</div>
+    <input type="file" id="localFileInput" accept="image/*" style="display:none">
+    <input id="assetSearch" placeholder="Search GitHub assets…" style="width:100%;padding:8px;background:#0c1015;border:1px solid var(--line);border-radius:6px;color:#fff;margin-bottom:10px">
+    <div id="gallery" class="gallery"><div style="color:var(--muted);font-size:12px">Loading media assets…</div></div>
   </aside>
 </div>
 
@@ -141,7 +142,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, set, get } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getDatabase, ref, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 const cfg={
@@ -151,9 +152,13 @@ const cfg={
   databaseURL:'https://atomictanvir-default-rtdb.firebaseio.com'
 };
 const app=initializeApp(cfg),db=getDatabase(app),auth=getAuth(app);
+const AI_ENDPOINT='https://us-central1-atomictanvir.cloudfunctions.net/atomicAi';
 const $=id=>document.getElementById(id);
+const PUBLIC='https://iammdtanvirrahman.github.io/atomic-weekly/';
+const UPLOAD_API='https://us-central1-atomictanvir.cloudfunctions.net/atomicUploadAsset';
+const ASSET_API='https://api.github.com/repos/iammdtanvirrahman/atomic-weekly/contents/assets?ref=main';
 
-let savedRange=null,selectedMedia=null,selectedGalleryUrl='',sourceMode=false,scaleMode=false;
+let savedRange=null,selectedMedia=null,selectedGalleryUrl='',sourceMode=false;
 let history=[],historyIndex=-1,saveTimer=null,cloudTimer=null,dragState=null,allAssets=[];
 let suppressHistory=false;
 
@@ -213,7 +218,8 @@ function updateStats(){
   const chars=text.length;
   const read=Math.max(1,Math.ceil(words/200));
   $('count').textContent=`${words} words · ${chars} chars · ${read} min read`;
-  const headings=[...$('editor').querySelectorAll('h1,h2,h3')];$('tocList').innerHTML=headings.length
+  const headings=[...$('editor').querySelectorAll('h1,h2,h3')];
+  $('tocList').innerHTML=headings.length
     ? headings.map(h=>`<div>• ${escapeHtml(h.innerText||'Untitled Heading')}</div>`).join('')
     : 'No headings present.';
 }
@@ -239,7 +245,7 @@ function addMediaToolbar(layer){
   h.querySelectorAll('[data-align]').forEach(btn=>btn.onclick=e=>{
     e.stopPropagation();
     if(btn.dataset.align==='left') layer.style.left='80px';
-    if(btn.dataset.align==='center') layer.style.left=Math.max(0,(($('editor').clientWidth-layer.offsetWidth)/2))+'px';
+    if(btn.dataset.align==='center') layer.style.left=Math.max(0,(($('paper').clientWidth-layer.offsetWidth)/2))+'px';
     pushHistory();scheduleLocalSave();
   });
   h.querySelectorAll('[data-action="bringFront"],[data-action="sendBack"]').forEach(btn=>btn.onclick=e=>{
@@ -250,25 +256,15 @@ function addMediaToolbar(layer){
   h.querySelector('.mediaDelete').onclick=e=>{
     e.stopPropagation();layer.remove();clearMediaSelection();pushHistory();scheduleLocalSave();
   };
-  const scaleBtn=document.createElement('button');
-  scaleBtn.type='button';scaleBtn.textContent='Scale';scaleBtn.title='Toggle resize mode';
-  scaleBtn.onclick=e=>{
-    e.stopPropagation();
-    scaleMode=!scaleMode;
-    document.querySelectorAll('.mediaLayer').forEach(x=>x.classList.toggle('scaleMode',x===layer&&scaleMode));
-    scaleBtn.classList.toggle('active',scaleMode);
-  };
-  h.querySelector('.mediaToolbar').insertBefore(scaleBtn,h.querySelector('.mediaDelete'));
   h.querySelector('.mediaOpacity').oninput=e=>{layer.style.opacity=(e.target.value/100).toFixed(2)};
   h.querySelectorAll('.mediaHandle').forEach(handle=>handle.onpointerdown=e=>startMediaAction(e,layer,handle.dataset.action));
-  layer.onpointerdown=e=>{if(e.target.closest('.mediaHandles'))return; selectMedia(layer); startMediaAction(e,layer,'move')};
 }
 function selectMedia(layer){
   clearMediaSelection();selectedMedia=layer;layer.classList.add('selectedMedia');addMediaToolbar(layer);
 }
 function clearMediaSelection(){
-  if(selectedMedia){selectedMedia.classList.remove('selectedMedia','scaleMode');selectedMedia.querySelector('.mediaHandles')?.remove()}
-  selectedMedia=null;scaleMode=false;
+  if(selectedMedia){selectedMedia.classList.remove('selectedMedia');selectedMedia.querySelector('.mediaHandles')?.remove()}
+  selectedMedia=null;
 }
 function startMediaAction(e,layer,action){
   e.preventDefault();e.stopPropagation();
@@ -295,53 +291,35 @@ function mediaPointerUp(){
   document.removeEventListener('pointermove',mediaPointerMove);
 }
 
-$('toolbar').querySelectorAll('[data-cmd]').forEach(b=>b.onclick=()=>cmd(b.dataset.cmd));$('fontName').onchange=e=>cmd('fontName',e.target.value);
-$('fontSize').onchange=e=>cmd('fontSize',e.target.value);$('block').onchange=e=>cmd('formatBlock',`<${e.target.value}>`);
-$('textColor').oninput=e=>cmd('foreColor',e.target.value);$('highlight').oninput=e=>cmd('hiliteColor',e.target.value);
-$('undo').onclick=()=>applyHistory(-1);$('redo').onclick=()=>applyHistory(1);
-$('togglePaperTheme').onclick=()=>document.body.classList.toggle('darkPaper');$('focus').onclick=()=>document.body.classList.toggle('focusMode');
+$('toolbar').querySelectorAll('[data-cmd]').forEach(b=>b.onclick=()=>cmd(b.dataset.cmd));
+$('fontName').onchange=e=>cmd('fontName',e.target.value);
+$('fontSize').onchange=e=>cmd('fontSize',e.target.value);
+$('block').onchange=e=>cmd('formatBlock',`<${e.target.value}>`);
+$('textColor').oninput=e=>cmd('foreColor',e.target.value);
+$('highlight').oninput=e=>cmd('hiliteColor',e.target.value);
+$('undo').onclick=()=>applyHistory(-1);
+$('redo').onclick=()=>applyHistory(1);
+$('togglePaperTheme').onclick=()=>document.body.classList.toggle('darkPaper');
+$('focus').onclick=()=>document.body.classList.toggle('focusMode');
+$('print').onclick=()=>window.print();
 
-$('editor').addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='copy';$('editor').style.outline='2px dashed var(--accent)'});$('editor').addEventListener('dragleave',e=>{if(!$('editor').contains(e.relatedTarget))$('editor').style.outline=''});
-$('editor').addEventListener('drop',e=>{   e.preventDefault();$('editor').style.outline='';
-  const url=e.dataTransfer.getData('text/plain');
-  if(!url)return;
-  insertMedia(url,e.clientX,e.clientY);
-});
 $('editor').addEventListener('click',e=>{
   const layer=e.target.closest('.mediaLayer');
   if(layer)selectMedia(layer);else clearMediaSelection();
 });
-$('editor').addEventListener('keyup',()=>{saveSelection();updateStats();scheduleLocalSave()});$('editor').addEventListener('input',()=>{saveSelection();updateStats();scheduleLocalSave();pushHistory()});
-$('editor').addEventListener('mouseup',saveSelection);$('editor').addEventListener('blur',saveSelection);
+$('editor').addEventListener('keyup',()=>{saveSelection();updateStats();scheduleLocalSave()});
+$('editor').addEventListener('input',()=>{saveSelection();updateStats();scheduleLocalSave();pushHistory()});
+$('editor').addEventListener('mouseup',saveSelection);
+$('editor').addEventListener('blur',saveSelection);
 
 function insertHtml(html){
   restoreSelection();
   document.execCommand('insertHTML',false,html);
   $('editor').focus();pushHistory();updateStats();scheduleLocalSave();
 }
-function insertMedia(url,x=null,y=null){
-  if(!url)return;
-  const layer=document.createElement('div');
-  layer.className='mediaLayer';
-  layer.dataset.align='center';
-  layer.style.width='300px';
-  layer.style.left=Math.max(12,($('editor').clientWidth-300)/2)+'px';
-  layer.style.top='140px';
-  layer.innerHTML=`<img src="${escapeAttr(url)}" alt="Article image">`;
-  $('editor').appendChild(layer);
-  if(x!==null&&y!==null){
-    const er=$('editor').getBoundingClientRect();
-    layer.style.left=Math.max(0,Math.min(er.width-layer.offsetWidth,x-er.left-layer.offsetWidth/2))+'px';
-    layer.style.top=Math.max(0,Math.min(er.height-layer.offsetHeight,y-er.top-layer.offsetHeight/2))+'px';
-  }
-  addMediaToolbar(layer);
-  selectMedia(layer);
-  $('editor').focus();
-  pushHistory();updateStats();scheduleLocalSave();
-}
 $('insertImage').onclick=()=>{
-  if(selectedGalleryUrl)insertMedia(selectedGalleryUrl);
-  else alert('Select an image from the GitHub Asset Library first.');
+  if(selectedGalleryUrl)insertHtml(`<div class="mediaLayer" data-align="center"><img src="${escapeAttr(selectedGalleryUrl)}" alt="Article image"></div>`);
+  else alert('Please select an asset from the gallery first.');
 };
 function escapeAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 $('embedVideo').onclick=()=>{
@@ -360,13 +338,43 @@ function getYouTubeId(url){
   }catch{return null}
 }
 $('insertTable').onclick=()=>insertHtml(`<table><thead><tr><th>Header 1</th><th>Header 2</th></tr></thead><tbody><tr><td>Data 1</td><td>Data 2</td></tr></tbody></table>`);
-$('link').onclick=()=>{saveSelection();$('linkUrl').value='';$('linkModal').classList.add('open');setTimeout(()=>$('linkUrl').focus(),50)};$('closeLink').onclick=()=>{$('linkModal').classList.remove('open')};$('applyLink').onclick=()=>{
+function selectedTable(){
+  const n=window.getSelection()?.anchorNode;
+  return n?.nodeType===3?n.parentElement.closest('table'):n?.closest?.('table');
+}
+$('addTableRow').onclick=()=>{
+  const t=selectedTable();if(!t){alert('Place the cursor inside a table first.');return}
+  const row=t.insertRow();const cols=t.rows[0]?.cells.length||2;
+  for(let i=0;i<cols;i++)row.insertCell().innerText='New Cell';
+  pushHistory();scheduleLocalSave();
+};
+$('addTableCol').onclick=()=>{
+  const t=selectedTable();if(!t){alert('Place the cursor inside a table first.');return}
+  [...t.rows].forEach(r=>r.insertCell().innerText='New Cell');pushHistory();scheduleLocalSave();
+};
+$('deleteTableRow').onclick=()=>{
+  const t=selectedTable();if(!t){alert('Place the cursor inside a table first.');return}
+  const cell=window.getSelection()?.anchorNode?.parentElement?.closest('td,th');
+  const row=cell?.parentElement;if(row)t.deleteRow(row.rowIndex);pushHistory();scheduleLocalSave();
+};
+$('deleteTableCol').onclick=()=>{
+  const t=selectedTable();if(!t){alert('Place the cursor inside a table first.');return}
+  const cell=window.getSelection()?.anchorNode?.parentElement?.closest('td,th');
+  if(!cell)return;
+  const idx=cell.cellIndex;[...t.rows].forEach(r=>{if(r.cells[idx])r.deleteCell(idx)});pushHistory();scheduleLocalSave();
+};
+$('pageBreak').onclick=()=>insertHtml('<div class="page-break"></div>');
+
+$('link').onclick=()=>{saveSelection();$('linkUrl').value='';$('linkModal').classList.add('open');setTimeout(()=>$('linkUrl').focus(),50)};
+$('closeLink').onclick=()=>{$('linkModal').classList.remove('open')};
+$('applyLink').onclick=()=>{
   const url=$('linkUrl').value.trim();if(!url)return;
   const safe=/^(https?:|mailto:|tel:)/i.test(url)?url:'https://'+url;
   restoreSelection();document.execCommand('createLink',false,safe);$('editor').focus();
   pushHistory();scheduleLocalSave();$('linkModal').classList.remove('open');
 };
-$('unlink').onclick=()=>cmd('unlink');$('clear').onclick=()=>cmd('removeFormat');
+$('unlink').onclick=()=>cmd('unlink');
+$('clear').onclick=()=>cmd('removeFormat');
 
 function payload(){
   return {
@@ -386,7 +394,6 @@ function saveLocalNow(){
 function scheduleLocalSave(){
   setStatus('Saving…','error');
   clearTimeout(saveTimer);saveTimer=setTimeout(saveLocalNow,700);
-  scheduleCloudSave();
 }
 function scheduleCloudSave(){
   clearTimeout(cloudTimer);
@@ -411,19 +418,57 @@ $('publish').onclick=async()=>{
   try{
     setStatus('Publishing…','error');
     const id=Date.now();
-    const publishedRecord={...p,status:'published',published:true,publishedAt:id,timestamp:id,id};
-    await set(ref(db,'publishedArticles/'+id),publishedRecord);
-    const verify=await get(ref(db,'publishedArticles/'+id));
-    if(!verify.exists() || verify.val()?.status!=='published'){
-      throw new Error('Publish verification failed.');
-    }
-    await set(ref(db,'atomicWeekly/latestPublished'),publishedRecord);
-    saveLocalNow();
-    setStatus('Published to magazine ✓','synced');
-    alert('Published successfully — the article is now in the public magazine.');
+    await set(ref(db,'atomicWeekly/published/'+id),{...p,published:true,publishedAt:id});
+    await set(ref(db,'atomicWeekly/latestPublished'),{...p,published:true,publishedAt:id,id});
+    await set(ref(db,'publishedArticles/'+id),{...p,status:'published',published:true,publishedAt:id,timestamp:id,id});
+    await set(ref(db,'atomicWeekly/latestPublished'),{...p,status:'published',published:true,publishedAt:id,id});
+    setStatus('Published successfully','synced');
+    alert('Article published successfully.');
   }catch(e){setStatus('Publish failed','error');console.error(e)}
 };
 
+$('exportHtml').onclick=()=>{
+  const p=payload();
+  const doc=`<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(p.title)}</title><style>body{max-width:800px;margin:40px auto;padding:20px;font:18px Georgia,serif;line-height:1.8}img{max-width:100%}iframe{width:100%;height:420px;border:0}table{width:100%;border-collapse:collapse}td,th{border:1px solid #999;padding:8px}</style></head><body><h1>${escapeHtml(p.title)}</h1><p><em>By ${escapeHtml(p.author)} · ${escapeHtml(p.section)}</em></p><p>${escapeHtml(p.dek)}</p>${p.content}</body></html>`;
+  downloadBlob(doc,'article.html','text/html');
+};
+$('exportMd').onclick=()=>{
+  const p=payload();
+  const md=`# ${p.title}\\n\\n**By:** ${p.author}\\n**Section:** ${p.section}\\n\\n${p.dek}\\n\\n${htmlToMarkdown(p.content)}`;
+  downloadBlob(md,'article.md','text/markdown');
+};
+function downloadBlob(data,name,type){
+  const blob=new Blob([data],{type}),a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function htmlToMarkdown(html){
+  const temp=document.createElement('div');temp.innerHTML=html;
+  function walk(n){
+    if(n.nodeType===3)return n.nodeValue;
+    if(n.nodeType!==1)return '';
+    const inner=[...n.childNodes].map(walk).join('');
+    const tag=n.tagName.toLowerCase();
+    if(tag==='h1')return `# ${inner}\\n\\n`;if(tag==='h2')return `## ${inner}\\n\\n`;if(tag==='h3')return `### ${inner}\\n\\n`;
+    if(tag==='p')return `${inner}\\n\\n`;if(tag==='strong'||tag==='b')return `**${inner}**`;if(tag==='em'||tag==='i')return `*${inner}*`;
+    if(tag==='blockquote')return `> ${inner}\\n\\n`;if(tag==='li')return `- ${inner}\\n`;
+    if(tag==='br')return '\\n';if(tag==='img')return `![image](${n.getAttribute('src')||''})\\n\\n`;
+    if(tag==='a')return `[${inner}](${n.getAttribute('href')||''})`;
+    if(tag==='table')return [...n.querySelectorAll('tr')].map(r=>`| ${[...r.cells].map(c=>c.innerText.trim()).join(' | ')} |`).join('\\n')+'\\n\\n';
+    if(['ul','ol','pre','div'].includes(tag))return inner+'\\n';
+    return inner;
+  }
+  return walk(temp).replace(/\\n{3,}/g,'\\n\\n').trim();
+}
+
+$('source').onclick=()=>{
+  sourceMode=!sourceMode;
+  document.body.classList.toggle('sourceMode',sourceMode);
+  if(sourceMode){$('sourceEditor').value=editorHTML();$('sourceEditor').focus()}
+  else{
+    clearMediaSelection();$('editor').innerHTML=$('sourceEditor').value||'<p></p>';pushHistory();updateStats();scheduleLocalSave();
+  }
+};
 $('sourceEditor').addEventListener('input',()=>{updateStats();scheduleLocalSave()});
 
 $('preview').onclick=()=>{
@@ -434,64 +479,89 @@ $('preview').onclick=()=>{
 $('closePreview').onclick=()=>$('previewModal').classList.remove('open');
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
 
-onAuthStateChanged(auth,user=>{ setStatus(user?'Admin signed in ✓':'Please sign in to publish/upload','synced'); });
-
-// NEW ASSET LOAD LOGIC (Fixed using Git Trees API instead of Recursive Contents API)
 async function loadAssets(){
-  const imageRe=/\\.(png|jpe?g|webp|gif|svg)$/i;
-  const MANIFEST='https://raw.githubusercontent.com/iammdtanvirrahman/atomic-weekly/main/assets/assets.json';
-  const RAW_BASE='https://raw.githubusercontent.com/iammdtanvirrahman/atomic-weekly/main/assets/';
-  const PAGE_BASE='https://iammdtanvirrahman.github.io/atomic-weekly/assets/';
-
-  $('assetCount').textContent='Loading assets…';
-  $('gallery').innerHTML='<div style="color:var(--muted);font-size:11px">Loading GitHub assets…</div>';
-
   try{
-    const r=await fetch(MANIFEST+'?t='+Date.now(),{cache:'no-store'});
-    if(!r.ok)throw new Error('Manifest HTTP '+r.status);
-    const data=await r.json();
-    const list=Array.isArray(data.assets)?data.assets:[];
-    allAssets=list.filter(p=>imageRe.test(p)).map(p=>({
-      name:p,
-      url:RAW_BASE+p.split('/').map(encodeURIComponent).join('/'),
-      pagesUrl:PAGE_BASE+p.split('/').map(encodeURIComponent).join('/')
-    })).sort((a,b)=>a.name.localeCompare(b.name));
+    const r=await fetch(ASSET_API,{cache:'no-store'});
+    if(!r.ok)throw new Error('GitHub API '+r.status);
+    const files=await r.json();
+    allAssets=files.filter(x=>x.type==='file'&&/\.(png|jpe?g|webp|gif|svg)$/i.test(x.name))
+      .map(x=>({name:x.name,url:x.download_url}));
     renderAssets();
-    if(!allAssets.length){
-      $('gallery').innerHTML='<div class="assetEmpty">No images found in <b>assets/</b>.</div>';
-      $('assetCount').textContent='0 images';
-    }
-  }catch(err){
-    console.error('Asset manifest load failed:',err);
-    allAssets=[];
-    $('gallery').innerHTML='<div class="assetEmpty"><b>GitHub Asset Library could not load.</b><br>Use ↻ Refresh after GitHub finishes updating the asset manifest.</div>';
-    $('assetCount').textContent='Load failed';
+  }catch(e){
+    $('gallery').innerHTML='<div style="font-size:11px;color:var(--muted)">Failed to fetch remote assets. You can upload local images below.</div>';
   }
 }
 function renderAssets(){
   const q=$('assetSearch').value.toLowerCase().trim();
   const items=allAssets.filter(x=>x.name.toLowerCase().includes(q));
-  $('gallery').innerHTML='';$('assetCount').textContent=items.length+' image'+(items.length===1?'':'s')+(q?' found':'');
-  if(!items.length){$('gallery').innerHTML='<div class="assetEmpty">No images found in <b>assets/</b>.</div>';return}
-  
+  $('gallery').innerHTML='';
+  if(!items.length){$('gallery').innerHTML='<div style="color:var(--muted);font-size:11px">No matching assets.</div>';return}
   items.forEach(x=>{
     const d=document.createElement('div');d.className='asset';
     const img=document.createElement('img');img.src=x.url;img.loading='lazy';img.alt=x.name;
-    img.onerror=()=>{if(x.pagesUrl&&img.src!==x.pagesUrl){img.onerror=null;img.src=x.pagesUrl}else{img.style.display='none'}};
     const span=document.createElement('span');span.textContent=x.name;
     d.append(img,span);
     d.draggable=true;
-    d.ondragstart=e=>{e.dataTransfer.setData('text/plain',x.url);e.dataTransfer.effectAllowed='copy';selectedGalleryUrl=x.url};
-    d.onclick=()=>{
-      selectedGalleryUrl=x.url;
-      document.querySelectorAll('.asset').forEach(a=>a.classList.remove('selected'));
-      d.classList.add('selected');
-    };
-    d.ondblclick=()=>insertMedia(x.url);
+    d.ondragstart=e=>{e.dataTransfer.setData('text/plain',x.url);e.dataTransfer.effectAllowed='copy'};
+    d.onclick=()=>{selectedGalleryUrl=x.url;document.querySelectorAll('.asset').forEach(a=>a.style.borderColor='');d.style.borderColor='var(--red)'};
     $('gallery').appendChild(d);
   });
 }
-$('refreshAssets').onclick=()=>loadAssets();$('assetSearch').oninput=()=>renderAssets();
+$('assetSearch').oninput=renderAssets;
+
+function fileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>{
+      try{
+        const bytes=new Uint8Array(reader.result);
+        let binary='';
+        const chunk=0x8000;
+        for(let i=0;i<bytes.length;i+=chunk){
+          binary+=String.fromCharCode(...bytes.subarray(i,Math.min(i+chunk,bytes.length)));
+        }
+        resolve(btoa(binary));
+      }catch(err){reject(err)}
+    };
+    reader.onerror=()=>reject(reader.error||new Error('Could not read file.'));
+    reader.readAsArrayBuffer(file);
+  });
+}
+async function uploadImageToGitHub(file){
+  if(!auth.currentUser)throw new Error('Please sign in to the Admin Panel first.');
+  if(!file.type.startsWith('image/'))throw new Error('Please choose an image file.');
+  if(file.size>8*1024*1024)throw new Error('Image must be 8 MB or smaller.');
+  const token=await auth.currentUser.getIdToken();
+  const data=await fileToBase64(file);
+  const response=await fetch(UPLOAD_API,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization:'Bearer '+token},
+    body:JSON.stringify({filename:file.name,mimeType:file.type,data})
+  });
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(result.error||'GitHub upload failed.');
+  return result.url;
+}
+async function handleLocalFiles(files){
+  const file=files?.[0];if(!file)return;
+  try{
+    $('dropZone').textContent='⏳ Uploading image to magazine GitHub…';
+    const url=await uploadImageToGitHub(file);
+    selectedGalleryUrl=url;
+    insertHtml(`<div class="mediaLayer" data-align="center"><img src="${escapeAttr(url)}" alt="${escapeAttr(file.name)}"></div>`);
+    $('dropZone').textContent='✅ Uploaded to atomic-weekly/assets/';
+    await loadAssets();
+  }catch(e){
+    console.error(e);
+    alert(e.message||'Image upload failed.');
+    $('dropZone').textContent='📁 Click or Drag Image to Upload Local Asset';
+  }
+}
+$('dropZone').onclick=()=>$('localFileInput').click();
+$('localFileInput').onchange=e=>handleLocalFiles(e.target.files);
+$('dropZone').ondragover=e=>{e.preventDefault();$('dropZone').classList.add('dragover')};
+$('dropZone').ondragleave=()=>$('dropZone').classList.remove('dragover');
+$('dropZone').ondrop=e=>{e.preventDefault();$('dropZone').classList.remove('dragover');handleLocalFiles(e.dataTransfer.files)};
 
 ['title','author','section','dek','cover'].forEach(id=>{
   $(id).addEventListener('input',()=>{
@@ -500,7 +570,6 @@ $('refreshAssets').onclick=()=>loadAssets();$('assetSearch').oninput=()=>renderA
   });
   $(id).addEventListener('change',scheduleLocalSave);
 });
-
 function updateCoverPreview(){
   const v=$('cover').value.trim(),img=$('coverPreview');
   if(!v){img.style.display='none';img.removeAttribute('src');return}
@@ -512,28 +581,20 @@ document.addEventListener('keydown',e=>{
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();applyHistory(-1)}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();applyHistory(1)}
   if(e.key==='Escape'){document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open'));clearMediaSelection()}
-  if(selectedMedia&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){
-    e.preventDefault();
-    const step=e.shiftKey?10:2;
-    const l=parseFloat(selectedMedia.style.left)||0,t=parseFloat(selectedMedia.style.top)||0;
-    if(e.key==='ArrowLeft')selectedMedia.style.left=Math.max(0,l-step)+'px';
-    if(e.key==='ArrowRight')selectedMedia.style.left=Math.min($('editor').clientWidth-selectedMedia.offsetWidth,l+step)+'px';
-    if(e.key==='ArrowUp')selectedMedia.style.top=Math.max(0,t-step)+'px';
-    if(e.key==='ArrowDown')selectedMedia.style.top=Math.min($('editor').clientHeight-selectedMedia.offsetHeight,t+step)+'px';
-    pushHistory();scheduleLocalSave();
-  }
 });
 
 const local=localStorage.getItem('atomic_article_draft');
 if(local){
   try{
     const p=JSON.parse(local);
-    $('title').value=p.title\vert{}\vert{}'';$('author').value=p.author||'';
-    $('section').value=p.section\vert{}\vert{}'Science';$('dek').value=p.dek||'';
-    $('cover').value=p.cover\vert{}\vert{}'';$('editor').innerHTML=p.content||'<h1>Heading 1 Title</h1><p>Start writing your amazing story here...</p>';
+    $('title').value=p.title||'';
+    $('author').value=p.author||'';
+    $('section').value=p.section||'Science';
+    $('dek').value=p.dek||'';
+    $('cover').value=p.cover||'';
+    $('editor').innerHTML=p.content||'<h1>Heading 1 Title</h1><p>Start writing your amazing story here...</p>';
   }catch(e){console.warn('Draft restore failed',e)}
 }
 updateCoverPreview();updateStats();pushHistory();loadAssets();
 </script>
 </body>
-</html>
