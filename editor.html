@@ -533,7 +533,7 @@ function payload(){
     section:$('section').value,
     dek:$('dek').value.trim(),
     cover:$('cover').value.trim(),
-    content:sourceMode?$('sourceEditor').value:editorHTML(),
+    content:sourceMode?sourceContent():editorHTML(),
     updatedAt:Date.now()
   };
 }
@@ -597,6 +597,16 @@ $('exportMd').onclick=()=>{
   const md=`# ${p.title}\\n\\n**By:** ${p.author}\\n**Section:** ${p.section}\\n\\n${p.dek}\\n\\n${htmlToMarkdown(p.content)}`;
   downloadBlob(md,'article.md','text/markdown');
 };
+function sourceTemplate(content=''){
+  return `<article class="articlePage">\n${content}\n</article>`;
+}
+function sourceContent(){
+  const value=$('sourceEditor').value.trim();
+  if(!value)return '';
+  const doc=new DOMParser().parseFromString(value,'text/html');
+  const wrapper=doc.querySelector('article.articlePage');
+  return wrapper?wrapper.innerHTML.trim():value;
+}
 function downloadBlob(data,name,type){
   const blob=new Blob([data],{type}),a=document.createElement('a');
   a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
@@ -624,9 +634,13 @@ function htmlToMarkdown(html){
 $('source').onclick=()=>{
   sourceMode=!sourceMode;
   document.body.classList.toggle('sourceMode',sourceMode);
-  if(sourceMode){$('sourceEditor').value=editorHTML();$('sourceEditor').focus()}
-  else{
-    clearMediaSelection();$('editor').innerHTML=$('sourceEditor').value||'<p></p>';pushHistory();updateStats();scheduleLocalSave();
+  if(sourceMode){
+    $('sourceEditor').value=sourceTemplate(editorHTML());
+    $('sourceEditor').focus();
+  }else{
+    clearMediaSelection();
+    $('editor').innerHTML=sourceContent()||'<p></p>';
+    pushHistory();updateStats();scheduleLocalSave();
   }
 };
 $('sourceEditor').addEventListener('input',()=>{updateStats();scheduleLocalSave()});
