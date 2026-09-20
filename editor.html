@@ -468,6 +468,38 @@ $('pageBreak').onclick=()=>insertHtml('<div class="page-break"></div>');
 
 $('clear').onclick=()=>cmd('removeFormat');
 
+const editId=new URLSearchParams(location.search).get('id');
+let editingPublishedId=editId||null;
+async function loadPublishedArticleForEdit(){
+  if(!editId)return false;
+  try{
+    setStatus('Loading published article…','error');
+    const snap=await get(ref(db,'publishedArticles/'+editId));
+    if(!snap.exists()){
+      setStatus('Published article not found','error');
+      alert('This published article could not be found.');
+      return false;
+    }
+    const article=snap.val()||{};
+    $('title').value=article.title||'';
+    $('author').value=article.author||'Atomic Desk';
+    $('section').value=article.section||'Science';
+    $('dek').value=article.dek||'';
+    $('cover').value=article.cover||article.coverImage||article.image||'';
+    $('editor').innerHTML=typeof article.content==='string'?article.content:'<p></p>';
+    updateCoverPreview();
+    updateStats();
+    pushHistory();
+    setStatus('Editing published article','synced');
+    document.title='Atomic Admin — Edit Published Article';
+    return true;
+  }catch(e){
+    console.error('Published article load failed:',e);
+    setStatus('Failed to load published article','error');
+    alert('Could not load the published article content.');
+    return false;
+  }
+}
 function payload(){
   return {
     title:$('title').value.trim()||'Untitled',
@@ -509,9 +541,10 @@ $('publish').onclick=async()=>{
   if(!p.title||p.title==='Untitled'){alert('Please enter an article title first.');return}
   if(!p.content.trim()){alert('Article content is empty.');return}
   try{
-    setStatus('Publishing…','error');
-    const id=Date.now();
-    const publishedRecord={...p,status:'published',published:true,publishedAt:id,timestamp:id,id};
+    setStatus(editingPublishedId?'Updating published article…':'Publishing…','error');
+    const id=editingPublishedId||String(Date.now());
+    const existing=editingPublishedId?(await get(ref(db,'publishedArticles/'+editingPublishedId))).val()||{}:{};
+    const publishedRecord={...existing,...p,status:'published',published:true,publishedAt:existing.publishedAt||Date.now(),timestamp:Date.now(),id};
     await set(ref(db,'publishedArticles/'+id),publishedRecord);
     const verify=await get(ref(db,'publishedArticles/'+id));
     if(!verify.exists() || verify.val()?.status!=='published'){
@@ -519,9 +552,9 @@ $('publish').onclick=async()=>{
     }
     await set(ref(db,'atomicWeekly/latestPublished'),publishedRecord);
     saveLocalNow();
-    setStatus('Published to magazine ✓','synced');
-    alert('Published successfully — the article is now in the public magazine.');
-  }catch(e){setStatus('Publish failed','error');console.error(e)}
+    setStatus(editingPublishedId?'Published article updated ✓':'Published to magazine ✓','synced');
+    alert(editingPublishedId?'Published article updated successfully.':'Published successfully — the article is now in the public magazine.');
+  }catch(e){setStatus(editingPublishedId?'Update failed':'Publish failed','error');console.error(e)}
 };
 
 $('exportHtml').onclick=()=>{
@@ -664,8 +697,12 @@ document.addEventListener('keydown',e=>{
 // Restore the latest local draft when available; otherwise open a blank page.
 $('editor').innerHTML='';
 updateCoverPreview();updateStats();
-restoreDraft();
-if(!$('editor').innerHTML.trim())pushHistory();
+if(editId){
+  await loadPublishedArticleForEdit();
+}else{
+  restoreDraft();
+  if(!$('editor').innerHTML.trim())pushHistory();
+}
 loadAssets();
 </script>
 </body>
