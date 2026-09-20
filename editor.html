@@ -484,7 +484,9 @@ async function loadPublishedArticleForEdit(){
         editingSource='submissions';
         $('title').value=article.title||'';
         $('author').value=article.author||'Atomic Desk';
-        $('section').value=article.section||'Science';
+        const incomingSection=String(article.section||'').trim();
+        const incomingType=String(article.type||article.submissionType||'').toLowerCase();
+        $('section').value=(incomingType.includes('story')||incomingSection.toLowerCase()==='story'||incomingSection.toLowerCase()==='stories')?'Stories':(incomingSection||'Science');
         $('dek').value=article.dek||article.description||'';
         $('cover').value=article.cover||article.coverImage||article.image||'';
         $('editor').innerHTML=typeof article.content==='string'&&article.content.trim()?article.content:(article.text?'<p>'+escapeHtml(article.text).replace(/\\n/g,'</p><p>')+'</p>':'<p></p>');
