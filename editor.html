@@ -470,7 +470,31 @@ $('clear').onclick=()=>cmd('removeFormat');
 
 const editId=new URLSearchParams(location.search).get('id');
 let editingPublishedId=editId||null;
+let editingSubmissionId=null;
+let editingSource='publishedArticles';
 async function loadPublishedArticleForEdit(){
+  // Incoming submissions use the same editor, but remain unpublished until Admin presses Publish.
+  if(editId){
+    try{
+      const incoming=await get(ref(db,'submissions/'+editId));
+      if(incoming.exists() && incoming.val()?.status!=='published'){
+        const article=incoming.val()||{};
+        editingSubmissionId=editId;
+        editingPublishedId=null;
+        editingSource='submissions';
+        $('title').value=article.title||'';
+        $('author').value=article.author||'Atomic Desk';
+        $('section').value=article.section||'Science';
+        $('dek').value=article.dek||article.description||'';
+        $('cover').value=article.cover||article.coverImage||article.image||'';
+        $('editor').innerHTML=typeof article.content==='string'&&article.content.trim()?article.content:(article.text?'<p>'+escapeHtml(article.text).replace(/\\n/g,'</p><p>')+'</p>':'<p></p>');
+        updateCoverPreview(); updateStats(); pushHistory();
+        setStatus('Editing incoming submission — not published yet','synced');
+        document.title='Atomic Admin — Review Submission';
+        return true;
+      }
+    }catch(e){console.error('Submission load failed:',e)}
+  }
   if(!editId)return false;
   try{
     setStatus('Loading published article…','error');
@@ -541,20 +565,24 @@ $('publish').onclick=async()=>{
   if(!p.title||p.title==='Untitled'){alert('Please enter an article title first.');return}
   if(!p.content.trim()){alert('Article content is empty.');return}
   try{
-    setStatus(editingPublishedId?'Updating published article…':'Publishing…','error');
+    setStatus(editingSubmissionId?'Publishing reviewed submission…':editingPublishedId?'Updating published article…':'Publishing…','error');
     const id=editingPublishedId||String(Date.now());
     const existing=editingPublishedId?(await get(ref(db,'publishedArticles/'+editingPublishedId))).val()||{}:{};
-    const publishedRecord={...existing,...p,status:'published',published:true,publishedAt:existing.publishedAt||Date.now(),timestamp:Date.now(),id};
+    const sourceRecord=editingSubmissionId?(await get(ref(db,'submissions/'+editingSubmissionId))).val()||{}:existing;
+    const publishedRecord={...sourceRecord,...p,status:'published',published:true,publishedAt:existing.publishedAt||Date.now(),timestamp:Date.now(),id,type:sourceRecord.type||'article'};
     await set(ref(db,'publishedArticles/'+id),publishedRecord);
     const verify=await get(ref(db,'publishedArticles/'+id));
     if(!verify.exists() || verify.val()?.status!=='published'){
       throw new Error('Publish verification failed. The article was not confirmed in the public feed.');
     }
     await set(ref(db,'atomicWeekly/latestPublished'),publishedRecord);
+    if(editingSubmissionId){
+      await set(ref(db,'submissions/'+editingSubmissionId),{...sourceRecord,...p,status:'published',published:true,publishedAt:publishedRecord.publishedAt,timestamp:Date.now(),id});
+    }
     saveLocalNow();
-    setStatus(editingPublishedId?'Published article updated ✓':'Published to magazine ✓','synced');
-    alert(editingPublishedId?'Published article updated successfully.':'Published successfully — the article is now in the public magazine.');
-  }catch(e){setStatus(editingPublishedId?'Update failed':'Publish failed','error');console.error(e)}
+    setStatus(editingSubmissionId?'Submission reviewed and published ✓':editingPublishedId?'Published article updated ✓':'Published to magazine ✓','synced');
+    alert(editingSubmissionId?'The edited submission has been published successfully.':editingPublishedId?'Published article updated successfully.':'Published successfully — the article is now in the public magazine.');
+  }catch(e){setStatus(editingSubmissionId?'Submission publish failed':editingPublishedId?'Update failed':'Publish failed','error');console.error(e)}
 };
 
 $('exportHtml').onclick=()=>{
