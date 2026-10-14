@@ -89,7 +89,7 @@ function renderPublished(){
     if(!currentUser){openLogin();return}
     const id=b.dataset.duplicate,x=published[id];if(!x)return;
     const copyId=String(Date.now());
-    const copy={...x,id:copyId,title:(x.title||'Untitled')+' — Copy',status:'draft',published:false,createdAt:Date.now(),updatedAt:Date.now(),duplicateOf:id};
+    const copy={...x,id:copyId,title:(x.title||'Untitled')+' — Copy',status:'draft',published:false,publishedAt:0,createdAt:Date.now(),updatedAt:Date.now(),duplicateOf:id};
     try{await set(ref(db,'atomicWeekly/drafts/'+copyId),copy);location.href='./editor.html?draftId='+encodeURIComponent(copyId)}
     catch(e){alert('Could not create draft copy: '+e.message)}
   });
