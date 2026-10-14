@@ -217,8 +217,6 @@ exports.atomicUploadAsset = onRequest(
   }
 );
 
-const { onSchedule } = require("firebase-functions/v2/scheduler");
-
 exports.publishScheduledArticles = onSchedule(
   {
     schedule: "every 5 minutes",
