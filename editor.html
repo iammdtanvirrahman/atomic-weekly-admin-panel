@@ -126,6 +126,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
     <button id="mobileMetaToggle" class="mobileOnly" type="button">☰ Metadata</button><button id="mobileAssetsToggle" class="mobileOnly" type="button">▦ Assets</button><button id="focus">🧘 Focus</button>
     <button id="preview">👁 Preview</button>
     <button id="saveDraft">💾 Draft</button>
+    <span id="authSuccess" class="statusBadge" role="status" hidden>✓ Signed in successfully</span>
     <button id="signInOpen" class="authBtn">🔐 Sign in</button>
     <button id="signOutEditor" hidden>↪ Sign out</button>
     <button class="green" id="publish">🚀 Publish</button>
@@ -808,6 +809,7 @@ onAuthStateChanged(auth,user=>{
   authUser=user||null;
   $('signInOpen').hidden=!!user;
   $('signOutEditor').hidden=!user;
+  $('authSuccess').hidden=!user;
   $('uploadAsset').disabled=!user;
   $('uploadStatus').textContent=user?'Signed in as '+(user.email||'admin')+'. Ready to upload.':'Sign in to upload assets.';
   if(user){$('authGate').classList.remove('open');setStatus('Admin signed in ✓','synced');recoverCloudDraft()}
