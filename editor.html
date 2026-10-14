@@ -125,6 +125,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
     <button id="redo" title="Redo">↷</button>
     <button id="mobileMetaToggle" class="mobileOnly" type="button">☰ Metadata</button><button id="mobileAssetsToggle" class="mobileOnly" type="button">▦ Assets</button><button id="focus">🧘 Focus</button>
     <button id="preview">👁 Preview</button>
+    <button id="versionHistory" type="button" hidden>🕘 History</button>
     <button id="saveDraft">💾 Draft</button>
     <span id="authSuccess" class="statusBadge" role="status" hidden>✓ Signed in successfully</span>
     <button id="signInOpen" class="authBtn">🔐 Sign in</button>
@@ -218,6 +219,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
     <div id="previewContent" class="previewArticle"></div>
   </div>
 </div>
+<div id="historyModal" class="modal"><div class="modalBox" role="dialog" aria-modal="true" aria-labelledby="historyTitle"><h3 id="historyTitle">Published Article History</h3><p style="color:var(--muted);font-size:12px;line-height:1.6">Earlier published versions are saved before updates. Restoring a version loads it into the editor; it does not publish it automatically.</p><div id="revisionList"><div class="assetLoading">Loading revisions…</div></div><div class="actions" style="justify-content:flex-end;margin-top:18px"><button id="closeHistory" type="button">Close</button></div></div></div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
@@ -532,6 +534,7 @@ const queryParams=new URLSearchParams(location.search);
 const editId=queryParams.get('id');
 const draftId=queryParams.get('draftId');
 let editingPublishedId=editId||null;
+$('versionHistory').hidden=!editingPublishedId;
 let editingDraftId=draftId||null;
 let editingSubmissionId=null;
 let editingSource='publishedArticles';
@@ -678,6 +681,12 @@ $('publish').onclick=async()=>{
     const existing=editingPublishedId?(await get(ref(db,'publishedArticles/'+editingPublishedId))).val()||{}:{};
     const sourceRecord=editingSubmissionId?(await get(ref(db,'submissions/'+editingSubmissionId))).val()||{}:editingDraftId?(await get(ref(db,'atomicWeekly/drafts/'+editingDraftId))).val()||{}:existing;
     const publishedRecord={...sourceRecord,...p,status:'published',published:true,publishedAt:existing.publishedAt||Date.now(),timestamp:Date.now(),id,type:sourceRecord.type||'article'};
+    if(editingPublishedId&&existing&&(existing.title||existing.content)){
+      try{
+        const revisionAt=Date.now();
+        await set(ref(db,'atomicWeekly/revisionHistory/'+editingPublishedId+'/'+revisionAt),{...existing,revisionAt});
+      }catch(historyError){console.warn('Could not save previous revision; continuing publish:',historyError)}
+    }
     await set(ref(db,'publishedArticles/'+id),publishedRecord);
     const verify=await get(ref(db,'publishedArticles/'+id));
     if(!verify.exists() || verify.val()?.status!=='published'){
@@ -706,6 +715,35 @@ $('exportMd').onclick=()=>{
   const md=`# ${p.title}\\n\\n**By:** ${p.author}\\n**Section:** ${p.section}\\n\\n${p.dek}\\n\\n${htmlToMarkdown(p.content)}`;
   downloadBlob(md,'article.md','text/markdown');
 };
+async function loadRevisionHistory(){
+ const list=$('revisionList');
+ if(!authUser){list.innerHTML='<p class="uploadStatus">Sign in to view revision history.</p>';return}
+ if(!editingPublishedId){list.innerHTML='<p class="uploadStatus">History is available when editing an already-published article.</p>';return}
+ list.innerHTML='<div class="assetLoading">Loading saved versions…</div>';
+ try{
+   const snap=await get(ref(db,'atomicWeekly/revisionHistory/'+editingPublishedId)),raw=snap.val()||{};
+   const entries=Object.entries(raw).map(([key,value])=>({key,...(value||{})})).sort((a,b)=>Number(b.revisionAt||a.key)-Number(a.revisionAt||b.key));
+   list.innerHTML='';
+   if(!entries.length){list.innerHTML='<p class="uploadStatus">No previous published versions have been saved yet. A backup is created the next time you update this article.</p>';return}
+   entries.forEach(revision=>{
+     const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)';
+     const details=document.createElement('div');details.style.minWidth='0';
+     const title=document.createElement('strong');title.textContent=revision.title||'Untitled version';title.style.cssText='display:block;font-size:13px;overflow-wrap:anywhere';
+     const date=document.createElement('div');date.textContent=new Date(Number(revision.revisionAt||revision.key)).toLocaleString();date.style.cssText='font-size:10px;color:var(--muted);margin-top:5px';
+     details.append(title,date);
+     const restore=document.createElement('button');restore.type='button';restore.className='ghost';restore.textContent='Restore';restore.onclick=()=>{
+       if(!confirm('Load this previous version into the editor? Your current unsaved text will be replaced.'))return;
+       $('title').value=revision.title||'';$('author').value=revision.author||'Atomic Desk';$('section').value=revision.section||'Science';$('dek').value=revision.dek||'';$('cover').value=revision.cover||'';
+       $('editor').innerHTML=typeof revision.content==='string'?revision.content:'<p></p>';
+       if(sourceMode){$('sourceEditor').value=revision.content||''}
+       updateCoverPreview();updateStats();pushHistory();scheduleLocalSave();$('historyModal').classList.remove('open');setStatus('Previous version restored into editor — review before publishing','synced');
+     };
+     row.append(details,restore);list.append(row);
+   });
+ }catch(e){list.innerHTML='<p class="uploadStatus error">Could not load history. Check Firebase database rules and try again.</p>';console.error('Revision history load failed:',e)}
+}
+$('versionHistory').onclick=()=>{if(!authUser){$('authGate').classList.add('open');return}$('historyModal').classList.add('open');loadRevisionHistory()};
+$('closeHistory').onclick=()=>$('historyModal').classList.remove('open');
 function sourceTemplate(content=''){
   return `<article class="articlePage">\n${content}\n</article>`;
 }
