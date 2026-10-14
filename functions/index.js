@@ -1,4 +1,5 @@
 const { onRequest } = require("firebase-functions/v2/https");
+const { onSchedule } = require("firebase-functions/v2/scheduler");
 const { defineSecret, defineString } = require("firebase-functions/params");
 const admin = require("firebase-admin");
 
@@ -215,3 +216,57 @@ exports.atomicUploadAsset = onRequest(
     }
   }
 );
+
+const { onSchedule } = require("firebase-functions/v2/scheduler");
+
+exports.publishScheduledArticles = onSchedule(
+  {
+    schedule: "every 5 minutes",
+    timeZone: "Asia/Dhaka",
+    region: "us-central1",
+    timeoutSeconds: 120,
+    memory: "256MiB"
+  },
+  async () => {
+    const database = admin.database();
+    const queueRef = database.ref("atomicWeekly/scheduledArticles");
+    const snapshot = await queueRef.once("value");
+    const now = Date.now();
+    const entries = snapshot.val() || {};
+
+    for (const [id, queued] of Object.entries(entries)) {
+      if (!queued || queued.scheduleStatus !== "scheduled" || !Number.isFinite(Number(queued.scheduledAt)) || Number(queued.scheduledAt) > now) continue;
+
+      const itemRef = queueRef.child(id);
+      const claim = await itemRef.transaction(current => {
+        if (!current || current.scheduleStatus !== "scheduled" || Number(current.scheduledAt) > Date.now()) return;
+        return { ...current, scheduleStatus: "publishing", publishAttemptAt: Date.now() };
+      });
+      if (!claim.committed || !claim.snapshot.exists()) continue;
+
+      const item = claim.snapshot.val();
+      try {
+        const publishedAt = Date.now();
+        const published = {
+          ...item,
+          id,
+          status: "published",
+          published: true,
+          publishedAt,
+          timestamp: publishedAt,
+          scheduleStatus: "published"
+        };
+        delete published.scheduledBy;
+        delete published.scheduledEmail;
+        await database.ref("publishedArticles/" + id).set(published);
+        await database.ref("atomicWeekly/latestPublished").set(published);
+        await itemRef.remove();
+        console.log("Scheduled article published:", id);
+      } catch (error) {
+        console.error("Scheduled publication failed for", id, error);
+        await itemRef.update({ scheduleStatus: "scheduled", lastError: String(error && error.message || error), lastAttemptAt: Date.now() });
+      }
+    }
+  }
+);
+
