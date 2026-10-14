@@ -818,13 +818,11 @@ $('signInOpen').onclick=()=>{$('authGate').classList.add('open')};
 $('authCancel').onclick=()=>{$('authGate').classList.remove('open')};
 $('googleAuth').onclick=async()=>{
   const btn=$('googleAuth');$('authError').textContent='';btn.disabled=true;btn.textContent='Connecting to Google…';
-  try{await signInWithPopup(auth,googleProvider)}
+  try{await signInWithRedirect(auth,googleProvider)}
   catch(err){
-    if(['auth/popup-blocked','auth/cancelled-popup-request','auth/operation-not-supported-in-this-environment'].includes(err.code)){
-      try{await signInWithRedirect(auth,googleProvider);return}catch(redirectErr){err=redirectErr}
-    }
     $('authError').textContent=err.code==='auth/unauthorized-domain'?'This website domain is not authorised in Firebase Authentication.':(err.message||'Google sign-in failed.');
-  }finally{btn.disabled=false;btn.innerHTML='<span class="googleMark" aria-hidden="true">G</span> Continue with Google'}
+    btn.disabled=false;btn.innerHTML='<span class="googleMark" aria-hidden="true">G</span> Continue with Google';
+  }
 };
 getRedirectResult(auth).catch(err=>{if(err)$('authError').textContent=err.message||'Google sign-in failed.'});
 $('signOutEditor').onclick=async()=>{await signOut(auth);$('authGate').classList.add('open')};
