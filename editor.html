@@ -77,6 +77,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
 .aiActions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .aiActions button{padding:9px 7px;font-size:10px;border:1px solid var(--line);border-radius:8px;background:#20232c;color:var(--text);cursor:pointer}
 #aiStatus{min-height:15px;margin-top:8px;font-size:10px;color:var(--muted);line-height:1.5}
+.aiTools .aiActions{display:flex;flex-wrap:wrap;gap:6px}.aiTools .aiActions button{font-size:11px}.aiResultWrap{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.aiResultWrap[hidden]{display:none}.aiResultWrap label{display:block;font-size:10px;font-weight:800;color:var(--muted);margin-bottom:6px}.aiResultWrap textarea{width:100%;min-height:120px;resize:vertical;padding:10px;border:1px solid var(--line);border-radius:8px;background:#090c10;color:var(--text);line-height:1.6}.aiResultWrap .aiActions{margin-top:8px}
 @media(max-width:620px){.aiActions{grid-template-columns:1fr}.aiTools{padding:11px}}
 
 
@@ -164,7 +165,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
     <div class="field"><label>Author</label><input id="author" value="Atomic Desk"></div>
     <div class="field"><label>Category / Section</label><select id="section"><option>Science</option><option>Space</option><option>Technology</option><option>Humanity</option><option>Love</option><option>Life</option><option>Philosophy</option><option>Nature</option><option>Art</option><option>Physics</option><option>Stories</option></select></div>
     <div class="field"><label>Short Deck / Excerpt</label><textarea id="dek" placeholder="Brief summary for preview cards..."></textarea></div>
-    <div class="aiTools"><div class="aiToolsTitle">AI Editorial Assistant</div><p>Suggest a stronger headline and a concise article summary.</p><div class="aiActions"><button type="button" id="aiTitle">✦ Suggest title</button><button type="button" id="aiSummary">✦ Suggest summary</button><button type="button" id="aiPolish">✦ Polish selection</button></div><div id="aiStatus" role="status" aria-live="polite"></div></div>
+    <div class="aiTools"><div class="aiToolsTitle">AI Editorial Assistant</div><p>Draft, refine and prepare your article. AI output is a suggestion; review facts and wording before publishing.</p><div class="aiActions"><button type="button" id="aiTitle">✦ Headline</button><button type="button" id="aiSummary">✦ Summary</button><button type="button" id="aiPolish">✦ Polish selection</button><button type="button" id="aiGrammar">✓ Grammar fix</button><button type="button" id="aiDraft">✎ Draft article</button><button type="button" id="aiOutline">☷ Outline</button><button type="button" id="aiSEO">⌕ SEO pack</button><button type="button" id="aiSources">⚑ Source checklist</button></div><div id="aiStatus" role="status" aria-live="polite"></div><div class="aiResultWrap" id="aiResultWrap" hidden><label for="aiResult">AI result · review before inserting</label><textarea id="aiResult" rows="8" placeholder="Your AI result will appear here…"></textarea><div class="aiActions"><button type="button" id="aiInsertResult" class="primary">Insert at cursor</button><button type="button" id="aiCopyResult">Copy result</button><button type="button" id="aiDismissResult" class="ghost">Dismiss</button></div></div></div>
     <div class="field"><label>Cover Asset Path / URL</label><input id="cover" placeholder="e.g. assets/cover.jpg or image URL"><img id="coverPreview" style="width:100%;height:100px;object-fit:cover;margin-top:6px;border-radius:6px;display:none"></div>
     <div class="sectionTitle">Content Pages</div>
     <div id="contentPages" class="contentPages"></div>
@@ -793,32 +794,83 @@ $('source').onclick=()=>{
 $('sourceEditor').addEventListener('input',()=>{updateStats();scheduleLocalSave()});
 
 
-/* Editorial assistant: try the configured Firebase AI endpoint, with clear errors if unavailable. */
+/* AI Editorial Assistant. The endpoint must be configured and live-tested separately. */
+let aiSavedRange=null;
+function rememberAISelection(){
+  const selection=window.getSelection();
+  if(selection&&selection.rangeCount)aiSavedRange=selection.getRangeAt(0).cloneRange();
+}
+function restoreAISelection(){
+  if(!aiSavedRange)return false;
+  const selection=window.getSelection();
+  selection.removeAllRanges();selection.addRange(aiSavedRange);return true;
+}
+function escapeAIText(value){
+  return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function insertAIText(value){
+  const text=String(value||'').trim();if(!text)return;
+  $('editor').focus();
+  if(aiSavedRange)restoreAISelection();
+  const safe=text.split(/\n{2,}/).map(part=>'<p>'+escapeAIText(part).replace(/\n/g,'<br>')+'</p>').join('');
+  document.execCommand('insertHTML',false,safe);
+  pushHistory();updateStats();scheduleLocalSave();
+}
 async function requestAISuggestion(kind){
-  const button=kind==='title'?$('aiTitle'):kind==='summary' ? $('aiSummary') : $('aiPolish');
-  const status=$('aiStatus'),p=payload();
-  const selectedText=(savedRange?savedRange.toString():'')||window.getSelection()?.toString()||'';
-  const bodyText=(kind==='polish'?selectedText:$('editor').innerText.trim()).slice(0,12000);
-  if(kind==='polish'&&!selectedText.trim()){status.textContent='Select a passage in the article first, then choose Polish selection.';return}
-  if(!bodyText && !p.title){status.textContent='Write a title or some article content first.';return}
-  button.disabled=true;status.textContent=kind==='polish'?'Polishing selected passage…':'Generating suggestion…';
+  const buttons={title:'aiTitle',summary:'aiSummary',polish:'aiPolish',grammar:'aiGrammar',draft:'aiDraft',outline:'aiOutline',seo:'aiSEO',sources:'aiSources'};
+  const button=$(buttons[kind]),status=$('aiStatus'),p=payload();
+  const selectionText=(aiSavedRange?aiSavedRange.toString():'')||window.getSelection()?.toString()||'';
+  const needsSelection=kind==='polish'||kind==='grammar';
+  const bodyText=(needsSelection?selectionText:$('editor').innerText.trim()).slice(0,12000);
+  if(needsSelection&&!selectionText.trim()){status.textContent='Select a passage in the article first, then choose this action.';return}
+  if(!bodyText&&!p.title&&kind!=='draft'&&kind!=='outline'&&kind!=='seo'){status.textContent='Write an article title or some content first.';return}
+  if((kind==='draft'||kind==='outline'||kind==='seo')&&!p.title.trim()&&!bodyText){status.textContent='Enter a working title or a topic in the article first.';return}
+  button.disabled=true;status.textContent='Working…';
+  const prompts={
+    title:'Suggest 5 distinct, compelling and accurate magazine headlines. Return the single strongest headline only. Do not invent facts.',
+    summary:'Write an engaging, accurate 1–2 sentence magazine-card summary. Do not add claims absent from the article.',
+    polish:'Polish the selected passage for clarity, natural flow and readability. Preserve its original language, meaning, tone and factual claims. Return only the revised passage.',
+    grammar:'Correct spelling, grammar and punctuation in the selected passage. Preserve the original language, voice, meaning and factual claims. Return only the corrected passage.',
+    draft:'Write a well-structured first draft for a science and culture magazine based on the supplied title/topic and any existing notes. Use the same language as the title/notes, a clear introduction, informative headings and a conclusion. Do not fabricate citations, quotations, statistics or specific factual claims. Mark uncertain claims for later verification. Return plain text with paragraph breaks and headings.',
+    outline:'Create a useful article outline for this topic, including a working thesis, section headings, key questions and a conclusion. Match the language of the supplied title/content. Do not invent research findings.',
+    seo:'Prepare an SEO pack for this article: one SEO title, one meta description (about 150–160 characters), 5 relevant keywords, and a short suggested URL slug. Base everything on the provided article and clearly avoid unsupported claims.',
+    sources:'Create a fact-checking checklist for this article. Identify specific claims that need verification and suggest credible source types or search queries for each. Do not claim that you verified facts or consulted sources. Label this as a checklist, not a fact-check verdict.'
+  };
   try{
     const token=authUser?await authUser.getIdToken():'';
-    const prompt=kind==='title'?'Suggest 5 compelling, accurate headline options for this article. Return only the single best headline, with no quotation marks.':kind==='summary'?'Write a concise, engaging 1–2 sentence summary for this article suitable for a magazine card. Return only the summary.':'Carefully polish the selected passage for clarity, natural flow, grammar and readability. Preserve its original meaning, tone and factual claims. Return only the revised passage.';
-    const response=await fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify({action:prompt,title:p.title,content:bodyText,section:p.section})});
+    const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),45000);
+    let response;
+    try{
+      response=await fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify({action:prompts[kind],kind,title:p.title,content:bodyText,section:p.section,language:'match-input',maxOutputChars:kind==='draft'?14000:6000}),signal:controller.signal});
+    }finally{clearTimeout(timeout)}
     const data=await response.json().catch(()=>({}));
     if(!response.ok)throw new Error(data.error||data.message||('AI service returned '+response.status));
     const candidate=typeof data==='string'?data:(data.text||data.suggestion||data.title||data.summary||data.result||data.output||data.data?.suggestion||data.data?.title||data.data?.summary||'');
-    if(!candidate)throw new Error('AI service did not return a suggestion. Check the configured AI endpoint response format.');
-    if(kind==='title')$('title').value=String(candidate).replace(/^[\"'“”]+|[\"'“”]+$/g,'').trim();
-    else if(kind==='summary')$('dek').value=String(candidate).trim();
-    else{restoreSelection();document.execCommand('insertText',false,String(candidate).trim());$('editor').focus();pushHistory();updateStats()}
-    scheduleLocalSave();status.textContent=kind==='polish'?'Passage polished — review the wording.':'Suggestion added — review and edit it before publishing.';
-  }catch(err){status.textContent=(err.message||'AI suggestion failed')+' You can still write/edit manually.'}
-  finally{button.disabled=false}
+    if(!String(candidate||'').trim())throw new Error('AI service returned no text. Check the endpoint response format.');
+    const result=String(candidate).trim();
+    if(kind==='title')$('title').value=result.replace(/^[\"'“”]+|[\"'“”]+$/g,'').trim();
+    else if(kind==='summary')$('dek').value=result;
+    else if(kind==='polish'||kind==='grammar'){restoreAISelection();document.execCommand('insertText',false,result);$('editor').focus();pushHistory();updateStats()}
+    else{$('aiResult').value=result;$('aiResultWrap').hidden=false}
+    scheduleLocalSave();
+    status.textContent=kind==='polish'||kind==='grammar'?'Passage updated — review it carefully.':kind==='title'?'Headline suggestion added — review before publishing.':kind==='summary'?'Summary suggestion added — review before publishing.':'AI result ready. Review it before inserting.';
+  }catch(err){
+    status.textContent=(err.name==='AbortError'?'AI request timed out.':(err.message||'AI suggestion failed'))+' You can continue editing manually.';
+  }finally{button.disabled=false}
 }
 $('aiTitle').onclick=()=>requestAISuggestion('title');
-$('aiSummary').onclick=()=>requestAISuggestion('summary');$('aiPolish').onmousedown=saveSelection;$('aiPolish').onclick=()=>requestAISuggestion('polish');
+$('aiSummary').onclick=()=>requestAISuggestion('summary');
+$('aiPolish').onmousedown=rememberAISelection;$('aiPolish').onclick=()=>requestAISuggestion('polish');
+$('aiGrammar').onmousedown=rememberAISelection;$('aiGrammar').onclick=()=>requestAISuggestion('grammar');
+$('aiDraft').onclick=()=>requestAISuggestion('draft');
+$('aiOutline').onclick=()=>requestAISuggestion('outline');
+$('aiSEO').onclick=()=>requestAISuggestion('seo');
+$('aiSources').onclick=()=>requestAISuggestion('sources');
+$('aiInsertResult').onclick=()=>{insertAIText($('aiResult').value);$('aiStatus').textContent='Result inserted. Review the article and save/publish when ready.'};
+$('aiCopyResult').onclick=async()=>{try{await navigator.clipboard.writeText($('aiResult').value);$('aiStatus').textContent='AI result copied.'}catch(e){$('aiResult').focus();$('aiResult').select();$('aiStatus').textContent='Select the result and copy it manually.'}};
+$('aiDismissResult').onclick=()=>{$('aiResultWrap').hidden=true};
+$('editor').addEventListener('mouseup',rememberAISelection);
+$('editor').addEventListener('keyup',rememberAISelection);
 
 function setPreviewDevice(device){
   $('previewModal').dataset.device=device;
