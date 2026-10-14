@@ -185,7 +185,13 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
       <span class="assetLive"><i></i> Cloud</span>
     </div>
     <p class="assetIntro">Choose an image from the magazine library, then use <b>🖼 Image</b> to place it in your article.</p>
-    <div class="assetSearchWrap">\n      <span>⌕</span>\n      <input id="assetSearch" placeholder="Search magazine assets…" aria-label="Search magazine assets">\n    </div>\n    <div class="assetFilters"><select id="assetTypeFilter" aria-label="Filter assets by type"><option value="all">All image types</option><option value="raster">Raster images</option><option value="vector">SVG vectors</option></select><select id="assetSort" aria-label="Sort assets"><option value="name">Name A–Z</option><option value="reverse">Name Z–A</option></select></div>\n    <div class="assetQuickActions"><button id="useAssetAsCover" type="button">Use as cover</button><button id="insertSelectedAsset" type="button" class="primary">Insert selected</button></div>\n    <div class="uploadBox"><strong>＋ Upload new artwork</strong><p>Upload a cover or inline image to the shared magazine repository. Images up to 8 MB.</p><input id="assetFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"><div class="uploadActions"><button class="primary" id="uploadAsset">Upload image</button><button id="refreshAssets">Refresh library</button></div><div class="uploadStatus" id="uploadStatus">Sign in to upload assets.</div></div>
+    <div class="assetSearchWrap">
+      <span>⌕</span>
+      <input id="assetSearch" placeholder="Search magazine assets…" aria-label="Search magazine assets">
+    </div>
+    <div class="assetFilters"><select id="assetTypeFilter" aria-label="Filter assets by type"><option value="all">All image types</option><option value="raster">Raster images</option><option value="vector">SVG vectors</option></select><select id="assetSort" aria-label="Sort assets"><option value="name">Name A–Z</option><option value="reverse">Name Z–A</option></select></div>
+    <div class="assetQuickActions"><button id="useAssetAsCover" type="button">Use as cover</button><button id="insertSelectedAsset" type="button" class="primary">Insert selected</button></div>
+    <div class="uploadBox"><strong>＋ Upload new artwork</strong><p>Upload a cover or inline image to the shared magazine repository. Images up to 8 MB.</p><input id="assetFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"><div class="uploadActions"><button class="primary" id="uploadAsset">Upload image</button><button id="refreshAssets">Refresh library</button></div><div class="uploadStatus" id="uploadStatus">Sign in to upload assets.</div></div>
     <div class="assetMeta"><span>MAGAZINE LIBRARY</span><span id="assetCount">Loading…</span></div>
     <div id="gallery" class="gallery"><div class="assetLoading">Loading media assets…</div></div>
     <div class="assetNote">☁ Images are loaded from the shared magazine library.</div>
@@ -631,8 +637,14 @@ function scheduleCloudSave(){
   cloudTimer=setTimeout(async()=>{
     try{
       if(!authUser)return;
-      const cloudPath=editingSubmissionId?'atomicWeekly/reviewAutosave/'+editingSubmissionId:editingDraftId?'atomicWeekly/draftAutosave/'+editingDraftId:editingPublishedId?'atomicWeekly/articleAutosave/'+editingPublishedId:'atomicWeekly/autosave';
-      await set(ref(db,cloudPath),{...payload(),id:editingDraftId||editingPublishedId||editingSubmissionId||'new',updatedAt:Date.now()});
+      const cloudPath=editingSubmissionId?'atomicWeekly/reviewAutosave/'+editingSubmissionId:editingPublishedId?'atomicWeekly/articleAutosave/'+editingPublishedId:'atomicWeekly/autosave';
+      if(editingDraftId){
+        const draftRef=ref(db,'atomicWeekly/drafts/'+editingDraftId);
+        const existingDraft=(await get(draftRef)).val()||{};
+        await set(draftRef,{...existingDraft,...payload(),id:editingDraftId,status:'draft',createdAt:existingDraft.createdAt||Date.now(),updatedAt:Date.now()});
+      }else{
+        await set(ref(db,cloudPath),{...payload(),id:editingPublishedId||editingSubmissionId||'new',updatedAt:Date.now()});
+      }
       setStatus('Auto-saved to cloud','synced');
     }catch(e){setStatus('Cloud autosave failed','error')}
   },4000);
