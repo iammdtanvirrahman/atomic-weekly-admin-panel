@@ -637,7 +637,7 @@ $('exportHtml').onclick=()=>{
  try{if(sessionStorage.getItem(key)==='1')unlock()}catch(e){}
  form.addEventListener('submit',function(e){e.preventDefault();if(input.value==='20072311'){error.textContent='';unlock()}else{error.textContent='Incorrect password. Try again.';input.value='';input.focus()}});
 })();
-</script>
+<\/script>
 </body></html>`;
   downloadBlob(doc,'article.html','text/html');
 };
