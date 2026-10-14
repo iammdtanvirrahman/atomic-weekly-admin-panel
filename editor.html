@@ -705,10 +705,10 @@ async function requestAISuggestion(kind){
   button.disabled=true;status.textContent='Generating suggestion…';
   try{
     const token=authUser?await authUser.getIdToken():'';
-    const response=await fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify({task:kind==='title'?'title':'summary',action:kind==='title'?'suggest_title':'summarize',title:p.title,content:bodyText,summary:p.dek,section:p.section})});
+    const response=await fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify({action:kind==='title'?'Suggest 5 compelling, accurate headline options for this article. Return only the single best headline, with no quotation marks.':'Write a concise, engaging 1–2 sentence summary for this article suitable for a magazine card. Return only the summary.',title:p.title,content:bodyText,section:p.section})});
     const data=await response.json().catch(()=>({}));
     if(!response.ok)throw new Error(data.error||data.message||('AI service returned '+response.status));
-    const candidate=typeof data==='string'?data:(data.suggestion||data.title||data.summary||data.result||data.text||data.output||data.data?.suggestion||data.data?.title||data.data?.summary||'');
+    const candidate=typeof data==='string'?data:(data.text||data.suggestion||data.title||data.summary||data.result||data.output||data.data?.suggestion||data.data?.title||data.data?.summary||'');
     if(!candidate)throw new Error('AI service did not return a suggestion. Check the configured AI endpoint response format.');
     if(kind==='title')$('title').value=String(candidate).replace(/^["'“”]+|["'“”]+$/g,'').trim();
     else $('dek').value=String(candidate).trim();
