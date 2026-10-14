@@ -69,9 +69,26 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
 .uploadBox strong{display:block;font-size:11px;margin-bottom:5px}.uploadBox p{font-size:10px;line-height:1.55;color:var(--muted);margin:0 0 9px}.uploadBox input[type=file]{width:100%;font-size:10px;color:var(--muted);margin:5px 0 10px}.uploadBox .uploadActions{display:flex;gap:6px;flex-wrap:wrap}.uploadBox button{font-size:10px;padding:8px 10px}.uploadStatus{font-size:10px;color:var(--muted);margin-top:8px;overflow-wrap:anywhere}.uploadStatus.error{color:#ff7881}.uploadStatus.ok{color:#75dfb3}
 .loginShade{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(3,4,7,.92);backdrop-filter:blur(16px)}.loginShade.open{display:flex}.loginCard{width:min(420px,100%);padding:25px;border:1px solid var(--line);border-radius:17px;background:#11151b;box-shadow:0 25px 80px #0009}.loginCard h2{font:800 30px Georgia,serif;margin:6px 0}.loginCard p{font-size:12px;color:var(--muted);line-height:1.7}.loginCard label{display:block;margin:12px 0 6px;font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.1em}.loginCard input{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:#080b10;color:#fff}.loginCard button{margin-top:12px;width:100%}.loginError{min-height:17px;color:#ff7881;font-size:11px;margin-top:8px}
 
+
+/* Temporary shared passcode gate: convenience barrier, not a substitute for server-side auth. */
+.atomic-pass-gate{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(4,5,8,.97);backdrop-filter:blur(22px);color:#f5f6f8;font-family:system-ui,-apple-system,sans-serif}
+.atomic-pass-gate[hidden]{display:none}
+.atomic-pass-card{width:min(390px,100%);padding:28px;border:1px solid #34313a;border-radius:22px;background:linear-gradient(145deg,#17171d,#0d0f14);box-shadow:0 25px 100px #000a}
+.atomic-pass-kicker{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#e94b5b}
+.atomic-pass-card h2{font-family:Georgia,serif;font-size:30px;line-height:1.15;margin:12px 0}
+.atomic-pass-card p{font-size:13px;line-height:1.7;color:#a6a7b2}
+.atomic-pass-card label{display:block;font-size:11px;color:#b4b6c0;margin:18px 0 7px}
+.atomic-pass-card input{display:block;width:100%;padding:13px 14px;border-radius:10px;border:1px solid #343744;background:#090b10;color:#fff;outline:none}
+.atomic-pass-card input:focus{border-color:#e94b5b;box-shadow:0 0 0 3px #e94b5b22}
+.atomic-pass-card button{width:100%;margin-top:12px;padding:13px;border:0;border-radius:10px;background:#e33b4d;color:#fff;font-weight:750;cursor:pointer}
+.atomic-pass-error{min-height:18px;margin-top:8px;font-size:12px;color:#ff7d87}
+body.atomic-pass-locked{overflow:hidden}
+
 </style>
 </head>
-<body>
+<body class="atomic-pass-locked">
+<div class="atomic-pass-gate" id="atomicPassGate"><form class="atomic-pass-card" id="atomicPassForm"><div class="atomic-pass-kicker">Atomic Magazine · Private Area</div><h2>Editorial access.</h2><p>Enter the editorial access password to continue. Firebase sign-in is still required for protected editor actions.</p><label for="atomicPassInput">Access password</label><input id="atomicPassInput" type="password" inputmode="numeric" autocomplete="current-password" required autofocus placeholder="Enter password"><div class="atomic-pass-error" id="atomicPassError" aria-live="polite"></div><button type="submit">Unlock editorial panel ↗</button></form></div>
+
 
 <header class="top">
   <div class="brand">Atomic<span>Admin</span> Studio</div>
@@ -602,7 +619,16 @@ $('publish').onclick=async()=>{
 
 $('exportHtml').onclick=()=>{
   const p=payload();
-  const doc=`<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(p.title)}</title><style>body{max-width:800px;margin:40px auto;padding:20px;font:18px Georgia,serif;line-height:1.8}img{max-width:100%}iframe{width:100%;height:420px;border:0}.youtubeFallback{display:block;padding:10px;background:#161c23;color:#fff;text-align:center}table{width:100%;border-collapse:collapse}td,th{border:1px solid #999;padding:8px}</style></head><body><h1>${escapeHtml(p.title)}</h1><p><em>By ${escapeHtml(p.author)} · ${escapeHtml(p.section)}</em></p><p>${escapeHtml(p.dek)}</p>${p.content}</body></html>`;
+  const doc=`<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(p.title)}</title><style>body{max-width:800px;margin:40px auto;padding:20px;font:18px Georgia,serif;line-height:1.8}img{max-width:100%}iframe{width:100%;height:420px;border:0}.youtubeFallback{display:block;padding:10px;background:#161c23;color:#fff;text-align:center}table{width:100%;border-collapse:collapse}td,th{border:1px solid #999;padding:8px}</style></head><body><h1>${escapeHtml(p.title)}</h1><p><em>By ${escapeHtml(p.author)} · ${escapeHtml(p.section)}</em></p><p>${escapeHtml(p.dek)}</p>${p.content}<script>
+(function(){
+ var gate=document.getElementById('atomicPassGate'),form=document.getElementById('atomicPassForm'),input=document.getElementById('atomicPassInput'),error=document.getElementById('atomicPassError');
+ var key='atomic-editorial-passcode-unlocked-v1';
+ function unlock(){gate.hidden=true;document.body.classList.remove('atomic-pass-locked');try{sessionStorage.setItem(key,'1')}catch(e){}}
+ try{if(sessionStorage.getItem(key)==='1')unlock()}catch(e){}
+ form.addEventListener('submit',function(e){e.preventDefault();if(input.value==='20072311'){error.textContent='';unlock()}else{error.textContent='Incorrect password. Try again.';input.value='';input.focus()}});
+})();
+</script>
+</body></html>`;
   downloadBlob(doc,'article.html','text/html');
 };
 $('exportMd').onclick=()=>{
