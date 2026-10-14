@@ -236,7 +236,7 @@ const $=id=>document.getElementById(id);
 const ASSET_API='https://api.github.com/repos/iammdtanvirrahman/atomic-weekly/contents/assets?ref=main';
 
 let savedRange=null,selectedMedia=null,selectedGalleryUrl='',sourceMode=false;
-let history=[],historyIndex=-1,saveTimer=null,cloudTimer=null,dragState=null,allAssets=[];
+let history=[],historyIndex=-1,historyTimer=null,saveTimer=null,cloudTimer=null,dragState=null,allAssets=[];
 let suppressHistory=false,authUser=null;
 
 function setStatus(msg,status='synced'){
@@ -269,6 +269,7 @@ function cmd(c,v=null){
   scheduleLocalSave();
 }
 function pushHistory(){
+  clearTimeout(historyTimer);historyTimer=null;
   if(sourceMode||suppressHistory)return;
   const html=editorHTML();
   if(history[historyIndex]===html)return;
@@ -278,6 +279,7 @@ function pushHistory(){
   historyIndex=history.length-1;
 }
 function applyHistory(dir){
+  clearTimeout(historyTimer);historyTimer=null;
   if(!history.length)return;
   const next=Math.max(0,Math.min(history.length-1,historyIndex+dir));
   if(next===historyIndex)return;
@@ -475,7 +477,8 @@ $('editor').addEventListener('keydown',e=>{
   }
 });
 $('editor').addEventListener('keyup',()=>{saveSelection();updateStats();scheduleLocalSave()});
-$('editor').addEventListener('input',()=>{saveSelection();updateStats();scheduleLocalSave();pushHistory()});
+function scheduleHistoryPush(){clearTimeout(historyTimer);historyTimer=setTimeout(()=>{historyTimer=null;pushHistory()},320)}
+$('editor').addEventListener('input',()=>{saveSelection();updateStats();scheduleLocalSave();scheduleHistoryPush()});
 $('editor').addEventListener('mouseup',saveSelection);
 $('editor').addEventListener('blur',saveSelection);
 
@@ -927,7 +930,7 @@ function renderAssets(){
   if(!items.length){$('gallery').innerHTML='<div style="color:var(--muted);font-size:11px">No matching assets.</div>';return}
   items.forEach(x=>{
     const d=document.createElement('div');d.className='asset';
-    const img=document.createElement('img');img.src=x.url;img.loading='lazy';img.alt=x.name;
+    const img=document.createElement('img');img.src=x.url;img.loading='lazy';img.decoding='async';img.alt=x.name;
     const span=document.createElement('span');span.textContent=x.name;
     d.append(img,span);
     d.draggable=true;
