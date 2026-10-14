@@ -26,34 +26,23 @@ button{border-radius:9px}button:hover{transform:translateY(-1px)}.quickGrid{disp
 
 .login{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(4,5,8,.93);backdrop-filter:blur(18px)}.login.open{display:flex}.loginBox{width:min(420px,100%);padding:27px;border:1px solid var(--line);border-radius:20px;background:#11131a;box-shadow:0 30px 90px #0008}.loginBox h2{font:600 32px var(--serif);margin:8px 0}.loginBox p{font-size:12px;color:var(--muted)}.loginBox label{display:block;margin:14px 0 6px;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}.loginBox input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#090b10;color:#fff}.loginError{font-size:11px;color:#ff7881;min-height:18px;margin-top:9px}.loginBox .btn{width:100%;margin-top:9px}
 
-/* Temporary shared passcode gate: convenience barrier, not a substitute for server-side auth. */
-.atomic-pass-gate{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(4,5,8,.97);backdrop-filter:blur(22px);color:#f5f6f8;font-family:system-ui,-apple-system,sans-serif}
-.atomic-pass-gate[hidden]{display:none}
-.atomic-pass-card{width:min(390px,100%);padding:28px;border:1px solid #34313a;border-radius:22px;background:linear-gradient(145deg,#17171d,#0d0f14);box-shadow:0 25px 100px #000a}
-.atomic-pass-kicker{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#e94b5b}
-.atomic-pass-card h2{font-family:Georgia,serif;font-size:30px;line-height:1.15;margin:12px 0}
-.atomic-pass-card p{font-size:13px;line-height:1.7;color:#a6a7b2}
-.atomic-pass-card label{display:block;font-size:11px;color:#b4b6c0;margin:18px 0 7px}
-.atomic-pass-card input{display:block;width:100%;padding:13px 14px;border-radius:10px;border:1px solid #343744;background:#090b10;color:#fff;outline:none}
-.atomic-pass-card input:focus{border-color:#e94b5b;box-shadow:0 0 0 3px #e94b5b22}
-.atomic-pass-card button{width:100%;margin-top:12px;padding:13px;border:0;border-radius:10px;background:#e33b4d;color:#fff;font-weight:750;cursor:pointer}
-.atomic-pass-error{min-height:18px;margin-top:8px;font-size:12px;color:#ff7d87}
-body.atomic-pass-locked{overflow:hidden}
 
+.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.sectionTools,.libraryFilters{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.libraryFilters{justify-content:flex-end}.libraryFilters .search{width:auto;min-width:135px}.statePill{display:inline-block;padding:3px 7px;border-radius:5px;font-size:10px;font-weight:800}.statePill.live{background:#15372f;color:#8de0b9}.statePill.off{background:#292f39;color:#b9c1cc}.analyticsPanel{border:1px solid var(--line);background:linear-gradient(145deg,#121720,#0c0e13);padding:18px;border-radius:16px}.analyticsSummary{display:flex;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:12px}.analyticsSummary b{color:var(--text);font-size:18px;margin-right:5px}.trendChart{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px;align-items:end;height:150px;margin-top:18px}.trendCol{display:flex;flex-direction:column;align-items:center;justify-content:end;height:100%;gap:4px}.trendTrack{height:105px;width:min(100%,46px);display:flex;align-items:end;background:#1a2029;border-radius:7px 7px 3px 3px;overflow:hidden}.trendTrack span{display:block;width:100%;background:linear-gradient(180deg,#ff737e,#e63946);border-radius:7px 7px 3px 3px;min-height:2px}.trendCol b{font-size:11px}.trendCol small{font-size:10px;color:var(--muted)}.cardActions{flex-wrap:wrap}.cardActions button{padding:8px 9px}.thumb{background:#141922}.thumb img{width:100%;height:100%;object-fit:cover}.empty{color:var(--muted);padding:22px;border:1px dashed var(--line);border-radius:12px}.login.open{display:flex}.loginBox button{width:100%;margin-top:9px}.loginBox .secondary{background:#27303a}@media(max-width:850px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.sectionHead{align-items:flex-start;flex-direction:column}.libraryFilters{justify-content:flex-start;width:100%}.libraryFilters .search{flex:1;min-width:120px}}@media(max-width:560px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{padding:13px}.stat b{font-size:28px}.sectionTools{width:100%;align-items:flex-start;flex-direction:column}.sectionTools .search{width:100%}.libraryFilters{display:grid;grid-template-columns:1fr 1fr}.libraryFilters #search{grid-column:1/-1}.libraryFilters .search{width:100%;min-width:0}.trendChart{gap:5px}.trendTrack{width:28px}.analyticsPanel{padding:12px}}
 </style>
 </head>
-<body class="atomic-pass-locked">
-<div class="atomic-pass-gate" id="atomicPassGate"><form class="atomic-pass-card" id="atomicPassForm"><div class="atomic-pass-kicker">Atomic Magazine · Private Area</div><h2>Editorial access.</h2><p>Enter the editorial access password to continue. Firebase sign-in is still required for protected editor actions.</p><label for="atomicPassInput">Access password</label><input id="atomicPassInput" type="password" inputmode="numeric" autocomplete="current-password" required autofocus placeholder="Enter password"><div class="atomic-pass-error" id="atomicPassError" aria-live="polite"></div><button type="submit">Unlock editorial panel ↗</button></form></div>
-
+<body>
 <div class="shell">
-<header class="top"><div class="brand">Atomic<span>Admin</span></div><div class="actions"><a class="secondary" href="./editor.html" style="padding:10px 14px;border-radius:10px">Write Article</a></div></header>
+<header class="top"><div><div class="brand">Atomic<span>Admin</span></div><div id="dashboardAuthStatus" class="meta">Checking sign-in…</div></div><div class="actions"><a class="secondary" href="./editor.html" style="padding:10px 14px;border-radius:10px">Write Article</a><button id="signInDashboard" type="button">Sign in</button><button id="signOutDashboard" class="secondary" type="button" hidden>Sign out</button></div></header>
 <section class="hero"><div class="heroCopy"><div class="eyebrow">Editorial control center</div><h1>Publish with control.</h1><p>Normal submissions and rich-text articles use their own workflow. The public magazine only receives published records.</p></div><div class="quick"><a href="#incoming">Incoming</a><a href="#published">Published</a><a href="./editor.html">Open Editor ↗</a></div></section>
-<section class="stats"><div class="stat">Published<b id="publishedCount">0</b></div><div class="stat">Incoming Articles<b id="incomingCount">0</b></div></section>
+<section class="stats"><div class="stat">Published<b id="publishedCount">0</b></div><div class="stat">Incoming<b id="incomingCount">0</b></div><div class="stat">Saved drafts<b id="draftCount">0</b></div><div class="stat">Published · 30 days<b id="published30Count">0</b></div></section>
 <section class="navGrid"><a class="navCard" href="./editor.html"><h2>✎ Article Editor</h2><p>Use the shared Word-style rich-text editor for normal magazine articles.</p></a><a class="navCard" href="#incoming"><h2>↙ Incoming</h2><p>Review reader submissions, edit them and publish when ready.</p></a><a class="navCard" href="#published"><h2>● Published</h2><p>See published content and unpublish items when needed.</p></a></section>
 <section class="quickGrid"><a class="quickCard" href="./editor.html"><span class="eyebrow">01 / WRITE</span><b>Article Studio ↗</b><p>Rich-text editing, cover art, reusable assets, video embeds and preview.</p></a><a class="quickCard" href="./editor.html#assets"><span class="eyebrow">02 / ASSETS</span><b>Editorial Media ↗</b><p>Open the shared asset library and add new artwork to the magazine.</p></a></section>
-<section class="section" id="incoming"><div class="sectionHead"><h2>Incoming Articles</h2><span id="incomingStatus" class="meta"></span></div><div id="incomingList"></div></section>
-<section class="section" id="published"><div class="sectionHead"><h2>Published</h2><input id="search" class="search" placeholder="Search published items..."></div><div id="publishedGrid" class="published"></div></section>
+<section class="section" id="analytics"><div class="sectionHead"><h2>Editorial analytics</h2><span class="meta">Publishing activity · not reader-view counts</span></div><div class="analyticsPanel"><div class="analyticsSummary" id="analyticsSummary">Loading editorial metrics…</div><div class="trendChart" id="trendChart" aria-label="Articles published over the last seven days"></div></div></section>
+<section class="section" id="drafts"><div class="sectionHead"><h2>Cloud Drafts</h2><span id="draftStatus" class="meta"></span></div><div id="draftList" class="published"></div></section>
+<section class="section" id="incoming"><div class="sectionHead"><h2>Incoming Articles</h2><div class="sectionTools"><input id="incomingSearch" class="search" placeholder="Search incoming…"><span id="incomingStatus" class="meta"></span></div></div><div id="incomingList"></div></section>
+<section class="section" id="published"><div class="sectionHead"><h2>Article library</h2><div class="libraryFilters"><input id="search" class="search" placeholder="Search articles…"><select id="statusFilter" class="search" aria-label="Filter by publishing status"><option value="published">Published</option><option value="unpublished">Unpublished</option><option value="all">All articles</option></select><select id="sectionFilter" class="search" aria-label="Filter by category"><option value="">All categories</option><option>Science</option><option>Space</option><option>Technology</option><option>Humanity</option><option>Love</option><option>Life</option><option>Philosophy</option><option>Nature</option><option>Art</option><option>Physics</option><option>Stories</option></select><select id="sortFilter" class="search" aria-label="Sort articles"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="title">Title A–Z</option></select></div></div><div id="publishedGrid" class="published"></div></section>
 </div>
+<div id="loginGate" class="login"><form id="loginForm" class="loginBox"><div class="eyebrow">Admin authentication</div><h2>Sign in to publish.</h2><p>Reading the dashboard is public to this admin URL; changes require an authorised Firebase account.</p><label for="loginEmail">Admin email</label><input id="loginEmail" type="email" autocomplete="username" required placeholder="you@example.com"><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required><div id="loginError" class="loginError" aria-live="polite"></div><button id="loginSubmit" class="btn" type="submit">Sign in ↗</button><button id="loginCancel" class="secondary btn" type="button">Cancel</button></form></div>
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import{getDatabase,ref,onValue,set,remove,get}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
@@ -61,18 +50,134 @@ import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut}from'https:
 const C={apiKey:'AIzaSyCit_SKjXRUpr8FNY1ahKhiG5sdDyOlW6k',authDomain:'atomictanvir.firebaseapp.com',projectId:'atomictanvir',storageBucket:'atomictanvir.firebasestorage.app',messagingSenderId:'140595401471',appId:'1:140595401471:web:8f92115a8c8b58d1ec32ca',databaseURL:'https://atomictanvir-default-rtdb.firebaseio.com'};
 const app=initializeApp(C),db=getDatabase(app),auth=getAuth(app),PUBLIC='https://iammdtanvirrahman.github.io/atomic-weekly/',$=id=>document.getElementById(id);let published={},submissions={},currentUser=null;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const asset=v=>{const s=String(v||'').trim();if(!s)return'';if(/^https?:\/\//i.test(s)||/^data:image\//i.test(s))return s;if(s.startsWith('assets/'))return PUBLIC+s;return PUBLIC+'assets/'+s.replace(/^\.\//,'')};
-function renderPublished(){const q=$('search').value.trim().toLowerCase();const arr=Object.entries(published).filter(([,x])=>x?.status==='published'&&JSON.stringify(x).toLowerCase().includes(q)).sort((a,b)=>(b[1]?.publishedAt||b[1]?.timestamp||0)-(a[1]?.publishedAt||a[1]?.timestamp||0));$('publishedCount').textContent=Object.values(published).filter(x=>x?.status==='published').length;$('publishedGrid').innerHTML=arr.length?arr.map(([id,x])=>{const image=asset(x.image||x.coverImage||x.cover);return`<article class="card"><div class="thumb">${image?`<img src="${esc(image)}" alt="">`:'ARTICLE'}</div><div class="body"><h3>${esc(x.title||'Untitled')}</h3><div class="meta">${esc(x.author||'Atomic Desk')} · ${esc(x.section||'')}<br>${esc(x.date||'')}</div><div class="cardActions"><a class="secondary" href="./editor.html?id=${encodeURIComponent(id)}" style="padding:9px 12px;border-radius:9px">Edit</a><button class="danger" data-unpub="${esc(id)}">Unpublish</button></div></div></article>`}).join(''):'<div class="empty">No published items found.</div>';document.querySelectorAll('[data-unpub]').forEach(b=>b.onclick=async()=>{if(!currentUser){openLogin();return}if(confirm('Unpublish this item?')){try{await set(ref(db,'publishedArticles/'+b.dataset.unpub+'/status'),'unpublished');await set(ref(db,'publishedArticles/'+b.dataset.unpub+'/published'),false)}catch(e){alert('Unpublish failed: '+e.message)}}})}
-function renderIncoming(){const arr=Object.entries(submissions).filter(([,x])=>x?.status!=='published').sort((a,b)=>(b[1]?.timestamp||b[1]?.createdAt||0)-(a[1]?.timestamp||a[1]?.createdAt||0));$('incomingCount').textContent=arr.length;$('incomingStatus').textContent=arr.length?arr.length+' pending':'No pending submissions';$('incomingList').innerHTML=arr.length?arr.map(([id,x])=>`<div class="navCard incomingItem"><h2>${esc(x.title||'Untitled')}</h2><p class="meta">${esc(x.author||'Reader')} · ${esc(x.email||'')}</p><p>${esc((x.text||'').slice(0,260))}</p><div class="cardActions"><a class="secondary" href="./editor.html?id=${encodeURIComponent(id)}" style="padding:9px 12px;border-radius:9px">Edit</a><button class="green" data-pub="${esc(id)}">Publish</button><button class="danger" data-del="${esc(id)}">Delete</button></div></div>`).join(''):'<div class="empty">No pending submissions.</div>';document.querySelectorAll('[data-pub]').forEach(b=>b.onclick=async()=>{if(!currentUser){openLogin();return}const id=b.dataset.pub,x=submissions[id];if(!x)return;if(!confirm('Publish this submission to the magazine?'))return;try{const now=Date.now(),record={...x,id,status:'published',published:true,publishedAt:now,timestamp:now,content:x.content||x.text||''};await set(ref(db,'publishedArticles/'+id),record);const check=await get(ref(db,'publishedArticles/'+id));if(!check.exists()||check.val()?.status!=='published')throw new Error('Publish verification failed');await set(ref(db,'atomicWeekly/latestPublished'),record);await set(ref(db,'submissions/'+id+'/status'),'published');alert('Published successfully.')}catch(e){alert('Publish failed: '+e.message)}});document.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{if(!currentUser){openLogin();return}if(confirm('Delete this submission permanently?'))try{await remove(ref(db,'submissions/'+b.dataset.del))}catch(e){alert('Delete failed: '+e.message)}})}
-$('search').oninput=renderPublished;onValue(ref(db,'publishedArticles'),s=>{published=s.val()||{};renderPublished()});onValue(ref(db,'submissions'),s=>{submissions=s.val()||{};renderIncoming()});
-</script>
-<script>
-(function(){
- var gate=document.getElementById('atomicPassGate'),form=document.getElementById('atomicPassForm'),input=document.getElementById('atomicPassInput'),error=document.getElementById('atomicPassError');
- var key='atomic-editorial-passcode-unlocked-v1';
- function unlock(){gate.hidden=true;document.body.classList.remove('atomic-pass-locked');try{sessionStorage.setItem(key,'1')}catch(e){}}
- try{if(sessionStorage.getItem(key)==='1')unlock()}catch(e){}
- form.addEventListener('submit',function(e){e.preventDefault();if(input.value==='20072311'){error.textContent='';unlock()}else{error.textContent='Incorrect password. Try again.';input.value='';input.focus()}});
-})();
+
+function isPublished(x){return !!x&&(x.status==='published'||(x.published===true&&x.status!=='unpublished'))}
+function articleDate(x){return Number(x?.publishedAt||x?.updatedAt||x?.timestamp||x?.createdAt||0)}
+function renderAnalytics(){
+  const all=Object.values(published||{}).filter(Boolean);
+  const live=all.filter(isPublished);
+  const now=Date.now(),month=live.filter(x=>articleDate(x)>=now-30*86400000);
+  const cats=new Set(live.map(x=>String(x.section||'Uncategorized')));
+  $('publishedCount').textContent=live.length;
+  $('incomingCount').textContent=Object.values(submissions||{}).filter(x=>x&&x.status!=='published').length;
+  $('draftCount').textContent=Object.keys(drafts||{}).length;
+  $('published30Count').textContent=month.length;
+  $('analyticsSummary').innerHTML='<span><b>'+cats.size+'</b> categories in use</span><span><b>'+live.filter(x=>articleDate(x)>=now-7*86400000).length+'</b> published this week</span><span><b>'+Object.values(submissions||{}).filter(x=>x&&x.status!=='published').length+'</b> items awaiting review</span>';
+  const labels=['6d','5d','4d','3d','2d','1d','Today'];
+  const bins=labels.map((label,i)=>{const start=new Date();start.setHours(0,0,0,0);start.setDate(start.getDate()-(6-i));const end=new Date(start);end.setDate(end.getDate()+1);return {label,count:live.filter(x=>{const t=articleDate(x);return t>=start.getTime()&&t<end.getTime()}).length}});
+  const max=Math.max(1,...bins.map(x=>x.count));
+  $('trendChart').innerHTML=bins.map(x=>'<div class="trendCol" title="'+x.count+' published"><div class="trendTrack"><span style="height:'+Math.max(x.count?8:2,Math.round(x.count/max*100))+'%"></span></div><b>'+x.count+'</b><small>'+x.label+'</small></div>').join('');
+}
+function renderPublished(){
+  const q=$('search').value.trim().toLowerCase();
+  const status=$('statusFilter').value,section=$('sectionFilter').value;
+  const sort=$('sortFilter').value;
+  let arr=Object.entries(published||{}).filter(([,x])=>{
+    if(!x)return false;
+    const live=isPublished(x);
+    if(status==='published'&&!live)return false;
+    if(status==='unpublished'&&live)return false;
+    if(section&&String(x.section||'')!==section)return false;
+    return JSON.stringify(x).toLowerCase().includes(q);
+  });
+  arr.sort((a,b)=>sort==='title'?String(a[1].title||'').localeCompare(String(b[1].title||'')):sort==='oldest'?articleDate(a[1])-articleDate(b[1]):articleDate(b[1])-articleDate(a[1]));
+  $('publishedGrid').innerHTML=arr.length?arr.map(([id,x])=>{
+    const image=asset(x.image||x.coverImage||x.cover),live=isPublished(x);
+    return '<article class="card"><div class="thumb">'+(image?'<img loading="lazy" src="'+esc(image)+'" alt="">':'ARTICLE')+'</div><div class="body"><h3>'+esc(x.title||'Untitled')+'</h3><div class="meta">'+esc(x.author||'Atomic Desk')+' · '+esc(x.section||'Uncategorised')+'<br><span class="statePill '+(live?'live':'off')+'">'+(live?'Published':'Unpublished')+'</span> · '+esc(x.publishedAt?new Date(x.publishedAt).toLocaleDateString():x.date||'No publish date')+'</div><div class="cardActions"><a class="secondary" href="./editor.html?id='+encodeURIComponent(id)+'" style="padding:9px 12px;border-radius:9px">Edit</a><button data-duplicate="'+esc(id)+'">Duplicate</button><button class="'+(live?'secondary':'green')+'" data-toggle-publish="'+esc(id)+'">'+(live?'Unpublish':'Republish')+'</button><button class="danger" data-delete-article="'+esc(id)+'">Delete</button></div></div></article>';
+  }).join(''):'<div class="empty">No articles match these filters.</div>';
+  document.querySelectorAll('[data-duplicate]').forEach(b=>b.onclick=async()=>{
+    if(!currentUser){openLogin();return}
+    const id=b.dataset.duplicate,x=published[id];if(!x)return;
+    const copyId=String(Date.now());
+    const copy={...x,id:copyId,title:(x.title||'Untitled')+' — Copy',status:'draft',published:false,createdAt:Date.now(),updatedAt:Date.now(),duplicateOf:id};
+    try{await set(ref(db,'atomicWeekly/drafts/'+copyId),copy);location.href='./editor.html?draftId='+encodeURIComponent(copyId)}
+    catch(e){alert('Could not create draft copy: '+e.message)}
+  });
+  document.querySelectorAll('[data-toggle-publish]').forEach(b=>b.onclick=async()=>{
+    if(!currentUser){openLogin();return}
+    const id=b.dataset.togglePublish,x=published[id];if(!x)return;
+    const live=isPublished(x),message=live?'Unpublish this article? It will remain in the library.':'Republish this article to the magazine?';
+    if(!confirm(message))return;
+    try{
+      await set(ref(db,'publishedArticles/'+id+'/status'),live?'unpublished':'published');
+      await set(ref(db,'publishedArticles/'+id+'/published'),!live);
+      if(!live)await set(ref(db,'publishedArticles/'+id+'/publishedAt'),Date.now());
+      const remaining=Object.entries(published||{}).filter(([key,row])=>key!==id&&isPublished(row)).sort((a,b)=>articleDate(b[1])-articleDate(a[1]));
+      const latest=remaining[0];
+      if(live && (await get(ref(db,'atomicWeekly/latestPublished'))).val()?.id===id){if(latest)await set(ref(db,'atomicWeekly/latestPublished'),latest[1]);else await remove(ref(db,'atomicWeekly/latestPublished'))}
+      if(!live)await set(ref(db,'atomicWeekly/latestPublished'),{...x,status:'published',published:true,publishedAt:Date.now(),timestamp:Date.now(),id});
+    }catch(e){alert('Status update failed: '+e.message)}
+  });
+  document.querySelectorAll('[data-delete-article]').forEach(b=>b.onclick=async()=>{
+    if(!currentUser){openLogin();return}
+    const id=b.dataset.deleteArticle;if(!confirm('Permanently delete this article? This cannot be undone.'))return;
+    try{
+      const latest=(await get(ref(db,'atomicWeekly/latestPublished'))).val();
+      await remove(ref(db,'publishedArticles/'+id));
+      if(String(latest?.id||'')===String(id)){
+        const next=Object.entries(published||{}).filter(([key,row])=>key!==id&&isPublished(row)).sort((a,b)=>articleDate(b[1])-articleDate(a[1]))[0];
+        if(next)await set(ref(db,'atomicWeekly/latestPublished'),next[1]);else await remove(ref(db,'atomicWeekly/latestPublished'));
+      }
+    }catch(e){alert('Delete failed: '+e.message)}
+  });
+  renderAnalytics();
+}
+function renderDrafts(){
+  const q=$('search').value.trim().toLowerCase();
+  const arr=Object.entries(drafts||{}).filter(([,x])=>x&&JSON.stringify(x).toLowerCase().includes(q)).sort((a,b)=>articleDate(b[1])-articleDate(a[1]));
+  $('draftStatus').textContent=arr.length?arr.length+' saved':'No saved drafts';
+  $('draftList').innerHTML=arr.length?arr.map(([id,x])=>'<article class="card"><div class="body"><div class="eyebrow">CLOUD DRAFT</div><h3>'+esc(x.title||'Untitled draft')+'</h3><div class="meta">'+esc(x.author||'Atomic Desk')+' · '+esc(x.section||'Uncategorised')+'<br>Updated '+esc(x.updatedAt?new Date(x.updatedAt).toLocaleString():'recently')+'</div><div class="cardActions"><a class="secondary" href="./editor.html?draftId='+encodeURIComponent(id)+'" style="padding:9px 12px;border-radius:9px">Continue editing</a><button class="danger" data-delete-draft="'+esc(id)+'">Delete</button></div></div></article>').join(''):'<div class="empty">Saved cloud drafts will appear here.</div>';
+  document.querySelectorAll('[data-delete-draft]').forEach(b=>b.onclick=async()=>{
+    if(!currentUser){openLogin();return}
+    if(!confirm('Delete this saved draft?'))return;
+    try{await remove(ref(db,'atomicWeekly/drafts/'+b.dataset.deleteDraft))}catch(e){alert('Draft delete failed: '+e.message)}
+  });
+  renderAnalytics();
+}
+function renderIncoming(){
+  const q=$('incomingSearch').value.trim().toLowerCase();
+  const arr=Object.entries(submissions||{}).filter(([,x])=>x&&x.status!=='published'&&JSON.stringify(x).toLowerCase().includes(q)).sort((a,b)=>(b[1]?.timestamp||b[1]?.createdAt||0)-(a[1]?.timestamp||a[1]?.createdAt||0));
+  $('incomingCount').textContent=Object.values(submissions||{}).filter(x=>x&&x.status!=='published').length;
+  $('incomingStatus').textContent=arr.length?arr.length+' pending':'No pending submissions';
+  $('incomingList').innerHTML=arr.length?arr.map(([id,x])=>'<div class="navCard incomingItem"><h2>'+esc(x.title||'Untitled')+'</h2><p class="meta">'+esc(x.author||'Reader')+' · '+esc(x.email||'')+' · '+esc(x.status==='review'?'In review':'Needs review')+'</p><p>'+esc((x.text||x.content||'').replace(/<[^>]*>/g,' ').slice(0,260))+'</p><div class="cardActions"><a class="secondary" href="./editor.html?id='+encodeURIComponent(id)+'" style="padding:9px 12px;border-radius:9px">Review / edit</a><button class="secondary" data-review="'+esc(id)+'">Mark in review</button><button class="green" data-pub="'+esc(id)+'">Publish</button><button class="danger" data-del="'+esc(id)+'">Delete</button></div></div>').join(''):'<div class="empty">No pending submissions.</div>';
+  document.querySelectorAll('[data-review]').forEach(b=>b.onclick=async()=>{if(!currentUser){openLogin();return}try{await set(ref(db,'submissions/'+b.dataset.review+'/status'),'review')}catch(e){alert('Could not update status: '+e.message)}});
+  document.querySelectorAll('[data-pub]').forEach(b=>b.onclick=async()=>{
+    if(!currentUser){openLogin();return}
+    const id=b.dataset.pub,x=submissions[id];if(!x)return;
+    if(!confirm('Publish this submission to the magazine?'))return;
+    try{
+      const now=Date.now(),record={...x,id,status:'published',published:true,publishedAt:now,timestamp:now,content:x.content||x.text||''};
+      await set(ref(db,'publishedArticles/'+id),record);
+      const check=await get(ref(db,'publishedArticles/'+id));
+      if(!check.exists()||check.val()?.status!=='published')throw new Error('Publish verification failed');
+      await set(ref(db,'atomicWeekly/latestPublished'),record);
+      await set(ref(db,'submissions/'+id+'/status'),'published');
+    }catch(e){alert('Publish failed: '+e.message)}
+  });
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{if(!currentUser){openLogin();return}if(confirm('Delete this submission permanently?'))try{await remove(ref(db,'submissions/'+b.dataset.del))}catch(e){alert('Delete failed: '+e.message)}});
+  renderAnalytics();
+}
+$('search').oninput=()=>{renderPublished();renderDrafts()};
+$('statusFilter').onchange=renderPublished;$('sectionFilter').onchange=renderPublished;$('sortFilter').onchange=renderPublished;
+$('incomingSearch').oninput=renderIncoming;
+onValue(ref(db,'publishedArticles'),s=>{published=s.val()||{};renderPublished();renderAnalytics()});
+onValue(ref(db,'submissions'),s=>{submissions=s.val()||{};renderIncoming();renderAnalytics()});
+onValue(ref(db,'atomicWeekly/drafts'),s=>{drafts=s.val()||{};renderDrafts();renderAnalytics()});
+function openLogin(){$('loginGate').classList.add('open');$('loginEmail').focus()}
+$('signInDashboard').onclick=openLogin;
+$('loginCancel').onclick=()=>$('loginGate').classList.remove('open');
+$('loginForm').onsubmit=async e=>{
+  e.preventDefault();$('loginError').textContent='';$('loginSubmit').disabled=true;
+  try{await signInWithEmailAndPassword(auth,$('loginEmail').value.trim(),$('loginPassword').value)}
+  catch(e){$('loginError').textContent=e.code==='auth/invalid-credential'?'Email or password is incorrect.':(e.message||'Sign in failed')}
+  finally{$('loginSubmit').disabled=false}
+};
+$('signOutDashboard').onclick=async()=>{await signOut(auth)};
+onAuthStateChanged(auth,user=>{
+  currentUser=user||null;$('signInDashboard').hidden=!!user;$('signOutDashboard').hidden=!user;
+  $('dashboardAuthStatus').textContent=user?'Signed in as '+(user.email||'admin'):'Sign in required for publishing and cloud changes';
+  document.body.classList.toggle('dashboardSignedIn',!!user);
+});
 </script>
 </body>
 </html>
