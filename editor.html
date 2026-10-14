@@ -109,6 +109,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
   .gallery{max-height:44vh}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+ .googleLogin{display:flex;align-items:center;justify-content:center;gap:12px;background:#fff!important;color:#202124!important;border:1px solid #dadce0!important;font-weight:700}.googleLogin:hover{background:#f7f8fa!important}.googleMark{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:conic-gradient(from -45deg,#4285f4 0 25%,#34a853 25% 50%,#fbbc05 50% 75%,#ea4335 75%);color:#fff;font:bold 14px Arial;box-shadow:inset 0 0 0 3px #fff}
 </style>
 </head>
 <body>
@@ -198,7 +199,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
   </aside>
 </div>
 
-<div id="authGate" class="loginShade"><form class="loginCard" id="authForm"><div class="sectionTitle">Editorial access</div><h2>Sign in to Atomic.</h2><p>Use your authorised Firebase admin account to save drafts, publish articles and upload artwork.</p><label for="authEmail">Admin email</label><input id="authEmail" type="email" autocomplete="username" required placeholder="you@example.com"><label for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="current-password" required placeholder="Password"><div class="loginError" id="authError" aria-live="polite"></div><button class="primary" id="authSubmit" type="submit">Sign in ↗</button><button type="button" class="ghost" id="authCancel">Continue editing offline</button></form></div>
+<div id="authGate" class="loginShade"><div class="loginCard"><div class="sectionTitle">Editorial access</div><h2>Sign in to Atomic.</h2><p>Use your authorised Google account to save drafts, publish articles and upload artwork.</p><div class="loginError" id="authError" aria-live="polite"></div><button class="primary googleLogin" id="googleAuth" type="button"><span class="googleMark" aria-hidden="true">G</span> Continue with Google</button><button type="button" class="ghost" id="authCancel">Continue editing offline</button></div></div>
 <div id="tableModal" class="modal">
   <div class="modalBox" style="width:360px"><h3>Create Table</h3>
     <p class="tableBuilderHint">Choose how many rows and columns you need.</p>
@@ -220,7 +221,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, set, get, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 const cfg={
   apiKey:'AIzaSyCit_SKjXRUpr8FNY1ahKhiG5sdDyOlW6k',
@@ -812,14 +813,20 @@ onAuthStateChanged(auth,user=>{
   if(user){$('authGate').classList.remove('open');setStatus('Admin signed in ✓','synced');recoverCloudDraft()}
   else setStatus('Offline editing · sign in to publish','error');
 });
-$('signInOpen').onclick=()=>{$('authGate').classList.add('open');$('authEmail').focus()};
+const googleProvider=new GoogleAuthProvider();googleProvider.setCustomParameters({prompt:'select_account'});
+$('signInOpen').onclick=()=>{$('authGate').classList.add('open')};
 $('authCancel').onclick=()=>{$('authGate').classList.remove('open')};
-$('authForm').onsubmit=async ev=>{
-  ev.preventDefault();$('authError').textContent='';$('authSubmit').disabled=true;$('authSubmit').textContent='Signing in…';
-  try{await signInWithEmailAndPassword(auth,$('authEmail').value.trim(),$('authPassword').value)}
-  catch(err){$('authError').textContent=err.code==='auth/invalid-credential'?'Email or password is incorrect.':(err.message||'Sign in failed.')}
-  finally{$('authSubmit').disabled=false;$('authSubmit').textContent='Sign in ↗'}
+$('googleAuth').onclick=async()=>{
+  const btn=$('googleAuth');$('authError').textContent='';btn.disabled=true;btn.textContent='Connecting to Google…';
+  try{await signInWithPopup(auth,googleProvider)}
+  catch(err){
+    if(['auth/popup-blocked','auth/cancelled-popup-request','auth/operation-not-supported-in-this-environment'].includes(err.code)){
+      try{await signInWithRedirect(auth,googleProvider);return}catch(redirectErr){err=redirectErr}
+    }
+    $('authError').textContent=err.code==='auth/unauthorized-domain'?'This website domain is not authorised in Firebase Authentication.':(err.message||'Google sign-in failed.');
+  }finally{btn.disabled=false;btn.innerHTML='<span class="googleMark" aria-hidden="true">G</span> Continue with Google'}
 };
+getRedirectResult(auth).catch(err=>{if(err)$('authError').textContent=err.message||'Google sign-in failed.'});
 $('signOutEditor').onclick=async()=>{await signOut(auth);$('authGate').classList.add('open')};
 $('uploadAsset').onclick=uploadAsset;
 $('refreshAssets').onclick=loadAssets;
