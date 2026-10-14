@@ -79,6 +79,36 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
 #aiStatus{min-height:15px;margin-top:8px;font-size:10px;color:var(--muted);line-height:1.5}
 @media(max-width:620px){.aiActions{grid-template-columns:1fr}.aiTools{padding:11px}}
 
+
+.articlePage img{max-width:100%;height:auto}
+.mobileOnly,.mobileDrawerHead{display:none}
+.mobileDrawerHead{align-items:center;justify-content:space-between;gap:12px;padding:0 0 14px;margin-bottom:12px;border-bottom:1px solid var(--line)}
+.mobileDrawerHead b{font:800 15px Georgia,serif}
+.mobileDrawerHead button{padding:6px 9px}
+.assetFilters,.assetQuickActions{display:flex;gap:7px;margin-top:9px}
+.assetFilters select{flex:1;min-width:0;background:#0b0f14;border:1px solid var(--line);border-radius:7px;color:#fff;padding:8px;font-size:11px}
+.assetQuickActions button{flex:1;font-size:10px;padding:8px 6px}
+.previewDevices{display:flex;gap:5px;margin-left:auto}
+.previewDevices button{padding:7px 9px;font-size:10px;border:1px solid var(--line)}
+.previewDevices button.active{background:var(--red)!important}
+#previewModal[data-device="tablet"] .previewArticle{max-width:768px;margin:0 auto}
+#previewModal[data-device="mobile"] .previewArticle{max-width:390px;margin:0 auto;min-height:70vh;padding:28px 20px;box-shadow:0 0 0 1px #c9cdd3}
+@media(max-width:768px){
+  .top{gap:8px;padding:10px 12px}.top .actions{width:100%;gap:5px}.top .actions button{font-size:10px;padding:8px 9px}.brand{font-size:19px}
+  .mobileOnly{display:inline-flex!important}
+  .mobileDrawerHead{display:flex}
+  .layout{display:block}
+  .left,.right{display:none}
+  body.mobileMetaOpen .left{display:block!important;position:fixed;inset:0 auto 0 0;width:min(88vw,370px);z-index:400;padding:18px 16px 90px;box-shadow:20px 0 70px #000b;overflow-y:auto}
+  body.mobileAssetsOpen .right{display:block!important;position:fixed;inset:0 0 0 auto;width:min(88vw,370px);z-index:400;padding:18px 16px 90px;box-shadow:-20px 0 70px #000b;overflow-y:auto}
+  body.mobileMetaOpen:before,body.mobileAssetsOpen:before{content:"";position:fixed;inset:0;background:#0009;z-index:390}
+  .workspace{padding:20px 8px 70px}.paper{width:100%;min-height:calc(100vh - 180px)}.articlePage{padding:24px 18px;font-size:17px;min-height:700px}.articlePage h1{font-size:34px}
+  .toolbar,.subbar{gap:5px;padding:6px}.toolbar button,.subbar button{flex:0 0 auto;padding:7px 9px;font-size:11px}
+  .previewHeader{padding:12px;flex-wrap:wrap}.previewHeader>div:first-child{flex:1}.previewDevices{order:3;flex:1;width:100%;margin:0}.previewDevices button{flex:1}
+  .previewBox .previewArticle{padding:24px 18px;max-height:calc(90vh - 132px)}
+  .gallery{max-height:44vh}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
@@ -92,7 +122,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
     <button id="togglePaperTheme">🌓 Dark/Light</button>
     <button id="undo" title="Undo">↶</button>
     <button id="redo" title="Redo">↷</button>
-    <button id="focus">🧘 Focus</button>
+    <button id="mobileMetaToggle" class="mobileOnly" type="button">☰ Metadata</button><button id="mobileAssetsToggle" class="mobileOnly" type="button">▦ Assets</button><button id="focus">🧘 Focus</button>
     <button id="preview">👁 Preview</button>
     <button id="saveDraft">💾 Draft</button>
     <button id="signInOpen" class="authBtn">🔐 Sign in</button>
@@ -125,13 +155,13 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
 </div>
 
 <div class="layout">
-  <aside class="left">
+  <aside class="left"><div class="mobileDrawerHead"><b>Article metadata</b><button id="closeMobileMeta" type="button" aria-label="Close metadata">✕</button></div>
     <div class="sectionTitle">Metadata</div>
     <div class="field"><label>Article Title</label><input id="title" placeholder="Enter article title..."></div>
     <div class="field"><label>Author</label><input id="author" value="Atomic Desk"></div>
-    <div class="field"><label>Category / Section</label><select id="section"><option>Science</option><option>Space</option><option>Technology</option><option>Humanity</option><option>Love</option><option>Life</option><option>Philosophy</option><option>Nature</option><option>Art</option><option>Physics</option></select></div>
+    <div class="field"><label>Category / Section</label><select id="section"><option>Science</option><option>Space</option><option>Technology</option><option>Humanity</option><option>Love</option><option>Life</option><option>Philosophy</option><option>Nature</option><option>Art</option><option>Physics</option><option>Stories</option></select></div>
     <div class="field"><label>Short Deck / Excerpt</label><textarea id="dek" placeholder="Brief summary for preview cards..."></textarea></div>
-    <div class="aiTools"><div class="aiToolsTitle">AI Editorial Assistant</div><p>Suggest a stronger headline and a concise article summary.</p><div class="aiActions"><button type="button" id="aiTitle">✦ Suggest title</button><button type="button" id="aiSummary">✦ Suggest summary</button></div><div id="aiStatus" role="status" aria-live="polite"></div></div>
+    <div class="aiTools"><div class="aiToolsTitle">AI Editorial Assistant</div><p>Suggest a stronger headline and a concise article summary.</p><div class="aiActions"><button type="button" id="aiTitle">✦ Suggest title</button><button type="button" id="aiSummary">✦ Suggest summary</button><button type="button" id="aiPolish">✦ Polish selection</button></div><div id="aiStatus" role="status" aria-live="polite"></div></div>
     <div class="field"><label>Cover Asset Path / URL</label><input id="cover" placeholder="e.g. assets/cover.jpg or image URL"><img id="coverPreview" style="width:100%;height:100px;object-fit:cover;margin-top:6px;border-radius:6px;display:none"></div>
     <div class="sectionTitle">Content Pages</div>
     <div id="contentPages" class="contentPages"></div>
@@ -146,7 +176,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
     </div>
   </main>
 
-  <aside class="right assetPanel">
+  <aside class="right assetPanel"><div class="mobileDrawerHead"><b>Editorial media</b><button id="closeMobileAssets" type="button" aria-label="Close media library">✕</button></div>
     <div class="assetHeader">
       <div>
         <div class="sectionTitle">Asset Manager</div>
@@ -155,11 +185,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
       <span class="assetLive"><i></i> Cloud</span>
     </div>
     <p class="assetIntro">Choose an image from the magazine library, then use <b>🖼 Image</b> to place it in your article.</p>
-    <div class="assetSearchWrap">
-      <span>⌕</span>
-      <input id="assetSearch" placeholder="Search magazine assets…" aria-label="Search magazine assets">
-    </div>
-    <div class="uploadBox"><strong>＋ Upload new artwork</strong><p>Upload a cover or inline image to the shared magazine repository. Images up to 8 MB.</p><input id="assetFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"><div class="uploadActions"><button class="primary" id="uploadAsset">Upload image</button><button id="refreshAssets">Refresh library</button></div><div class="uploadStatus" id="uploadStatus">Sign in to upload assets.</div></div>
+    <div class="assetSearchWrap">\n      <span>⌕</span>\n      <input id="assetSearch" placeholder="Search magazine assets…" aria-label="Search magazine assets">\n    </div>\n    <div class="assetFilters"><select id="assetTypeFilter" aria-label="Filter assets by type"><option value="all">All image types</option><option value="raster">Raster images</option><option value="vector">SVG vectors</option></select><select id="assetSort" aria-label="Sort assets"><option value="name">Name A–Z</option><option value="reverse">Name Z–A</option></select></div>\n    <div class="assetQuickActions"><button id="useAssetAsCover" type="button">Use as cover</button><button id="insertSelectedAsset" type="button" class="primary">Insert selected</button></div>\n    <div class="uploadBox"><strong>＋ Upload new artwork</strong><p>Upload a cover or inline image to the shared magazine repository. Images up to 8 MB.</p><input id="assetFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"><div class="uploadActions"><button class="primary" id="uploadAsset">Upload image</button><button id="refreshAssets">Refresh library</button></div><div class="uploadStatus" id="uploadStatus">Sign in to upload assets.</div></div>
     <div class="assetMeta"><span>MAGAZINE LIBRARY</span><span id="assetCount">Loading…</span></div>
     <div id="gallery" class="gallery"><div class="assetLoading">Loading media assets…</div></div>
     <div class="assetNote">☁ Images are loaded from the shared magazine library.</div>
@@ -180,14 +206,14 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
 
 <div id="previewModal" class="modal">
   <div class="modalBox previewBox" role="dialog" aria-modal="true" aria-labelledby="previewTitle">
-    <div class="previewHeader"><div><div class="sectionTitle">Reader View</div><h3 id="previewTitle">Article Preview</h3></div><button id="closePreview" class="ghost" aria-label="Close preview">✕</button></div>
+    <div class="previewHeader"><div><div class="sectionTitle">Reader View</div><h3 id="previewTitle">Article Preview</h3></div><div class="previewDevices" role="group" aria-label="Preview device size"><button id="previewDesktop" type="button" class="active">Desktop</button><button id="previewTablet" type="button">Tablet</button><button id="previewMobile" type="button">Mobile</button></div><button id="closePreview" class="ghost" aria-label="Close preview">✕</button></div>
     <div id="previewContent" class="previewArticle"></div>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, set, get } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getDatabase, ref, set, get, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 const cfg={
@@ -491,11 +517,27 @@ $('pageBreak').onclick=()=>insertHtml('<div class="page-break"></div>');
 
 $('clear').onclick=()=>cmd('removeFormat');
 
-const editId=new URLSearchParams(location.search).get('id');
+const queryParams=new URLSearchParams(location.search);
+const editId=queryParams.get('id');
+const draftId=queryParams.get('draftId');
 let editingPublishedId=editId||null;
+let editingDraftId=draftId||null;
 let editingSubmissionId=null;
 let editingSource='publishedArticles';
 async function loadPublishedArticleForEdit(){
+  // Cloud drafts open in-place so subsequent saves update the same record.
+  if(draftId){
+    try{
+      const draftSnap=await get(ref(db,'atomicWeekly/drafts/'+draftId));
+      if(!draftSnap.exists()){setStatus('Cloud draft not found','error');alert('This cloud draft could not be found.');return false}
+      const article=draftSnap.val()||{};editingDraftId=draftId;editingPublishedId=null;editingSubmissionId=null;editingSource='atomicWeekly/drafts';
+      $('title').value=article.title||'';$('author').value=article.author||'Atomic Desk';
+      if(article.section&&[...$('section').options].some(o=>o.value===article.section))$('section').value=article.section;
+      $('dek').value=article.dek||'';$('cover').value=article.cover||article.coverImage||article.image||'';
+      $('editor').innerHTML=typeof article.content==='string'?article.content:'<p></p>';
+      updateCoverPreview();updateStats();pushHistory();setStatus('Editing cloud draft','synced');document.title='Atomic Admin — Cloud Draft';return true;
+    }catch(e){setStatus('Draft load failed','error');console.error(e);return false}
+  }
   // Incoming submissions use the same editor, but remain unpublished until Admin presses Publish.
   if(editId){
     try{
@@ -569,8 +611,14 @@ function payload(){
     updatedAt:Date.now()
   };
 }
+function localDraftKey(){
+  if(editingSubmissionId)return 'atomic_article_draft_submission_'+editingSubmissionId;
+  if(editingDraftId)return 'atomic_article_draft_cloud_'+editingDraftId;
+  if(editingPublishedId)return 'atomic_article_draft_article_'+editingPublishedId;
+  return 'atomic_article_draft_new';
+}
 function saveLocalNow(){
-  try{localStorage.setItem('atomic_article_draft',JSON.stringify(payload()));setStatus('Draft saved locally','synced')}
+  try{const data=JSON.stringify(payload());localStorage.setItem(localDraftKey(),data);if(!editingSubmissionId&&!editingPublishedId&&!editingDraftId)localStorage.setItem('atomic_article_draft',data);setStatus('Draft saved locally','synced')}
   catch(e){setStatus('Local save failed','error')}
 }
 function scheduleLocalSave(){
@@ -583,7 +631,8 @@ function scheduleCloudSave(){
   cloudTimer=setTimeout(async()=>{
     try{
       if(!authUser)return;
-      await set(ref(db,'atomicWeekly/autosave'),payload());
+      const cloudPath=editingSubmissionId?'atomicWeekly/reviewAutosave/'+editingSubmissionId:editingDraftId?'atomicWeekly/draftAutosave/'+editingDraftId:editingPublishedId?'atomicWeekly/articleAutosave/'+editingPublishedId:'atomicWeekly/autosave';
+      await set(ref(db,cloudPath),{...payload(),id:editingDraftId||editingPublishedId||editingSubmissionId||'new',updatedAt:Date.now()});
       setStatus('Auto-saved to cloud','synced');
     }catch(e){setStatus('Cloud autosave failed','error')}
   },4000);
@@ -592,7 +641,10 @@ $('saveDraft').onclick=async()=>{
   if(!authUser){$('authGate').classList.add('open');setStatus('Sign in to save cloud drafts','error');return}
   saveLocalNow();
   try{
-    await set(ref(db,'atomicWeekly/drafts/'+Date.now()),payload());
+    const draftKey=editingDraftId||String(Date.now());
+    const existingDraft=editingDraftId?(await get(ref(db,'atomicWeekly/drafts/'+editingDraftId))).val()||{}:{};
+    await set(ref(db,'atomicWeekly/drafts/'+draftKey),{...existingDraft,...payload(),id:draftKey,status:'draft',createdAt:existingDraft.createdAt||Date.now(),updatedAt:Date.now()});
+    editingDraftId=draftKey;editingPublishedId=null;editingSubmissionId=null;
     setStatus('Saved to Cloud','synced');
   }catch(e){setStatus('Cloud save failed','error');console.error(e)}
 };
@@ -605,7 +657,7 @@ $('publish').onclick=async()=>{
     setStatus(editingSubmissionId?'Publishing reviewed submission…':editingPublishedId?'Updating published article…':'Publishing…','error');
     const id=editingPublishedId||String(Date.now());
     const existing=editingPublishedId?(await get(ref(db,'publishedArticles/'+editingPublishedId))).val()||{}:{};
-    const sourceRecord=editingSubmissionId?(await get(ref(db,'submissions/'+editingSubmissionId))).val()||{}:existing;
+    const sourceRecord=editingSubmissionId?(await get(ref(db,'submissions/'+editingSubmissionId))).val()||{}:editingDraftId?(await get(ref(db,'atomicWeekly/drafts/'+editingDraftId))).val()||{}:existing;
     const publishedRecord={...sourceRecord,...p,status:'published',published:true,publishedAt:existing.publishedAt||Date.now(),timestamp:Date.now(),id,type:sourceRecord.type||'article'};
     await set(ref(db,'publishedArticles/'+id),publishedRecord);
     const verify=await get(ref(db,'publishedArticles/'+id));
@@ -616,6 +668,7 @@ $('publish').onclick=async()=>{
     if(editingSubmissionId){
       await set(ref(db,'submissions/'+editingSubmissionId),{...sourceRecord,...p,status:'published',published:true,publishedAt:publishedRecord.publishedAt,timestamp:Date.now(),id});
     }
+    if(editingDraftId){await remove(ref(db,'atomicWeekly/drafts/'+editingDraftId));editingDraftId=null;}
     saveLocalNow();
     setStatus(editingSubmissionId?'Submission reviewed and published ✓':editingPublishedId?'Published article updated ✓':'Published to magazine ✓','synced');
     alert(editingSubmissionId?'The edited submission has been published successfully.':editingPublishedId?'Published article updated successfully.':'Published successfully — the article is now in the public magazine.');
@@ -683,30 +736,38 @@ $('sourceEditor').addEventListener('input',()=>{updateStats();scheduleLocalSave(
 
 /* Editorial assistant: try the configured Firebase AI endpoint, with clear errors if unavailable. */
 async function requestAISuggestion(kind){
-  const button=kind==='title'?$('aiTitle'):$('aiSummary');
-  const status=$('aiStatus');
-  const p=payload();
-  const bodyText=$('editor').innerText.trim().slice(0,12000);
+  const button=kind==='title'?$('aiTitle'):kind==='summary' ? $('aiSummary') : $('aiPolish');
+  const status=$('aiStatus'),p=payload();
+  const selectedText=(savedRange?savedRange.toString():'')||window.getSelection()?.toString()||'';
+  const bodyText=(kind==='polish'?selectedText:$('editor').innerText.trim()).slice(0,12000);
+  if(kind==='polish'&&!selectedText.trim()){status.textContent='Select a passage in the article first, then choose Polish selection.';return}
   if(!bodyText && !p.title){status.textContent='Write a title or some article content first.';return}
-  button.disabled=true;status.textContent='Generating suggestion…';
+  button.disabled=true;status.textContent=kind==='polish'?'Polishing selected passage…':'Generating suggestion…';
   try{
     const token=authUser?await authUser.getIdToken():'';
-    const response=await fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify({action:kind==='title'?'Suggest 5 compelling, accurate headline options for this article. Return only the single best headline, with no quotation marks.':'Write a concise, engaging 1–2 sentence summary for this article suitable for a magazine card. Return only the summary.',title:p.title,content:bodyText,section:p.section})});
+    const prompt=kind==='title'?'Suggest 5 compelling, accurate headline options for this article. Return only the single best headline, with no quotation marks.':kind==='summary'?'Write a concise, engaging 1–2 sentence summary for this article suitable for a magazine card. Return only the summary.':'Carefully polish the selected passage for clarity, natural flow, grammar and readability. Preserve its original meaning, tone and factual claims. Return only the revised passage.';
+    const response=await fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify({action:prompt,title:p.title,content:bodyText,section:p.section})});
     const data=await response.json().catch(()=>({}));
     if(!response.ok)throw new Error(data.error||data.message||('AI service returned '+response.status));
     const candidate=typeof data==='string'?data:(data.text||data.suggestion||data.title||data.summary||data.result||data.output||data.data?.suggestion||data.data?.title||data.data?.summary||'');
     if(!candidate)throw new Error('AI service did not return a suggestion. Check the configured AI endpoint response format.');
-    if(kind==='title')$('title').value=String(candidate).replace(/^["'“”]+|["'“”]+$/g,'').trim();
-    else $('dek').value=String(candidate).trim();
-    scheduleLocalSave();status.textContent='Suggestion added — review and edit it before publishing.';
-  }catch(err){
-    status.textContent=(err.message||'AI suggestion failed')+' You can still write/edit manually.';
-  }finally{button.disabled=false}
+    if(kind==='title')$('title').value=String(candidate).replace(/^[\"'“”]+|[\"'“”]+$/g,'').trim();
+    else if(kind==='summary')$('dek').value=String(candidate).trim();
+    else{restoreSelection();document.execCommand('insertText',false,String(candidate).trim());$('editor').focus();pushHistory();updateStats()}
+    scheduleLocalSave();status.textContent=kind==='polish'?'Passage polished — review the wording.':'Suggestion added — review and edit it before publishing.';
+  }catch(err){status.textContent=(err.message||'AI suggestion failed')+' You can still write/edit manually.'}
+  finally{button.disabled=false}
 }
 $('aiTitle').onclick=()=>requestAISuggestion('title');
-$('aiSummary').onclick=()=>requestAISuggestion('summary');
+$('aiSummary').onclick=()=>requestAISuggestion('summary');$('aiPolish').onmousedown=saveSelection;$('aiPolish').onclick=()=>requestAISuggestion('polish');
 
+function setPreviewDevice(device){
+  $('previewModal').dataset.device=device;
+  [['previewDesktop','desktop'],['previewTablet','tablet'],['previewMobile','mobile']].forEach(([id,value])=>$(id).classList.toggle('active',value===device));
+}
+$('previewDesktop').onclick=()=>setPreviewDevice('desktop');$('previewTablet').onclick=()=>setPreviewDevice('tablet');$('previewMobile').onclick=()=>setPreviewDevice('mobile');
 $('preview').onclick=()=>{
+  setPreviewDevice('desktop');
   saveSelection();
   const p=payload();
   const title=escapeHtml(p.title||'Untitled Article');
@@ -719,6 +780,12 @@ $('preview').onclick=()=>{
 };
 $('closePreview').onclick=()=>$('previewModal').classList.remove('open');
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+
+function closeMobileDrawers(){document.body.classList.remove('mobileMetaOpen','mobileAssetsOpen')}
+$('mobileMetaToggle').onclick=()=>{document.body.classList.toggle('mobileMetaOpen');document.body.classList.remove('mobileAssetsOpen')};
+$('mobileAssetsToggle').onclick=()=>{document.body.classList.toggle('mobileAssetsOpen');document.body.classList.remove('mobileMetaOpen')};
+$('closeMobileMeta').onclick=closeMobileDrawers;$('closeMobileAssets').onclick=closeMobileDrawers;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMobileDrawers()});
 
 onAuthStateChanged(auth,user=>{
   authUser=user||null;
@@ -778,7 +845,7 @@ function applyDraftData(draft){
 }
 function restoreDraft(){
   try{
-    const raw=localStorage.getItem('atomic_article_draft');
+    const raw=localStorage.getItem(localDraftKey())||localStorage.getItem('atomic_article_draft');
     if(!raw)return false;
     const draft=JSON.parse(raw);
     if(!draft || !(draft.title||draft.content||draft.dek))return false;
@@ -790,7 +857,7 @@ function restoreDraft(){
   return false;
 }
 async function recoverCloudDraft(){
-  if(!authUser || editId)return;
+  if(!authUser || editId || draftId)return;
   try{
     const snap=await get(ref(db,'atomicWeekly/autosave'));
     if(!snap.exists())return;
@@ -821,8 +888,9 @@ async function loadAssets(){
   }
 }
 function renderAssets(){
-  const q=$('assetSearch').value.toLowerCase().trim();
-  const items=allAssets.filter(x=>x.name.toLowerCase().includes(q));
+  const q=$('assetSearch').value.toLowerCase().trim(),type=$('assetTypeFilter').value,sort=$('assetSort').value;
+  const items=allAssets.filter(x=>x.name.toLowerCase().includes(q)&&(type==='all'||(type==='vector'?/\.svg$/i.test(x.name):!/\.svg$/i.test(x.name))));
+  items.sort((a,b)=>sort==='reverse'?b.name.localeCompare(a.name):a.name.localeCompare(b.name));
   $('assetCount').textContent=`${items.length} ${items.length===1?'asset':'assets'}`;
   $('gallery').innerHTML='';
   if(!items.length){$('gallery').innerHTML='<div style="color:var(--muted);font-size:11px">No matching assets.</div>';return}
@@ -841,7 +909,9 @@ function renderAssets(){
     $('gallery').appendChild(d);
   });
 }
-$('assetSearch').oninput=renderAssets;
+$('assetSearch').oninput=renderAssets;$('assetTypeFilter').onchange=renderAssets;$('assetSort').onchange=renderAssets;
+$('useAssetAsCover').onclick=()=>{if(!selectedGalleryUrl){toastAsset('Choose an asset first.');return}const item=allAssets.find(x=>x.url===selectedGalleryUrl);$('cover').value=selectedGalleryUrl;updateCoverPreview();scheduleLocalSave();toastAsset((item?.name||'Selected image')+' set as cover.')};
+$('insertSelectedAsset').onclick=()=>{if(!selectedGalleryUrl){alert('Select an image from the library first.');return}const item=allAssets.find(x=>x.url===selectedGalleryUrl);insertHtml('<div class="mediaLayer" data-align="center"><img loading="lazy" src="'+escapeAttr(selectedGalleryUrl)+'" alt="'+escapeAttr(item?.name||'Article image')+'"></div>');closeMobileDrawers()};
 
 ['title','author','section','dek','cover'].forEach(id=>{
   $(id).addEventListener('input',()=>{
@@ -867,7 +937,7 @@ document.addEventListener('keydown',e=>{
 // Restore the latest local draft when available; otherwise open a blank page.
 $('editor').innerHTML='';
 updateCoverPreview();updateStats();
-if(editId){
+if(editId||draftId){
   await loadPublishedArticleForEdit();
 }else{
   restoreDraft();
