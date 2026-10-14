@@ -67,6 +67,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
 .authBtn{border:1px solid rgba(240,68,82,.35)!important;background:rgba(240,68,82,.09)!important}
 .uploadBox{padding:12px;border:1px dashed rgba(240,68,82,.4);border-radius:10px;background:rgba(240,68,82,.035);margin:12px 0}
 .uploadBox strong{display:block;font-size:11px;margin-bottom:5px}.uploadBox p{font-size:10px;line-height:1.55;color:var(--muted);margin:0 0 9px}.uploadBox input[type=file]{width:100%;font-size:10px;color:var(--muted);margin:5px 0 10px}.uploadBox .uploadActions{display:flex;gap:6px;flex-wrap:wrap}.uploadBox button{font-size:10px;padding:8px 10px}.uploadStatus{font-size:10px;color:var(--muted);margin-top:8px;overflow-wrap:anywhere}.uploadStatus.error{color:#ff7881}.uploadStatus.ok{color:#75dfb3}
+.scheduleHelp{font-size:10px;line-height:1.55;color:var(--muted);margin:7px 0}.scheduleButton{width:100%;padding:10px;border:1px solid rgba(42,157,143,.4);border-radius:8px;background:rgba(42,157,143,.1);color:#a2eee0;font-weight:700;cursor:pointer}.scheduleButton:disabled{opacity:.55;cursor:wait}
 .loginShade{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(3,4,7,.92);backdrop-filter:blur(16px)}.loginShade.open{display:flex}.loginCard{width:min(420px,100%);padding:25px;border:1px solid var(--line);border-radius:17px;background:#11151b;box-shadow:0 25px 80px #0009}.loginCard h2{font:800 30px Georgia,serif;margin:6px 0}.loginCard p{font-size:12px;color:var(--muted);line-height:1.7}.loginCard label{display:block;margin:12px 0 6px;font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.1em}.loginCard input{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:#080b10;color:#fff}.loginCard button{margin-top:12px;width:100%}.loginError{min-height:17px;color:#ff7881;font-size:11px;margin-top:8px}
 
 
@@ -167,6 +168,11 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
     <div class="field"><label>Short Deck / Excerpt</label><textarea id="dek" placeholder="Brief summary for preview cards..."></textarea></div>
     <div class="aiTools"><div class="aiToolsTitle">AI Editorial Assistant</div><p>Draft, refine and prepare your article. AI output is a suggestion; review facts and wording before publishing.</p><div class="aiActions"><button type="button" id="aiTitle">✦ Headline</button><button type="button" id="aiSummary">✦ Summary</button><button type="button" id="aiPolish">✦ Polish selection</button><button type="button" id="aiGrammar">✓ Grammar fix</button><button type="button" id="aiDraft">✎ Draft article</button><button type="button" id="aiOutline">☷ Outline</button><button type="button" id="aiSEO">⌕ SEO pack</button><button type="button" id="aiSources">⚑ Source checklist</button></div><div id="aiStatus" role="status" aria-live="polite"></div><div class="aiResultWrap" id="aiResultWrap" hidden><label for="aiResult">AI result · review before inserting</label><textarea id="aiResult" rows="8" placeholder="Your AI result will appear here…"></textarea><div class="aiActions"><button type="button" id="aiInsertResult" class="primary">Insert at cursor</button><button type="button" id="aiCopyResult">Copy result</button><button type="button" id="aiDismissResult" class="ghost">Dismiss</button></div></div></div>
     <div class="field"><label>Cover Asset Path / URL</label><input id="cover" placeholder="e.g. assets/cover.jpg or image URL"><img id="coverPreview" style="width:100%;height:100px;object-fit:cover;margin-top:6px;border-radius:6px;display:none"></div>
+    <div class="sectionTitle">Publishing schedule</div>
+    <div class="field"><label>Publish date &amp; time (your local time)</label><input id="scheduleAt" type="datetime-local" aria-describedby="scheduleHelp"></div>
+    <p id="scheduleHelp" class="scheduleHelp">Choose a future time, then tap Schedule. The cloud scheduler checks every 5 minutes.</p>
+    <button id="schedulePublish" type="button" class="scheduleButton">◷ Schedule article</button>
+    <p id="scheduleStatus" class="scheduleHelp" role="status" aria-live="polite"></p>
     <div class="sectionTitle">Content Pages</div>
     <div id="contentPages" class="contentPages"></div>
     <div class="sectionTitle">Structure</div>
@@ -670,6 +676,31 @@ $('saveDraft').onclick=async()=>{
     editingDraftId=draftKey;editingPublishedId=null;editingSubmissionId=null;
     setStatus('Saved to Cloud','synced');
   }catch(e){setStatus('Cloud save failed','error');console.error(e)}
+};
+$('schedulePublish').onclick=async()=>{
+  const status=$('scheduleStatus');
+  if(!authUser){$('authGate').classList.add('open');status.textContent='Sign in to schedule an article.';return}
+  const p=payload();
+  if(!p.title||p.title==='Untitled'){status.textContent='Add an article title first.';return}
+  if(!p.content.trim()){status.textContent='Article content is empty.';return}
+  const localValue=$('scheduleAt').value;
+  const scheduledAt=localValue?new Date(localValue).getTime():NaN;
+  if(!Number.isFinite(scheduledAt)||scheduledAt<=Date.now()){status.textContent='Choose a valid future date and time.';return}
+  const button=$('schedulePublish');button.disabled=true;status.textContent='Saving schedule…';
+  try{
+    const id=editingPublishedId||String(Date.now());
+    const existing=editingPublishedId?(await get(ref(db,'publishedArticles/'+editingPublishedId))).val()||{}:{};
+    const sourceRecord=editingSubmissionId?(await get(ref(db,'submissions/'+editingSubmissionId))).val()||{}:editingDraftId?(await get(ref(db,'atomicWeekly/drafts/'+editingDraftId))).val()||{}:existing;
+    const record={...sourceRecord,...p,id,type:sourceRecord.type||'article',status:'scheduled',published:false,scheduledAt,scheduleStatus:'scheduled',scheduledBy:authUser.uid,scheduledEmail:authUser.email||'',createdAt:sourceRecord.createdAt||Date.now(),updatedAt:Date.now()};
+    await set(ref(db,'atomicWeekly/scheduledArticles/'+id),record);
+    const verify=await get(ref(db,'atomicWeekly/scheduledArticles/'+id));
+    if(!verify.exists()||verify.val()?.scheduleStatus!=='scheduled')throw new Error('Schedule could not be verified.');
+    if(editingDraftId){await remove(ref(db,'atomicWeekly/drafts/'+editingDraftId));editingDraftId=null}
+    if(editingSubmissionId){await set(ref(db,'submissions/'+editingSubmissionId),{...sourceRecord,status:'scheduled',scheduledAt,id})}
+    status.textContent='Scheduled ✓ '+new Date(scheduledAt).toLocaleString();
+    setStatus('Article scheduled','synced');
+  }catch(error){console.error(error);status.textContent=error.message||'Could not schedule this article.';setStatus('Schedule failed','error')}
+  finally{button.disabled=false}
 };
 $('publish').onclick=async()=>{
   if(!authUser){$('authGate').classList.add('open');setStatus('Sign in to publish articles','error');return}
