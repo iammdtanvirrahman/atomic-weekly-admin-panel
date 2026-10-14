@@ -563,13 +563,22 @@ async function loadPublishedArticleForEdit(){
     return false;
   }
 }
+const MAGAZINE_BASE_URL='https://iammdtanvirrahman.github.io/atomic-weekly/';
+function resolveCoverUrl(value){
+  const raw=String(value||'').trim();
+  if(!raw)return '';
+  if(/^(?:https?:|data:|blob:)/i.test(raw))return raw;
+  // Relative asset paths belong to the public magazine, not this admin-panel URL.
+  try{return new URL(raw.replace(/^\.\//,''),MAGAZINE_BASE_URL).href}
+  catch(e){return raw}
+}
 function payload(){
   return {
     title:$('title').value.trim()||'Untitled',
     author:$('author').value.trim()||'Atomic Desk',
     section:$('section').value,
     dek:$('dek').value.trim(),
-    cover:$('cover').value.trim(),
+    cover:resolveCoverUrl($('cover').value),
     content:sourceMode?sourceContent():editorHTML(),
     updatedAt:Date.now()
   };
@@ -867,7 +876,8 @@ $('assetSearch').oninput=renderAssets;
 function updateCoverPreview(){
   const v=$('cover').value.trim(),img=$('coverPreview');
   if(!v){img.style.display='none';img.removeAttribute('src');return}
-  img.src=v;img.style.display='block';img.onerror=()=>img.style.display='none';
+  img.onerror=()=>img.style.display='none';
+  img.src=resolveCoverUrl(v);img.style.display='block';
 }
 
 document.addEventListener('keydown',e=>{
