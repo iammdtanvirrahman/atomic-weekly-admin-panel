@@ -84,6 +84,15 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
 .atomic-pass-error{min-height:18px;margin-top:8px;font-size:12px;color:#ff7d87}
 body.atomic-pass-locked{overflow:hidden}
 
+
+.aiTools{margin:12px 0 20px;padding:13px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(145deg,#171922,#101116)}
+.aiToolsTitle{font:600 14px Georgia,serif;color:var(--text)}
+.aiTools p{font-size:11px;color:var(--muted);line-height:1.5;margin:6px 0 10px}
+.aiActions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.aiActions button{padding:9px 7px;font-size:10px;border:1px solid var(--line);border-radius:8px;background:#20232c;color:var(--text);cursor:pointer}
+#aiStatus{min-height:15px;margin-top:8px;font-size:10px;color:var(--muted);line-height:1.5}
+@media(max-width:620px){.aiActions{grid-template-columns:1fr}.aiTools{padding:11px}}
+
 </style>
 </head>
 <body class="atomic-pass-locked">
@@ -134,8 +143,9 @@ body.atomic-pass-locked{overflow:hidden}
     <div class="sectionTitle">Metadata</div>
     <div class="field"><label>Article Title</label><input id="title" placeholder="Enter article title..."></div>
     <div class="field"><label>Author</label><input id="author" value="Atomic Desk"></div>
-    <div class="field"><label>Category / Section</label><select id="section"><option>Science</option><option>Technology</option><option>Cosmos</option><option>Ideas</option><option>Stories</option><option>News</option></select></div>
+    <div class="field"><label>Category / Section</label><select id="section"><option>Science</option><option>Space</option><option>Physics</option><option>Love</option></select></div>
     <div class="field"><label>Short Deck / Excerpt</label><textarea id="dek" placeholder="Brief summary for preview cards..."></textarea></div>
+    <div class="aiTools"><div class="aiToolsTitle">AI Editorial Assistant</div><p>Suggest a stronger headline and a concise article summary.</p><div class="aiActions"><button type="button" id="aiTitle">✦ Suggest title</button><button type="button" id="aiSummary">✦ Suggest summary</button></div><div id="aiStatus" role="status" aria-live="polite"></div></div>
     <div class="field"><label>Cover Asset Path / URL</label><input id="cover" placeholder="e.g. assets/cover.jpg or image URL"><img id="coverPreview" style="width:100%;height:100px;object-fit:cover;margin-top:6px;border-radius:6px;display:none"></div>
     <div class="sectionTitle">Content Pages</div>
     <div id="contentPages" class="contentPages"></div>
@@ -684,6 +694,32 @@ $('source').onclick=()=>{
 };
 $('sourceEditor').addEventListener('input',()=>{updateStats();scheduleLocalSave()});
 
+
+/* Editorial assistant: try the configured Firebase AI endpoint, with clear errors if unavailable. */
+async function requestAISuggestion(kind){
+  const button=kind==='title'?$('aiTitle'):$('aiSummary');
+  const status=$('aiStatus');
+  const p=payload();
+  const bodyText=$('editor').innerText.trim().slice(0,12000);
+  if(!bodyText && !p.title){status.textContent='Write a title or some article content first.';return}
+  button.disabled=true;status.textContent='Generating suggestion…';
+  try{
+    const token=authUser?await authUser.getIdToken():'';
+    const response=await fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify({task:kind==='title'?'title':'summary',action:kind==='title'?'suggest_title':'summarize',title:p.title,content:bodyText,summary:p.dek,section:p.section})});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(data.error||data.message||('AI service returned '+response.status));
+    const candidate=typeof data==='string'?data:(data.suggestion||data.title||data.summary||data.result||data.text||data.output||data.data?.suggestion||data.data?.title||data.data?.summary||'');
+    if(!candidate)throw new Error('AI service did not return a suggestion. Check the configured AI endpoint response format.');
+    if(kind==='title')$('title').value=String(candidate).replace(/^["'“”]+|["'“”]+$/g,'').trim();
+    else $('dek').value=String(candidate).trim();
+    scheduleLocalSave();status.textContent='Suggestion added — review and edit it before publishing.';
+  }catch(err){
+    status.textContent=(err.message||'AI suggestion failed')+' You can still write/edit manually.';
+  }finally{button.disabled=false}
+}
+$('aiTitle').onclick=()=>requestAISuggestion('title');
+$('aiSummary').onclick=()=>requestAISuggestion('summary');
+
 $('preview').onclick=()=>{
   saveSelection();
   const p=payload();
@@ -704,7 +740,7 @@ onAuthStateChanged(auth,user=>{
   $('signOutEditor').hidden=!user;
   $('uploadAsset').disabled=!user;
   $('uploadStatus').textContent=user?'Signed in as '+(user.email||'admin')+'. Ready to upload.':'Sign in to upload assets.';
-  if(user){$('authGate').classList.remove('open');setStatus('Admin signed in ✓','synced')}
+  if(user){$('authGate').classList.remove('open');setStatus('Admin signed in ✓','synced');recoverCloudDraft()}
   else setStatus('Offline editing · sign in to publish','error');
 });
 $('signInOpen').onclick=()=>{$('authGate').classList.add('open');$('authEmail').focus()};
@@ -745,25 +781,44 @@ async function uploadAsset(){
 function toastAsset(msg){setStatus(msg,'synced')}
 
 
+function applyDraftData(draft){
+  if(draft.title)$('title').value=draft.title;
+  if(draft.author)$('author').value=draft.author;
+  if(draft.section&&[...$('section').options].some(o=>o.value===draft.section))$('section').value=draft.section;
+  if(draft.dek)$('dek').value=draft.dek;
+  if(draft.cover)$('cover').value=draft.cover;
+  if(typeof draft.content==='string')$('editor').innerHTML=draft.content;
+  updateCoverPreview();updateStats();pushHistory();setStatus('Draft recovered','synced');
+}
 function restoreDraft(){
   try{
     const raw=localStorage.getItem('atomic_article_draft');
-    if(!raw)return;
+    if(!raw)return false;
     const draft=JSON.parse(raw);
-    if(draft.title)$('title').value=draft.title;
-    if(draft.author)$('author').value=draft.author;
-    if(draft.section)$('section').value=draft.section;
-    if(draft.dek)$('dek').value=draft.dek;
-    if(draft.cover)$('cover').value=draft.cover;
-    if(typeof draft.content==='string')$('editor').innerHTML=draft.content;
-    updateCoverPreview();
-    updateStats();
-    pushHistory();
-    setStatus('Draft restored locally','synced');
-  }catch(e){
-    localStorage.removeItem('atomic_article_draft');
-    setStatus('Ready','synced');
-  }
+    if(!draft || !(draft.title||draft.content||draft.dek))return false;
+    if(confirm('A locally saved draft was found. Restore it?')){
+      applyDraftData(draft);
+      return true;
+    }
+  }catch(e){setStatus('Could not recover the local draft','error')}
+  return false;
+}
+async function recoverCloudDraft(){
+  if(!authUser || editId)return;
+  try{
+    const snap=await get(ref(db,'atomicWeekly/autosave'));
+    if(!snap.exists())return;
+    const draft=snap.val();
+    if(!(draft.title||draft.content||draft.dek))return;
+    const localRaw=localStorage.getItem('atomic_article_draft');
+    const local=localRaw?JSON.parse(localRaw):null;
+    const cloudTime=Number(draft.updatedAt||0),localTime=Number(local?.updatedAt||0);
+    if(cloudTime<=localTime)return;
+    if(confirm('A newer cloud autosave was found. Recover it?')){
+      applyDraftData(draft);
+      saveLocalNow();
+    }
+  }catch(e){console.warn('Cloud draft recovery unavailable',e)}
 }
 
 async function loadAssets(){
