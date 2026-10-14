@@ -176,7 +176,7 @@ body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
     </div>
   </main>
 
-  <aside class="right assetPanel"><div class="mobileDrawerHead"><b>Editorial media</b><button id="closeMobileAssets" type="button" aria-label="Close media library">✕</button></div>
+  <aside class="right assetPanel" id="assets"><div class="mobileDrawerHead"><b>Editorial media</b><button id="closeMobileAssets" type="button" aria-label="Close media library">✕</button></div>
     <div class="assetHeader">
       <div>
         <div class="sectionTitle">Asset Manager</div>
@@ -562,6 +562,7 @@ async function loadPublishedArticleForEdit(){
         $('cover').value=article.cover||article.coverImage||article.image||'';
         $('editor').innerHTML=typeof article.content==='string'&&article.content.trim()?article.content:(article.text?'<p>'+escapeHtml(article.text).replace(/\\n/g,'</p><p>')+'</p>':'<p></p>');
         updateCoverPreview(); updateStats(); pushHistory();
+        await recoverScopedAutosave('atomicWeekly/reviewAutosave/'+editId,article);
         setStatus('Editing incoming submission — not published yet','synced');
         document.title='Atomic Admin — Review Submission';
         return true;
@@ -587,6 +588,7 @@ async function loadPublishedArticleForEdit(){
     updateCoverPreview();
     updateStats();
     pushHistory();
+    await recoverScopedAutosave('atomicWeekly/articleAutosave/'+editId,article);
     setStatus('Editing published article','synced');
     document.title='Atomic Admin — Edit Published Article';
     return true;
@@ -677,6 +679,8 @@ $('publish').onclick=async()=>{
       throw new Error('Publish verification failed. The article was not confirmed in the public feed.');
     }
     await set(ref(db,'atomicWeekly/latestPublished'),publishedRecord);
+    if(editingPublishedId)await remove(ref(db,'atomicWeekly/articleAutosave/'+editingPublishedId));
+    if(editingSubmissionId)await remove(ref(db,'atomicWeekly/reviewAutosave/'+editingSubmissionId));
     if(editingSubmissionId){
       await set(ref(db,'submissions/'+editingSubmissionId),{...sourceRecord,...p,status:'published',published:true,publishedAt:publishedRecord.publishedAt,timestamp:Date.now(),id});
     }
@@ -846,6 +850,14 @@ async function uploadAsset(){
 function toastAsset(msg){setStatus(msg,'synced')}
 
 
+async function recoverScopedAutosave(path,currentArticle){
+  try{
+    const snap=await get(ref(db,path));if(!snap.exists())return;
+    const saved=snap.val()||{};if(!(saved.title||saved.content||saved.dek))return;
+    const savedAt=Number(saved.updatedAt||0),baseAt=Number(currentArticle?.updatedAt||currentArticle?.timestamp||currentArticle?.publishedAt||0);
+    if(savedAt>baseAt&&confirm('A newer cloud autosave was found for this article. Recover it?')){applyDraftData(saved);saveLocalNow();setStatus('Recovered newer cloud autosave','synced')}
+  }catch(e){console.warn('Scoped autosave recovery unavailable',e)}
+}
 function applyDraftData(draft){
   if(draft.title)$('title').value=draft.title;
   if(draft.author)$('author').value=draft.author;
