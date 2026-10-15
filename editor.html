@@ -137,6 +137,49 @@ button{border-radius:7px;font-weight:650;letter-spacing:.005em;transition:backgr
 
 .field input.modeTarget{border-color:var(--red)!important;box-shadow:0 0 0 4px rgba(240,68,82,.14)!important;transition:border-color .2s,box-shadow .2s}
 @media(prefers-reduced-motion:reduce){.field input.modeTarget{transition:none!important}}
+
+/* Full-screen Art Gallery Mode */
+.galleryExitBtn{display:none;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(222,147,107,.34);border-radius:5px;background:rgba(222,147,107,.06);color:#f0d5c6;font:10px var(--mono);cursor:pointer}
+.galleryExitBtn:hover{border-color:rgba(240,68,82,.6);background:rgba(240,68,82,.09)}
+.assetHeaderActions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.gallerySelectionStatus{display:none;color:#bd9b8d;font:9px/1.5 var(--mono);letter-spacing:.025em}
+body.assetGalleryMode .studioIntro,body.assetGalleryMode .toolbarWrap,body.assetGalleryMode .layout>.left,body.assetGalleryMode .workspace{display:none!important}
+body.assetGalleryMode .layout{display:block;min-height:calc(100vh - 76px)}
+body.assetGalleryMode .right.assetPanel{display:block!important;position:static;width:100%;height:auto;max-height:none;overflow:visible;border:0;padding:clamp(20px,3.4vw,46px) clamp(15px,4vw,58px) 60px;background:transparent}
+body.assetGalleryMode .right.assetPanel>.mobileDrawerHead{display:none!important}
+body.assetGalleryMode .assetHeader{max-width:1560px;margin:0 auto;align-items:flex-end}
+body.assetGalleryMode .assetHeader .sectionTitle{font-size:9px;letter-spacing:.2em;color:var(--red);margin:0 0 11px}
+body.assetGalleryMode .assetHeader h2{font:600 clamp(36px,5vw,64px)/.98 Georgia,serif;letter-spacing:-.055em;color:#fff0e7}
+body.assetGalleryMode .assetHeaderActions{justify-content:flex-end}
+body.assetGalleryMode .galleryExitBtn{display:inline-flex}
+body.assetGalleryMode .assetIntro{max-width:900px;margin:16px auto 25px;color:#bba9a0;font-size:13px;line-height:1.85}
+body.assetGalleryMode .assetSearchWrap{max-width:1560px;min-height:52px;margin:0 auto 12px;padding:0 15px;border-color:rgba(222,147,107,.24);border-radius:4px;background:rgba(255,255,255,.025)}
+body.assetGalleryMode .assetSearchWrap input{font-size:13px;padding:15px 0}
+body.assetGalleryMode .assetFilters{max-width:1560px;margin:0 auto 14px;justify-content:flex-start}
+body.assetGalleryMode .assetFilters select{min-width:160px;padding:10px 12px;font-size:11px;background:#151113;border-color:rgba(222,147,107,.19)}
+body.assetGalleryMode .assetQuickActions{max-width:1560px;margin:0 auto 14px;align-items:center;flex-wrap:wrap}
+body.assetGalleryMode .assetQuickActions button{min-height:37px;padding:10px 16px;border:1px solid rgba(222,147,107,.22);border-radius:4px;background:rgba(222,147,107,.065);color:#f0d9cb;font:10px var(--mono)}
+body.assetGalleryMode .assetQuickActions button.primary{background:var(--red);color:#fff;border-color:var(--red)}
+body.assetGalleryMode .gallerySelectionStatus{display:block;flex:1;min-width:220px;text-align:right}
+body.assetGalleryMode .uploadBox{max-width:1560px;margin:18px auto 23px;padding:15px 17px;display:grid;grid-template-columns:minmax(180px,.7fr) minmax(200px,1.2fr) minmax(220px,1.1fr) auto;align-items:center;gap:8px 18px;border:1px dashed rgba(222,147,107,.3);border-radius:4px;background:linear-gradient(100deg,rgba(116,50,37,.11),rgba(255,255,255,.014))}
+body.assetGalleryMode .uploadBox strong{font:600 17px Georgia,serif;margin:0}
+body.assetGalleryMode .uploadBox p{margin:0;font-size:10px;line-height:1.6}
+body.assetGalleryMode .uploadBox input[type=file]{margin:0;min-width:0}
+body.assetGalleryMode .uploadBox .uploadActions{flex-wrap:nowrap}
+body.assetGalleryMode .uploadBox .uploadStatus{grid-column:1/-1;margin:0;padding-top:7px;border-top:1px solid rgba(255,255,255,.055)}
+body.assetGalleryMode .assetMeta{max-width:1560px;margin:0 auto 10px;padding-bottom:10px;border-bottom:1px solid rgba(222,147,107,.21);font-size:9px;letter-spacing:.15em}
+body.assetGalleryMode .gallery{max-width:1560px;margin:0 auto;grid-template-columns:repeat(5,minmax(0,1fr));gap:15px;max-height:none;overflow:visible;padding:0}
+body.assetGalleryMode .asset{padding:8px;border-radius:3px;border-color:rgba(255,255,255,.08);background:linear-gradient(145deg,#1a1415,#100e11)}
+body.assetGalleryMode .asset img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:1px;background:#0b0a0d;transition:transform .25s,filter .25s}
+body.assetGalleryMode .asset span{margin-top:10px;white-space:normal;overflow-wrap:anywhere;font:10px/1.5 var(--mono);color:#d3c1b7;min-height:30px}
+body.assetGalleryMode .asset:hover{transform:translateY(-3px);border-color:rgba(222,147,107,.45)}
+body.assetGalleryMode .asset:hover img{filter:brightness(1.08)}
+body.assetGalleryMode .asset.selected{border-color:var(--red);box-shadow:0 0 0 1px rgba(240,68,82,.45),0 14px 35px rgba(0,0,0,.3);background:linear-gradient(145deg,rgba(95,32,38,.24),#100e11)}
+body.assetGalleryMode .asset.selected span{color:#ffb2aa}
+body.assetGalleryMode .assetNote{max-width:1560px;margin:18px auto 0;border-radius:3px;color:#8d7c76;font:9px/1.7 var(--mono);letter-spacing:.035em}
+@media(max-width:1200px){body.assetGalleryMode .gallery{grid-template-columns:repeat(4,minmax(0,1fr))}body.assetGalleryMode .uploadBox{grid-template-columns:1fr 1.2fr}body.assetGalleryMode .uploadBox .uploadActions{justify-content:flex-start}}
+@media(max-width:800px){body.assetGalleryMode .gallery{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}body.assetGalleryMode .assetHeader{align-items:flex-start;flex-direction:column}body.assetGalleryMode .assetHeaderActions{width:100%;justify-content:space-between}body.assetGalleryMode .assetIntro{margin-top:12px;font-size:12px}body.assetGalleryMode .uploadBox{grid-template-columns:1fr;gap:10px}body.assetGalleryMode .uploadBox .uploadStatus{grid-column:auto}body.assetGalleryMode .gallerySelectionStatus{text-align:left;flex-basis:100%}}
+@media(max-width:520px){body.assetGalleryMode .right.assetPanel{padding:20px 12px 42px}body.assetGalleryMode .assetHeader h2{font-size:38px}body.assetGalleryMode .gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}body.assetGalleryMode .asset{padding:5px}body.assetGalleryMode .asset img{aspect-ratio:1/1}body.assetGalleryMode .asset span{font-size:9px}body.assetGalleryMode .assetFilters select{min-width:0;flex:1;width:50%}body.assetGalleryMode .assetHeaderActions{align-items:flex-start;flex-direction:column}body.assetGalleryMode .assetQuickActions button{flex:1}body.assetGalleryMode .gallerySelectionStatus{min-width:100%}}
 </style>
 
 </head>
@@ -217,18 +260,18 @@ button{border-radius:7px;font-weight:650;letter-spacing:.005em;transition:backgr
   <aside class="right assetPanel" id="assets"><div class="mobileDrawerHead"><b>Editorial media</b><button id="closeMobileAssets" type="button" aria-label="Close media library">✕</button></div>
     <div class="assetHeader">
       <div>
-        <div class="sectionTitle">Asset Manager</div>
-        <h2>Editorial Media</h2>
+        <div class="sectionTitle" id="assetGalleryKicker">ASSET MANAGER</div>
+        <h2 id="assetGalleryTitle">Editorial Media</h2>
       </div>
-      <span class="assetLive"><i></i> Cloud</span>
+      <div class="assetHeaderActions"><span class="assetLive"><i></i> Shared magazine library</span><button id="exitAssetGallery" class="galleryExitBtn" type="button">← Return to Article Studio</button></div>
     </div>
-    <p class="assetIntro">Choose an image from the magazine library, then use <b>🖼 Image</b> to place it in your article.</p>
+    <p class="assetIntro">Browse the visual library for your next cover or scientific illustration. Select an artwork to use it as a cover, or insert it into the article canvas.</p>
     <div class="assetSearchWrap">
       <span>⌕</span>
       <input id="assetSearch" placeholder="Search magazine assets…" aria-label="Search magazine assets">
     </div>
     <div class="assetFilters"><select id="assetTypeFilter" aria-label="Filter assets by type"><option value="all">All image types</option><option value="raster">Raster images</option><option value="vector">SVG vectors</option></select><select id="assetSort" aria-label="Sort assets"><option value="name">Name A–Z</option><option value="reverse">Name Z–A</option></select></div>
-    <div class="assetQuickActions"><button id="useAssetAsCover" type="button">Use as cover</button><button id="insertSelectedAsset" type="button" class="primary">Insert selected</button></div>
+    <div class="assetQuickActions"><button id="useAssetAsCover" type="button">Use as cover</button><button id="insertSelectedAsset" type="button" class="primary">Insert selected</button><span id="gallerySelectionStatus" class="gallerySelectionStatus" role="status" aria-live="polite">Choose an artwork to see its selection here.</span></div>
     <div class="uploadBox"><strong>＋ Upload new artwork</strong><p>Upload a cover or inline image to the shared magazine repository. Images up to 8 MB.</p><input id="assetFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"><div class="uploadActions"><button class="primary" id="uploadAsset">Upload image</button><button id="refreshAssets">Refresh library</button></div><div class="uploadStatus" id="uploadStatus">Sign in to upload assets.</div></div>
     <div class="assetMeta"><span>MAGAZINE LIBRARY</span><span id="assetCount">Loading…</span></div>
     <div id="gallery" class="gallery"><div class="assetLoading">Loading media assets…</div></div>
@@ -1078,23 +1121,21 @@ function renderAssets(){
   $('gallery').innerHTML='';
   if(!items.length){$('gallery').innerHTML='<div style="color:var(--muted);font-size:11px">No matching assets.</div>';return}
   items.forEach(x=>{
-    const d=document.createElement('div');d.className='asset';
+    const d=document.createElement('div');d.className='asset';d.tabIndex=0;d.setAttribute('role','button');d.setAttribute('aria-pressed',String(x.url===selectedGalleryUrl));if(x.url===selectedGalleryUrl)d.classList.add('selected');
     const img=document.createElement('img');img.src=x.url;img.loading='lazy';img.decoding='async';img.alt=x.name;
     const span=document.createElement('span');span.textContent=x.name;
     d.append(img,span);
     d.draggable=true;
     d.ondragstart=e=>{e.dataTransfer.setData('text/plain',x.url);e.dataTransfer.effectAllowed='copy';selectedGalleryUrl=x.url};
-    d.onclick=()=>{
-    selectedGalleryUrl=x.url;
-    document.querySelectorAll('.asset').forEach(a=>a.classList.remove('selected'));
-    d.classList.add('selected');
-  };
+    const selectAsset=()=>{selectedGalleryUrl=x.url;document.querySelectorAll('.asset').forEach(a=>{a.classList.remove('selected');a.setAttribute('aria-pressed','false')});d.classList.add('selected');d.setAttribute('aria-pressed','true');$('gallerySelectionStatus').textContent='Selected · '+x.name+' — choose “Use as cover” or “Insert selected”.';};
+    d.onclick=selectAsset;
+    d.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectAsset()}};
     $('gallery').appendChild(d);
   });
 }
 $('assetSearch').oninput=renderAssets;$('assetTypeFilter').onchange=renderAssets;$('assetSort').onchange=renderAssets;
-$('useAssetAsCover').onclick=()=>{if(!selectedGalleryUrl){toastAsset('Choose an asset first.');return}const item=allAssets.find(x=>x.url===selectedGalleryUrl);$('cover').value=selectedGalleryUrl;updateCoverPreview();scheduleLocalSave();toastAsset((item?.name||'Selected image')+' set as cover.')};
-$('insertSelectedAsset').onclick=()=>{if(!selectedGalleryUrl){alert('Select an image from the library first.');return}const item=allAssets.find(x=>x.url===selectedGalleryUrl);insertHtml('<div class="mediaLayer" data-align="center"><img loading="lazy" src="'+escapeAttr(selectedGalleryUrl)+'" alt="'+escapeAttr(item?.name||'Article image')+'"></div>');closeMobileDrawers()};
+$('useAssetAsCover').onclick=()=>{if(!selectedGalleryUrl){toastAsset('Choose an artwork first.');return}const item=allAssets.find(x=>x.url===selectedGalleryUrl);$('cover').value=selectedGalleryUrl;updateCoverPreview();scheduleLocalSave();const message=(item?.name||'Selected image')+' set as cover.';if(document.body.classList.contains('assetGalleryMode'))exitAssetGalleryMode();toastAsset(message)};
+$('insertSelectedAsset').onclick=()=>{if(!selectedGalleryUrl){alert('Select an image from the library first.');return}const item=allAssets.find(x=>x.url===selectedGalleryUrl);const markup='<div class="mediaLayer" data-align="center"><img loading="lazy" src="'+escapeAttr(selectedGalleryUrl)+'" alt="'+escapeAttr(item?.name||'Article image')+'"></div>';if(document.body.classList.contains('assetGalleryMode')){exitAssetGalleryMode();window.setTimeout(()=>{insertHtml(markup);closeMobileDrawers()},80)}else{insertHtml(markup);closeMobileDrawers()}};
 
 ['title','author','section','dek','cover'].forEach(id=>{
   $(id).addEventListener('input',()=>{
@@ -1128,42 +1169,45 @@ if(editId||draftId){
 }
 loadAssets();
 
-// Dashboard shortcuts deliberately open a focused tool, not just the same editor view.
+// Dedicated fullscreen art gallery and schedule routes from the dashboard.
 const requestedEditorMode=new URLSearchParams(location.search).get('mode');
+function exitAssetGalleryMode(){
+  document.body.classList.remove('assetGalleryMode','mobileAssetsOpen','mobileMetaOpen');
+  document.title='Atomic Admin — Pro Article Studio';
+  $('assetGalleryKicker').textContent='ASSET MANAGER';
+  $('assetGalleryTitle').textContent='Editorial Media';
+  const u=new URL(location.href);u.searchParams.delete('mode');
+  history.replaceState({},'',u.pathname+(u.search?u.search:'')+u.hash);
+  window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  setStatus('Returned to Article Studio','synced');
+}
+$('exitAssetGallery').onclick=exitAssetGalleryMode;
 function openRequestedEditorMode(){
-  const isMobile=window.matchMedia('(max-width: 768px)').matches;
-  if(requestedEditorMode==='assets'){
-    if(isMobile){
-      document.body.classList.remove('mobileMetaOpen');
-      document.body.classList.add('mobileAssetsOpen');
-    }
-    setStatus('Editorial Media opened','synced');
+  const isMobile=window.matchMedia('(max-width:768px)').matches;
+  if(requestedEditorMode==='assets'||requestedEditorMode==='gallery'){
+    document.body.classList.remove('mobileMetaOpen','mobileAssetsOpen');
+    document.body.classList.add('assetGalleryMode');
+    document.title='Editorial Art Gallery — Atomic Magazine';
+    $('assetGalleryKicker').textContent='VISUAL LIBRARY / ISSUE 02';
+    $('assetGalleryTitle').textContent='Editorial Art Gallery';
+    setStatus('Art Gallery Mode','synced');
     window.setTimeout(()=>{
       const search=$('assetSearch');
-      if(search){
-        if(!isMobile)$('assets').scrollIntoView({behavior:'smooth',block:'start'});
-        search.focus({preventScroll:true});
-      }
-    },120);
+      if(search)search.focus({preventScroll:true});
+      window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+    },140);
     return;
   }
   if(requestedEditorMode==='schedule'){
-    if(isMobile){
-      document.body.classList.remove('mobileAssetsOpen');
-      document.body.classList.add('mobileMetaOpen');
-    }
+    if(isMobile){document.body.classList.remove('mobileAssetsOpen');document.body.classList.add('mobileMetaOpen')}
     setStatus('Publishing schedule selected','synced');
     window.setTimeout(()=>{
       const field=$('scheduleAt');
-      if(field){
-        field.classList.add('modeTarget');
-        field.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});
-        field.focus({preventScroll:true});
-      }
+      if(field){field.classList.add('modeTarget');field.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});field.focus({preventScroll:true})}
     },120);
   }
 }
-if(requestedEditorMode==='assets'||requestedEditorMode==='schedule')openRequestedEditorMode();
+if(requestedEditorMode==='assets'||requestedEditorMode==='gallery'||requestedEditorMode==='schedule')openRequestedEditorMode();
 </script>
 </body>
 </html>
