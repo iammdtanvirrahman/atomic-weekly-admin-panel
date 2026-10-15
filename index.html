@@ -229,7 +229,8 @@ function renderPublished(){
   const q=$('search').value.trim().toLowerCase();
   const status=$('statusFilter').value,section=$('sectionFilter').value;
   const sort=$('sortFilter').value;
-  let arr=Object.entries(published||{}).filter(([,x])=>{
+  let arr=Object.entries(published||{}).filter(([id,x])=>{
+    if(id==='_heroImageLinks'||(x&&x.kind==='hero-image-links'))return false;
     if(!x)return false;
     const live=isPublished(x);
     if(status==='published'&&!live)return false;
@@ -331,7 +332,7 @@ function renderIncoming(){
   document.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{if(!currentUser){openLogin();return}if(confirm('Delete this submission permanently?'))try{await remove(ref(db,'submissions/'+b.dataset.del))}catch(e){alert('Delete failed: '+e.message)}});
   renderAnalytics();
 }
-const HERO_IMAGE_LINKS_PATH='atomicWeekly/settings/heroImageLinks';
+const HERO_IMAGE_LINKS_PATH='publishedArticles/_heroImageLinks';
 const heroImageRows=$('heroImageRows');
 function setHeroImageStatus(message,type){
   const node=$('heroImageStatus');node.textContent=message;node.className='heroImageStatus'+(type?' '+type:'');
@@ -369,7 +370,6 @@ function addHeroImageRow(value){
   input.addEventListener('input',renumberHeroImageRows);
   removeButton.addEventListener('click',()=>{row.remove();renumberHeroImageRows();setHeroImageStatus('Link row removed. Save to apply the change.','')});
   row.append(serial,input,preview,previewButton,removeButton);heroImageRows.appendChild(row);renumberHeroImageRows();
-  if(value)previewUrl();
 }
 function renderHeroImageRows(urls){
   heroImageRows.replaceChildren();
@@ -404,7 +404,7 @@ $('saveHeroImageLinks').addEventListener('click',async()=>{
     const urls=[];
     for(const input of inputs){if(!input.value.trim())continue;urls.push(normalizeHeroImageUrl(input.value))}
     if(urls.length>60)throw new Error('Maximum 60 image links per list.');
-    const payload={urls:urls,updatedAt:Date.now(),updatedBy:currentUser.email||'admin',version:1};
+    const payload={kind:'hero-image-links',urls:urls,updatedAt:Date.now(),updatedBy:currentUser.email||'admin',version:1};
     await set(ref(db,HERO_IMAGE_LINKS_PATH),payload);
     const saved=await get(ref(db,HERO_IMAGE_LINKS_PATH));
     if(!saved.exists())throw new Error('Save check failed: the database returned no saved record.');
