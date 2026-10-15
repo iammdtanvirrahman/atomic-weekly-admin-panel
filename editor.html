@@ -313,7 +313,8 @@ const cfg={
 const app=initializeApp(cfg),db=getDatabase(app),auth=getAuth(app);
 const AI_ENDPOINT='https://us-central1-atomictanvir.cloudfunctions.net/atomicAi';
 const $=id=>document.getElementById(id);
-const ASSET_API='https://api.github.com/repos/iammdtanvirrahman/atomic-weekly/contents/assets?ref=main';
+const ASSET_BRANCH='atomic-weekly-2.0';
+const ASSET_API='https://api.github.com/repos/iammdtanvirrahman/atomic-weekly/contents/assets?ref='+encodeURIComponent(ASSET_BRANCH);
 
 let savedRange=null,selectedMedia=null,selectedGalleryUrl='',sourceMode=false;
 let history=[],historyIndex=-1,historyTimer=null,saveTimer=null,cloudTimer=null,dragState=null,allAssets=[];
