@@ -134,6 +134,9 @@ button{border-radius:7px;font-weight:650;letter-spacing:.005em;transition:backgr
 @media(max-width:700px){.top{gap:8px;padding:10px 12px}.brand{min-width:0;flex:1}.brandWord{font-size:17px}.brand small{font-size:7px;letter-spacing:.13em}.top>.statusBadge{order:3}.top .actions{width:100%;justify-content:flex-start;gap:5px}.top .actions>button{font-size:10px;padding:8px 9px}#authSuccess{display:none}.studioIntro{padding:18px 14px;flex-direction:column;gap:15px}.studioIntro h1{font-size:34px}.studioIntroMeta{width:100%;justify-content:space-between;gap:9px}.studioMetaItem{gap:5px}.studioMetaItem strong{font-size:17px}.studioMetaItem span{font-size:7px}.studioRibbonNote{width:100%;font-size:8px;white-space:normal}.toolbar,.subbar{gap:4px;padding:6px}.toolbar select{max-width:125px;padding:7px 6px;font-size:10px}.toolbar button,.subbar button{padding:7px 8px;font-size:10px}.count{width:100%;margin:3px 0 0;font-size:9px;white-space:normal}.canvasEyebrow{font-size:7px}.workspace{padding:16px 7px 55px}.paper{width:100%;min-height:calc(100vh - 220px)}.articlePage{min-height:760px;padding:28px 21px;font-size:16px;line-height:1.8}.articlePage h1{font-size:35px}.articlePage h2{font-size:26px;margin-top:34px}.articlePage h3{font-size:20px}.previewHeader{align-items:flex-start}.previewHeader>div:first-child{width:100%}.previewDevices{width:100%;margin:0}.previewDevices button{flex:1}.modal{padding:9px}.modalBox{max-height:92vh;overflow:auto;padding:16px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 @media print{body{background:#fff!important;color:#000}.studioIntro,.canvasEyebrow{display:none!important}.paper{--paper-bg:#fff!important;--paper-text:#111!important;border:0;box-shadow:none}.articlePage{color:#111!important}}
+
+.field input.modeTarget{border-color:var(--red)!important;box-shadow:0 0 0 4px rgba(240,68,82,.14)!important;transition:border-color .2s,box-shadow .2s}
+@media(prefers-reduced-motion:reduce){.field input.modeTarget{transition:none!important}}
 </style>
 
 </head>
@@ -1124,6 +1127,43 @@ if(editId||draftId){
   if(!$('editor').innerHTML.trim())pushHistory();
 }
 loadAssets();
+
+// Dashboard shortcuts deliberately open a focused tool, not just the same editor view.
+const requestedEditorMode=new URLSearchParams(location.search).get('mode');
+function openRequestedEditorMode(){
+  const isMobile=window.matchMedia('(max-width: 768px)').matches;
+  if(requestedEditorMode==='assets'){
+    if(isMobile){
+      document.body.classList.remove('mobileMetaOpen');
+      document.body.classList.add('mobileAssetsOpen');
+    }
+    setStatus('Editorial Media opened','synced');
+    window.setTimeout(()=>{
+      const search=$('assetSearch');
+      if(search){
+        if(!isMobile)$('assets').scrollIntoView({behavior:'smooth',block:'start'});
+        search.focus({preventScroll:true});
+      }
+    },120);
+    return;
+  }
+  if(requestedEditorMode==='schedule'){
+    if(isMobile){
+      document.body.classList.remove('mobileAssetsOpen');
+      document.body.classList.add('mobileMetaOpen');
+    }
+    setStatus('Publishing schedule selected','synced');
+    window.setTimeout(()=>{
+      const field=$('scheduleAt');
+      if(field){
+        field.classList.add('modeTarget');
+        field.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});
+        field.focus({preventScroll:true});
+      }
+    },120);
+  }
+}
+if(requestedEditorMode==='assets'||requestedEditorMode==='schedule')openRequestedEditorMode();
 </script>
 </body>
 </html>
