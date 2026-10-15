@@ -39,6 +39,17 @@ button{border-radius:9px}button:hover{transform:translateY(-1px)}.quickGrid{disp
 .attachmentNotice .attachmentReceivedBtn:hover{border-color:var(--red);background:rgba(240,68,82,.08)}
 .attachmentNotice.received{border-color:rgba(91,208,163,.24);background:rgba(47,154,131,.055)}
 .attachmentNotice.received strong{color:#95d8b5}
+
+.attachmentNoticeHead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.attachmentCount{padding:4px 7px;border:1px solid rgba(222,147,107,.22);border-radius:3px;color:#c69c86;font:8px var(--mono);letter-spacing:.08em;white-space:nowrap}
+.attachmentFileList{list-style:none;display:grid;gap:5px;margin:4px 0;padding:0}
+.attachmentFileList li{display:grid;grid-template-columns:14px 24px minmax(0,1fr) auto;align-items:center;gap:7px;min-width:0;padding:8px 9px;border:1px solid rgba(255,255,255,.065);border-radius:3px;background:rgba(0,0,0,.17)}
+.attachmentFileIcon{color:var(--red);font:12px var(--mono)}
+.attachmentFileNumber{color:#81736f;font:8px var(--mono)}
+.attachmentFileName{min-width:0;overflow-wrap:anywhere;word-break:break-word;color:#f0ddd2;font:10px/1.5 var(--mono);user-select:text}
+.attachmentFileType{padding:3px 5px;border:1px solid rgba(222,147,107,.2);border-radius:2px;color:#c7957d;font:7px var(--mono);letter-spacing:.04em;white-space:nowrap}
+.attachmentNoNames{margin:0!important;color:#b89c8d!important;font:10px/1.6 var(--mono)!important}
+@media(max-width:620px){.attachmentFileList li{grid-template-columns:12px 20px minmax(0,1fr) auto;gap:5px;padding:8px 7px}.attachmentFileName{font-size:9px}.attachmentFileType{font-size:6px}}
 </style>
 
 <style id="admin-dashboard-editorial-2">
@@ -259,7 +270,8 @@ function renderIncoming(){
     const hasEmailAttachments=!!x.attachmentsExpected&&x.attachmentStatus!=='received';
     const statusLabel=x.status==='review'?'In review':x.status==='pending_via_email'?'Website text pending · email follow-up':'Needs review';
     const names=Array.isArray(x.attachmentNames)?x.attachmentNames:[];
-    const attachmentNote=x.attachmentsExpected?'<div class="attachmentNotice '+(x.attachmentStatus==='received'?'received':'')+'"><strong>'+(x.attachmentStatus==='received'?'✓ Attachments marked received':'↗ Some attachments will follow by email')+'</strong><p>'+esc(names.length?names.join(' · '):'Sender indicated files will be sent by email.')+'</p><small>'+esc(x.attachmentStatus==='received'?'Marked received by '+(x.attachmentReceivedBy||'admin')+'.':'Article text is already pending. Check the sender email for the listed files; Gmail sending is not verified automatically.')+'</small>'+(hasEmailAttachments?'<button class="attachmentReceivedBtn" type="button" data-attachments-received="'+esc(id)+'">Mark attachments received</button>':'')+'</div>':'';
+    const attachmentFileList=names.length?'<ul class="attachmentFileList">'+names.map((name,index)=>'<li><span class="attachmentFileIcon" aria-hidden="true">↳</span><span class="attachmentFileNumber">'+String(index+1).padStart(2,'0')+'</span><span class="attachmentFileName">'+esc(name)+'</span><span class="attachmentFileType">'+esc((String(name).split('.').pop()||'FILE').toUpperCase().slice(0,8))+'</span></li>').join('')+'</ul>':'<p class="attachmentNoNames">No filenames were recorded with this submission.</p>';
+    const attachmentNote=x.attachmentsExpected?'<div class="attachmentNotice '+(x.attachmentStatus==='received'?'received':'')+'"><div class="attachmentNoticeHead"><strong>'+(x.attachmentStatus==='received'?'✓ Attachments marked received':'↗ Some attachments will follow by email')+'</strong><span class="attachmentCount">'+names.length+' file'+(names.length===1?'':'s')+' selected</span></div>'+attachmentFileList+'<small>'+esc(x.attachmentStatus==='received'?'Marked received by '+(x.attachmentReceivedBy||'admin')+'.':'Article text is already pending. Check the sender email for the listed files; Gmail sending is not verified automatically.')+'</small>'+(hasEmailAttachments?'<button class="attachmentReceivedBtn" type="button" data-attachments-received="'+esc(id)+'">Mark attachments received</button>':'')+'</div>':'';
     return '<div class="navCard incomingItem"><h2>'+esc(x.title||'Untitled')+'</h2><p class="meta">'+esc(x.author||'Reader')+' · '+esc(x.email||'')+' · '+esc(statusLabel)+'</p><p>'+esc(String(x.text||x.content||'').replace(/<[^>]*>/g,' ').slice(0,260))+'</p>'+attachmentNote+'<div class="cardActions"><a class="secondary" href="./editor.html?id='+encodeURIComponent(id)+'" style="padding:9px 12px;border-radius:9px">Review / edit</a><button class="secondary" data-review="'+esc(id)+'">Mark in review</button><button class="green" data-pub="'+esc(id)+'">Publish</button><button class="danger" data-del="'+esc(id)+'">Delete</button></div></div>';
   }).join(''):'<div class="empty">No pending submissions.</div>';
   document.querySelectorAll('[data-review]').forEach(b=>b.onclick=async()=>{if(!currentUser){openLogin();return}try{await set(ref(db,'submissions/'+b.dataset.review+'/status'),'review')}catch(e){alert('Could not update status: '+e.message)}});
