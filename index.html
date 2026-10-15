@@ -155,6 +155,35 @@ button:hover:not(:disabled){transform:translateY(-1px)}
 @media(max-width:850px){.shell{padding:0 20px}.top{position:relative;grid-template-columns:1fr auto;flex-wrap:wrap}.brand{grid-column:1}.headerStatus{display:block;grid-column:1/-1;grid-row:2;padding:0;border:0}.actions{grid-column:2;grid-row:1}.hero{grid-template-columns:minmax(0,1fr);padding-top:34px}.heroAside{grid-template-columns:150px minmax(0,1fr);max-width:600px}.heroOrb{max-width:150px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.navGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.navCard{padding:14px;min-height:270px}.navCard h2{font-size:20px}.quickGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.sectionHead{align-items:flex-start;flex-direction:column}.libraryFilters{justify-content:flex-start;width:100%}.libraryFilters .search{flex:1;min-width:120px}}
 @media(max-width:620px){.shell{padding:0 13px}.top{padding:12px 0;gap:9px}.brand{grid-template-columns:auto auto auto}.brandTop{font-size:19px}.brandAdmin{font-size:15px}.brand small{font-size:7px}.actions{gap:4px}.actions button,.actions a{font-size:9px;padding:8px 9px;white-space:normal} .actions .writeAction{max-width:138px}.hero{padding:29px 0 23px;gap:23px}.hero h1{font-size:clamp(46px,13vw,66px);margin:15px 0}.hero p{font-size:12px}.heroAside{grid-template-columns:110px minmax(0,1fr);gap:8px}.heroOrb{max-width:110px}.orbLabel{font-size:5px}.quick a{grid-template-columns:23px minmax(0,1fr) 16px;padding:10px 7px;font-size:10px}.stats{gap:8px;margin-top:12px}.stat{padding:13px 12px}.statTop{font-size:7px}.statTop i{width:20px;height:20px}.statLabel{font-size:9px;margin-top:12px}.stat b{font-size:30px}.stat small{font-size:8px}.navGrid{grid-template-columns:1fr;gap:8px}.navCard{min-height:0;padding:17px}.navGlyph{width:31px;height:31px;margin:12px 0}.navCard h2{font-size:23px}.navCard p{font-size:10px;margin-bottom:15px}.navFoot{padding-top:9px}.quickGrid{grid-template-columns:1fr;gap:8px}.quickCard{padding:15px}.quickCard b{font-size:20px}.section{margin-top:30px}.sectionHead h2{font-size:25px}.sectionHead h2:before{display:block;margin:0 0 9px}.sectionTools{width:100%;align-items:flex-start;flex-direction:column}.sectionTools .search{width:100%}.libraryFilters{display:grid;grid-template-columns:1fr 1fr;gap:7px}.libraryFilters #search{grid-column:1/-1}.libraryFilters .search{width:100%;min-width:0}.published{grid-template-columns:1fr}.thumb{height:175px}.analyticsPanel{padding:13px}.analyticsSummary{gap:9px 15px}.analyticsSummary b{font-size:19px}.trendChart{gap:4px}.trendTrack{width:27px;height:90px}.trendChart .trendCol small{font-size:7px}.footer{line-height:1.8}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+/* URL-managed homepage hero artwork — no file upload needed */
+.heroImagePanel{padding:clamp(15px,2vw,24px);border:1px solid rgba(222,147,107,.22);border-radius:4px;background:linear-gradient(135deg,rgba(36,23,24,.82),rgba(11,11,15,.98));}
+.heroImageIntro{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding-bottom:17px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,.07)}
+.heroImageIntro strong{display:block;color:#f4e4da;font:600 18px/1.3 var(--serif);letter-spacing:-.02em}
+.heroImageIntro p{max-width:760px;margin:7px 0 0;color:#aa9a92;font-size:10px;line-height:1.8}
+.heroImageCount{flex:none;padding:7px 9px;border:1px solid rgba(222,147,107,.22);border-radius:3px;color:#d3a089;font:8px var(--mono);letter-spacing:.12em;white-space:nowrap}
+.heroImageRows{display:grid;gap:9px}
+.heroImageRow{display:grid;grid-template-columns:38px minmax(0,1fr) 60px 72px;align-items:center;gap:9px;min-width:0;padding:9px;border:1px solid rgba(255,255,255,.065);border-radius:4px;background:rgba(0,0,0,.18)}
+.heroImageSerial{display:grid;place-items:center;width:32px;height:32px;border:1px solid rgba(240,68,82,.25);border-radius:3px;color:#f09b84;font:10px var(--mono)}
+.heroImageUrl{display:block;width:100%;min-width:0;padding:10px 11px;border:1px solid #362a2c;border-radius:4px;background:#09090d;color:#f0e4dc;font:10px/1.5 var(--mono);outline:none}
+.heroImageUrl::placeholder{color:#726565}
+.heroImageUrl:focus{border-color:rgba(240,68,82,.7);box-shadow:0 0 0 3px rgba(240,68,82,.07)}
+.heroImagePreview{width:60px;height:40px;object-fit:cover;border:1px solid rgba(222,147,107,.16);border-radius:3px;background:#131014}
+.heroImagePreview[hidden]{display:block;visibility:hidden}
+.heroImageRowButton{min-height:31px;padding:6px 8px;border:1px solid rgba(255,255,255,.1);border-radius:4px;background:rgba(255,255,255,.025);color:#cdbdb5;font:9px var(--mono);cursor:pointer}
+.heroImageRowButton:hover{border-color:rgba(222,147,107,.35)}
+.heroImageRowButton.remove{color:#ff9fa6;border-color:rgba(240,68,82,.19)}
+.heroImageActions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:15px}
+.heroImageActionsRight{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.heroAddBtn,.heroReloadBtn,.heroSaveBtn{min-height:37px;padding:9px 13px;border-radius:5px;font:700 9px var(--mono);letter-spacing:.04em;cursor:pointer}
+.heroAddBtn{border:1px dashed rgba(222,147,107,.35);background:rgba(222,147,107,.035);color:#e4c0ae}
+.heroReloadBtn{border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.025);color:#cbbdb5}
+.heroSaveBtn{border:1px solid var(--red);background:var(--red);color:#fff}
+.heroSaveBtn:disabled,.heroReloadBtn:disabled,.heroAddBtn:disabled{opacity:.55;cursor:wait}
+.heroImageStatus{margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.055);color:#a8968d;font:9px/1.7 var(--mono);overflow-wrap:anywhere}
+.heroImageStatus.success{color:#a8dfc0}.heroImageStatus.error{color:#ffb0b0}
+@media(max-width:720px){.heroImageIntro{flex-direction:column;gap:9px}.heroImageRow{grid-template-columns:31px minmax(0,1fr) 42px;gap:6px;padding:7px}.heroImageSerial{width:28px;height:28px;font-size:9px}.heroImagePreview{width:42px;height:32px}.heroImageRowButton.remove{grid-column:2/-1;justify-self:end;padding:5px 10px}.heroImageActions{align-items:stretch}.heroImageActionsRight{width:100%}.heroImageActionsRight button{flex:1}}
+@media(prefers-reduced-motion:reduce){.heroImageRowButton,.heroAddBtn,.heroReloadBtn,.heroSaveBtn{transition:none!important}}
 </style>
 </head>
 <body>
@@ -164,6 +193,7 @@ button:hover:not(:disabled){transform:translateY(-1px)}
 <section class="stats" aria-label="Editorial overview"><div class="stat statPublished"><div class="statTop"><span>01 / LIBRARY</span><i aria-hidden="true">↗</i></div><div class="statLabel">Published stories</div><b id="publishedCount">0</b><small>Live in the magazine</small></div><div class="stat statIncoming"><div class="statTop"><span>02 / REVIEW</span><i aria-hidden="true">↙</i></div><div class="statLabel">Incoming articles</div><b id="incomingCount">0</b><small>Waiting for editorial review</small></div><div class="stat statDrafts"><div class="statTop"><span>03 / WORK IN PROGRESS</span><i aria-hidden="true">✎</i></div><div class="statLabel">Saved drafts</div><b id="draftCount">0</b><small>Still being refined</small></div><div class="stat statRecent"><div class="statTop"><span>04 / MOMENTUM</span><i aria-hidden="true">◷</i></div><div class="statLabel">Published · 30 days</div><b id="published30Count">0</b><small>Recent publishing activity</small></div></section>
 <section class="navGrid" aria-label="Editorial work queues"><a class="navCard navEditor" href="./editor.html"><span class="navNumber">01 / CREATE</span><span class="navGlyph" aria-hidden="true">✎</span><h2>Article Studio <b>↗</b></h2><p>Write, format and prepare long-form articles with cover art, scientific layouts and a live reader preview.</p><span class="navFoot">OPEN THE STUDIO <i>↗</i></span></a><a class="navCard navIncoming" href="#incoming"><span class="navNumber">02 / REVIEW</span><span class="navGlyph" aria-hidden="true">↙</span><h2>Incoming stories <b>↗</b></h2><p>Read reader submissions, refine the writing and decide what belongs in the magazine.</p><span class="navFoot">REVIEW SUBMISSIONS <i>↗</i></span></a><a class="navCard navLibrary" href="#published"><span class="navNumber">03 / MANAGE</span><span class="navGlyph" aria-hidden="true">◉</span><h2>Published library <b>↗</b></h2><p>Search editions, filter by category, update published articles or unpublish when needed.</p><span class="navFoot">MANAGE ARTICLES <i>↗</i></span></a></section>
 <section class="quickGrid" aria-label="More editorial tools"><a class="quickCard" href="./editor.html?mode=schedule"><span class="quickIndex">01 / SCHEDULE</span><b>Plan a publication <i>↗</i></b><p>Prepare an article and use the publishing schedule to choose its release time.</p><span class="quickBottom">SCHEDULING WORKFLOW</span></a><a class="quickCard" href="./editor.html?mode=gallery"><span class="quickIndex">02 / ART GALLERY</span><b>Editorial artwork <i>↗</i></b><p>Find existing magazine images or upload fresh cover art in the shared media library.</p><span class="quickBottom">ASSET MANAGER</span></a><a class="quickCard" href="https://iammdtanvirrahman.github.io/atomic-weekly/" target="_blank" rel="noopener"><span class="quickIndex">03 / PUBLICATION</span><b>View the magazine <i>↗</i></b><p>Open the public reading experience to review the publication outside the admin workspace.</p><span class="quickBottom">PUBLIC ATOMIC WEEKLY</span></a></section>
+<section class="section" id="heroImages"><div class="sectionHead"><h2>Hero image links</h2><span id="heroImageConnection" class="meta">Sign in to manage homepage artwork</span></div><div class="heroImagePanel"><div class="heroImageIntro"><div><strong>Refresh artwork without uploading files.</strong><p>Paste direct HTTPS image URLs in serial order. Save once; the magazine will load one working image per refresh. If every link fails, it falls back to the artwork folder.</p></div><span class="heroImageCount" id="heroImageCount">0 LINKS</span></div><div class="heroImageRows" id="heroImageRows" aria-label="Homepage image URLs"></div><div class="heroImageActions"><button type="button" class="heroAddBtn" id="addHeroImageRow">＋ Add link</button><div class="heroImageActionsRight"><button type="button" class="heroReloadBtn" id="reloadHeroImageLinks">Reload saved</button><button type="button" class="heroSaveBtn" id="saveHeroImageLinks">Save image links</button></div></div><div class="heroImageStatus" id="heroImageStatus" role="status" aria-live="polite">Sign in to load saved image links.</div></div></section>
 <section class="section" id="analytics"><div class="sectionHead"><h2>Editorial analytics</h2><span class="meta">Publishing activity · not reader-view counts</span></div><div class="analyticsPanel"><div class="analyticsSummary" id="analyticsSummary">Loading editorial metrics…</div><div class="trendChart" id="trendChart" aria-label="Articles published over the last seven days"></div></div></section>
 <section class="section" id="drafts"><div class="sectionHead"><h2>Cloud Drafts</h2><span id="draftStatus" class="meta"></span></div><div id="draftList" class="published"></div></section>
 <section class="section" id="incoming"><div class="sectionHead"><h2>Incoming Articles</h2><div class="sectionTools"><input id="incomingSearch" class="search" placeholder="Search incoming…"><span id="incomingStatus" class="meta"></span></div></div><div id="incomingList"></div></section>
@@ -301,6 +331,92 @@ function renderIncoming(){
   document.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{if(!currentUser){openLogin();return}if(confirm('Delete this submission permanently?'))try{await remove(ref(db,'submissions/'+b.dataset.del))}catch(e){alert('Delete failed: '+e.message)}});
   renderAnalytics();
 }
+const HERO_IMAGE_LINKS_PATH='atomicWeekly/settings/heroImageLinks';
+const heroImageRows=$('heroImageRows');
+function setHeroImageStatus(message,type){
+  const node=$('heroImageStatus');node.textContent=message;node.className='heroImageStatus'+(type?' '+type:'');
+}
+function normalizeHeroImageUrl(raw){
+  const value=String(raw||'').trim();if(!value)return'';
+  let parsed;try{parsed=new URL(value)}catch(e){throw new Error('Enter a complete image URL starting with https://')}
+  if(parsed.protocol!=='https:')throw new Error('Use HTTPS image links so they work on the secure magazine website.');
+  return parsed.href;
+}
+function renumberHeroImageRows(){
+  const rows=[...heroImageRows.querySelectorAll('.heroImageRow')];
+  rows.forEach((row,index)=>{row.querySelector('.heroImageSerial').textContent=String(index+1).padStart(2,'0');row.querySelector('.heroImageUrl').setAttribute('aria-label','Image URL '+String(index+1));});
+  $('heroImageCount').textContent=rows.filter(row=>row.querySelector('.heroImageUrl').value.trim()).length+' LINKS';
+}
+function addHeroImageRow(value){
+  if(heroImageRows.querySelectorAll('.heroImageRow').length>=60){setHeroImageStatus('Maximum 60 image links per rotation list.', 'error');return}
+  const row=document.createElement('div');row.className='heroImageRow';
+  const serial=document.createElement('span');serial.className='heroImageSerial';serial.textContent='01';
+  const input=document.createElement('input');input.type='url';input.className='heroImageUrl';input.placeholder='https://example.com/cosmic-image.webp';input.value=value||'';input.autocomplete='url';input.spellcheck=false;
+  const preview=document.createElement('img');preview.className='heroImagePreview';preview.alt='Image preview';preview.hidden=true;
+  const previewButton=document.createElement('button');previewButton.type='button';previewButton.className='heroImageRowButton';previewButton.textContent='Preview';
+  const removeButton=document.createElement('button');removeButton.type='button';removeButton.className='heroImageRowButton remove';removeButton.textContent='Remove';
+  function previewUrl(){
+    const src=input.value.trim();
+    if(!src){preview.removeAttribute('src');preview.hidden=true;setHeroImageStatus('Paste an HTTPS image link first.','error');return}
+    let safe;try{safe=normalizeHeroImageUrl(src)}catch(error){preview.hidden=true;setHeroImageStatus(error.message,'error');return}
+    preview.hidden=true;previewButton.disabled=true;previewButton.textContent='Loading…';
+    preview.onload=()=>{preview.hidden=false;previewButton.disabled=false;previewButton.textContent='Preview';setHeroImageStatus('Image preview loaded. Save the list to use it on the homepage.','success')};
+    preview.onerror=()=>{preview.hidden=true;previewButton.disabled=false;previewButton.textContent='Preview';setHeroImageStatus('This URL did not return a loadable image. Check that it is a direct, public image link.','error')};
+    preview.src=safe;
+  }
+  previewButton.addEventListener('click',previewUrl);
+  input.addEventListener('change',()=>{renumberHeroImageRows();if(input.value.trim())previewUrl()});
+  input.addEventListener('input',renumberHeroImageRows);
+  removeButton.addEventListener('click',()=>{row.remove();renumberHeroImageRows();setHeroImageStatus('Link row removed. Save to apply the change.','')});
+  row.append(serial,input,preview,previewButton,removeButton);heroImageRows.appendChild(row);renumberHeroImageRows();
+  if(value)previewUrl();
+}
+function renderHeroImageRows(urls){
+  heroImageRows.replaceChildren();
+  const list=Array.isArray(urls)?urls:Object.keys(urls||{}).sort((a,b)=>Number(a)-Number(b)).map(k=>urls[k]);
+  const clean=list.map(item=>typeof item==='string'?item:(item&&item.url)||'').slice(0,60);
+  if(clean.length)clean.forEach(url=>addHeroImageRow(url));else{addHeroImageRow('');addHeroImageRow('');addHeroImageRow('')}
+  renumberHeroImageRows();
+}
+async function loadHeroImageLinks(){
+  if(!currentUser){$('heroImageConnection').textContent='Sign in to manage homepage artwork';$('reloadHeroImageLinks').disabled=true;$('saveHeroImageLinks').disabled=true;setHeroImageStatus('Sign in with your editor account to load and save links.','');return}
+  $('heroImageConnection').textContent='Loading saved links…';$('reloadHeroImageLinks').disabled=true;
+  try{
+    const snapshot=await get(ref(db,HERO_IMAGE_LINKS_PATH));
+    const data=snapshot.val()||{};
+    const urls=data.urls||[];
+    renderHeroImageRows(urls);
+    $('heroImageConnection').textContent=data.updatedAt?'Saved list · '+new Date(data.updatedAt).toLocaleString():'No saved link list yet';
+    $('saveHeroImageLinks').disabled=false;$('reloadHeroImageLinks').disabled=false;
+    setHeroImageStatus(snapshot.exists()&&((Array.isArray(urls)&&urls.length)||(urls&&typeof urls==='object'&&Object.keys(urls).length))?'Loaded '+Object.keys(urls).length+' saved link(s).':'No saved links yet. Add URLs and save; the magazine folder remains as fallback.','');
+  }catch(error){
+    $('heroImageConnection').textContent='Could not load cloud links';$('reloadHeroImageLinks').disabled=false;$('saveHeroImageLinks').disabled=false;
+    setHeroImageStatus('Could not read saved image links: '+(error.message||'Check Firebase database permissions.'),'error');
+  }
+}
+$('addHeroImageRow').addEventListener('click',()=>{if(!currentUser){openLogin();return}addHeroImageRow('');const inputs=heroImageRows.querySelectorAll('.heroImageUrl');inputs[inputs.length-1]?.focus();setHeroImageStatus('Paste a direct HTTPS image URL, then Preview or Save.','')});
+$('reloadHeroImageLinks').addEventListener('click',loadHeroImageLinks);
+$('saveHeroImageLinks').addEventListener('click',async()=>{
+  if(!currentUser){openLogin();return}
+  const button=$('saveHeroImageLinks');button.disabled=true;button.textContent='Saving…';
+  try{
+    const inputs=[...heroImageRows.querySelectorAll('.heroImageUrl')];
+    const urls=[];
+    for(const input of inputs){if(!input.value.trim())continue;urls.push(normalizeHeroImageUrl(input.value))}
+    if(urls.length>60)throw new Error('Maximum 60 image links per list.');
+    const payload={urls:urls,updatedAt:Date.now(),updatedBy:currentUser.email||'admin',version:1};
+    await set(ref(db,HERO_IMAGE_LINKS_PATH),payload);
+    const saved=await get(ref(db,HERO_IMAGE_LINKS_PATH));
+    if(!saved.exists())throw new Error('Save check failed: the database returned no saved record.');
+    const stored=saved.val().urls||[];
+    const storedUrls=Array.isArray(stored)?stored:Object.keys(stored).sort((a,b)=>Number(a)-Number(b)).map(k=>stored[k]);
+    if(storedUrls.length!==urls.length)throw new Error('Saved list verification failed; expected '+urls.length+' links but found '+storedUrls.length+'.');
+    $('heroImageConnection').textContent=urls.length+' saved link(s) · '+new Date(payload.updatedAt).toLocaleString();
+    setHeroImageStatus('Saved and verified '+urls.length+' image link(s). Reload the Atomic Weekly homepage to apply the new rotation list.','success');
+  }catch(error){setHeroImageStatus('Could not save image links: '+(error.message||'Unknown error'),'error')}
+  finally{button.disabled=!currentUser;button.textContent='Save image links';renumberHeroImageRows()}
+});
+
 $('search').oninput=()=>{renderPublished();renderDrafts()};
 $('statusFilter').onchange=renderPublished;$('sectionFilter').onchange=renderPublished;$('sortFilter').onchange=renderPublished;
 $('incomingSearch').oninput=renderIncoming;
@@ -325,6 +441,8 @@ onAuthStateChanged(auth,user=>{
   currentUser=user||null;$('signInDashboard').hidden=!!user;$('signOutDashboard').hidden=!user;
   $('dashboardAuthStatus').textContent=user?'Signed in as '+(user.email||'admin'):'Sign in required for publishing and cloud changes';
   document.body.classList.toggle('dashboardSignedIn',!!user);
+  $('heroImageConnection').textContent=user?'Loading saved homepage image links…':'Sign in to manage homepage artwork';
+  if(user)loadHeroImageLinks();else{heroImageRows.replaceChildren();renderHeroImageRows([]);$('saveHeroImageLinks').disabled=true;$('reloadHeroImageLinks').disabled=true;setHeroImageStatus('Sign in with your editor account to load and save links.','')}
 });
 </script>
 </body>
