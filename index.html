@@ -163,13 +163,12 @@ button:hover:not(:disabled){transform:translateY(-1px)}
 .heroImageIntro p{max-width:760px;margin:7px 0 0;color:#aa9a92;font-size:10px;line-height:1.8}
 .heroImageCount{flex:none;padding:7px 9px;border:1px solid rgba(222,147,107,.22);border-radius:3px;color:#d3a089;font:8px var(--mono);letter-spacing:.12em;white-space:nowrap}
 .heroImageRows{display:grid;gap:9px}
-.heroImageRow{display:grid;grid-template-columns:38px minmax(0,1fr) 60px 72px;align-items:center;gap:9px;min-width:0;padding:9px;border:1px solid rgba(255,255,255,.065);border-radius:4px;background:rgba(0,0,0,.18)}
+.heroImageRow{display:grid;grid-template-columns:38px minmax(200px,1fr) minmax(190px,230px) 72px;align-items:center;gap:10px;min-width:0;padding:10px;border:1px solid rgba(255,255,255,.065);border-radius:4px;background:rgba(0,0,0,.18)}
 .heroImageSerial{display:grid;place-items:center;width:32px;height:32px;border:1px solid rgba(240,68,82,.25);border-radius:3px;color:#f09b84;font:10px var(--mono)}
 .heroImageUrl{display:block;width:100%;min-width:0;padding:10px 11px;border:1px solid #362a2c;border-radius:4px;background:#09090d;color:#f0e4dc;font:10px/1.5 var(--mono);outline:none}
 .heroImageUrl::placeholder{color:#726565}
 .heroImageUrl:focus{border-color:rgba(240,68,82,.7);box-shadow:0 0 0 3px rgba(240,68,82,.07)}
-.heroImagePreview{width:60px;height:40px;object-fit:cover;border:1px solid rgba(222,147,107,.16);border-radius:3px;background:#131014}
-.heroImagePreview[hidden]{display:block;visibility:hidden}
+.heroImagePreviewPanel{min-width:0;display:grid;grid-template-columns:minmax(0,1fr);gap:7px;padding:7px;border:1px solid rgba(222,147,107,.15);border-radius:4px;background:linear-gradient(145deg,rgba(40,26,28,.72),rgba(10,10,14,.96))}.heroImagePreviewStage{position:relative;display:grid;place-items:center;width:100%;aspect-ratio:1/1;max-height:180px;overflow:hidden;border:1px solid rgba(255,255,255,.06);border-radius:3px;background:radial-gradient(ellipse at 50% 45%,rgba(222,147,107,.08),transparent 65%),#09090d}.heroImagePreview{width:100%;height:100%;object-fit:contain;display:block;transform:rotate(var(--preview-rotation,0deg)) scale(var(--preview-scale,1));transition:transform .18s ease}.heroImagePreview[hidden]{display:none}.heroImagePreviewControls{display:flex;align-items:center;justify-content:space-between;gap:5px;flex-wrap:wrap}.heroImagePreviewControls .heroImageRowButton{padding:6px 8px}.heroImageRotationLabel{margin-left:auto;color:#dbad95;font:9px var(--mono);white-space:nowrap}
 .heroImageRowButton{min-height:31px;padding:6px 8px;border:1px solid rgba(255,255,255,.1);border-radius:4px;background:rgba(255,255,255,.025);color:#cdbdb5;font:9px var(--mono);cursor:pointer}
 .heroImageRowButton:hover{border-color:rgba(222,147,107,.35)}
 .heroImageRowButton.remove{color:#ff9fa6;border-color:rgba(240,68,82,.19)}
@@ -182,7 +181,7 @@ button:hover:not(:disabled){transform:translateY(-1px)}
 .heroSaveBtn:disabled,.heroReloadBtn:disabled,.heroAddBtn:disabled{opacity:.55;cursor:wait}
 .heroImageStatus{margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.055);color:#a8968d;font:9px/1.7 var(--mono);overflow-wrap:anywhere}
 .heroImageStatus.success{color:#a8dfc0}.heroImageStatus.error{color:#ffb0b0}
-@media(max-width:720px){.heroImageIntro{flex-direction:column;gap:9px}.heroImageRow{grid-template-columns:31px minmax(0,1fr) 42px;gap:6px;padding:7px}.heroImageSerial{width:28px;height:28px;font-size:9px}.heroImagePreview{width:42px;height:32px}.heroImageRowButton.remove{grid-column:2/-1;justify-self:end;padding:5px 10px}.heroImageActions{align-items:stretch}.heroImageActionsRight{width:100%}.heroImageActionsRight button{flex:1}}
+@media(max-width:720px){.heroImageIntro{flex-direction:column;gap:9px}.heroImageRow{grid-template-columns:31px minmax(0,1fr);gap:7px;padding:8px}.heroImageSerial{width:28px;height:28px;font-size:9px}.heroImageUrl{grid-column:2;grid-row:1}.heroImagePreviewPanel{grid-column:1/-1;width:min(100%,330px);justify-self:center}.heroImagePreviewStage{max-height:230px}.heroImageRowButton.remove{grid-column:1/-1;justify-self:end;padding:6px 10px}.heroImageActions{align-items:stretch}.heroImageActionsRight{width:100%}.heroImageActionsRight button{flex:1}}
 @media(prefers-reduced-motion:reduce){.heroImageRowButton,.heroAddBtn,.heroReloadBtn,.heroSaveBtn{transition:none!important}}
 </style>
 </head>
@@ -350,31 +349,57 @@ function renumberHeroImageRows(){
 }
 function addHeroImageRow(value){
   if(heroImageRows.querySelectorAll('.heroImageRow').length>=60){setHeroImageStatus('Maximum 60 image links per rotation list.', 'error');return}
-  const row=document.createElement('div');row.className='heroImageRow';
+  const initialUrl=typeof value==='string'?value:(value&&value.url)||'';
+  let rotation=Number(value&&typeof value==='object'?value.rotation:0);
+  if(!Number.isFinite(rotation))rotation=0;
+  rotation=((Math.round(rotation/90)*90)%360+360)%360;
+  const row=document.createElement('div');row.className='heroImageRow';row.dataset.rotation=String(rotation);
   const serial=document.createElement('span');serial.className='heroImageSerial';serial.textContent='01';
-  const input=document.createElement('input');input.type='url';input.className='heroImageUrl';input.placeholder='https://example.com/cosmic-image.webp';input.value=value||'';input.autocomplete='url';input.spellcheck=false;
-  const preview=document.createElement('img');preview.className='heroImagePreview';preview.alt='Image preview';preview.hidden=true;
+  const input=document.createElement('input');input.type='url';input.className='heroImageUrl';input.placeholder='https://example.com/cosmic-image.webp';input.value=initialUrl;input.autocomplete='url';input.spellcheck=false;
+  const previewPanel=document.createElement('div');previewPanel.className='heroImagePreviewPanel';
+  const previewStage=document.createElement('div');previewStage.className='heroImagePreviewStage';
+  const preview=document.createElement('img');preview.className='heroImagePreview';preview.alt='Image preview';preview.loading='lazy';preview.hidden=true;
+  const controls=document.createElement('div');controls.className='heroImagePreviewControls';
   const previewButton=document.createElement('button');previewButton.type='button';previewButton.className='heroImageRowButton';previewButton.textContent='Preview';
+  const rotateButton=document.createElement('button');rotateButton.type='button';rotateButton.className='heroImageRowButton';rotateButton.textContent='↻ Rotate 90°';rotateButton.setAttribute('aria-label','Rotate preview 90 degrees clockwise');
+  const rotationLabel=document.createElement('span');rotationLabel.className='heroImageRotationLabel';
   const removeButton=document.createElement('button');removeButton.type='button';removeButton.className='heroImageRowButton remove';removeButton.textContent='Remove';
+  function applyPreviewRotation(){
+    row.dataset.rotation=String(rotation);
+    preview.style.setProperty('--preview-rotation',rotation+'deg');
+    preview.style.setProperty('--preview-scale',(rotation===90||rotation===270)?'.76':'1');
+    rotationLabel.textContent=rotation+'°';
+    rotateButton.setAttribute('aria-label','Rotate preview; current rotation '+rotation+' degrees');
+  }
   function previewUrl(){
     const src=input.value.trim();
     if(!src){preview.removeAttribute('src');preview.hidden=true;setHeroImageStatus('Paste an HTTPS image link first.','error');return}
     let safe;try{safe=normalizeHeroImageUrl(src)}catch(error){preview.hidden=true;setHeroImageStatus(error.message,'error');return}
     preview.hidden=true;previewButton.disabled=true;previewButton.textContent='Loading…';
-    preview.onload=()=>{preview.hidden=false;previewButton.disabled=false;previewButton.textContent='Preview';setHeroImageStatus('Image preview loaded. Save the list to use it on the homepage.','success')};
-    preview.onerror=()=>{preview.hidden=true;previewButton.disabled=false;previewButton.textContent='Preview';setHeroImageStatus('This URL did not return a loadable image. Check that it is a direct, public image link.','error')};
+    preview.onload=()=>{preview.hidden=false;previewButton.disabled=false;previewButton.textContent='Preview';setHeroImageStatus('Preview loaded. Rotation '+rotation+'°; save to apply it to the homepage.','success')};
+    preview.onerror=()=>{preview.hidden=true;previewButton.disabled=false;previewButton.textContent='Preview';setHeroImageStatus('This URL did not return a loadable image. Use a direct, public image URL rather than a Pinterest pin page.','error')};
     preview.src=safe;
   }
   previewButton.addEventListener('click',previewUrl);
-  input.addEventListener('change',()=>{renumberHeroImageRows();if(input.value.trim())previewUrl()});
+  rotateButton.addEventListener('click',()=>{
+    rotation=(rotation+90)%360;applyPreviewRotation();
+    if(!preview.getAttribute('src')&&input.value.trim())previewUrl();
+    setHeroImageStatus('Preview rotated to '+rotation+'°. Save image links to keep this orientation on the homepage.','');
+  });
+  input.addEventListener('change',()=>{rotation=0;applyPreviewRotation();renumberHeroImageRows();if(input.value.trim())previewUrl()});
   input.addEventListener('input',renumberHeroImageRows);
   removeButton.addEventListener('click',()=>{row.remove();renumberHeroImageRows();setHeroImageStatus('Link row removed. Save to apply the change.','')});
-  row.append(serial,input,preview,previewButton,removeButton);heroImageRows.appendChild(row);renumberHeroImageRows();
+  previewStage.appendChild(preview);
+  controls.append(previewButton,rotateButton,rotationLabel);
+  previewPanel.append(previewStage,controls);
+  row.append(serial,input,previewPanel,removeButton);
+  heroImageRows.appendChild(row);applyPreviewRotation();renumberHeroImageRows();
+  if(input.value.trim())previewUrl();
 }
 function renderHeroImageRows(urls){
   heroImageRows.replaceChildren();
   const list=Array.isArray(urls)?urls:Object.keys(urls||{}).sort((a,b)=>Number(a)-Number(b)).map(k=>urls[k]);
-  const clean=list.map(item=>typeof item==='string'?item:(item&&item.url)||'').slice(0,60);
+  const clean=list.map(item=>typeof item==='string'?item:({url:(item&&item.url)||'',rotation:Number(item&&item.rotation)||0})).slice(0,60);
   if(clean.length)clean.forEach(url=>addHeroImageRow(url));else{addHeroImageRow('');addHeroImageRow('');addHeroImageRow('')}
   renumberHeroImageRows();
 }
@@ -402,7 +427,7 @@ $('saveHeroImageLinks').addEventListener('click',async()=>{
   try{
     const inputs=[...heroImageRows.querySelectorAll('.heroImageUrl')];
     const urls=[];
-    for(const input of inputs){if(!input.value.trim())continue;urls.push(normalizeHeroImageUrl(input.value))}
+    for(const input of inputs){if(!input.value.trim())continue;const row=input.closest('.heroImageRow');urls.push({url:normalizeHeroImageUrl(input.value),rotation:Number(row&&row.dataset.rotation)||0})}
     if(urls.length>60)throw new Error('Maximum 60 image links per list.');
     const payload={kind:'hero-image-links',urls:urls,updatedAt:Date.now(),updatedBy:currentUser.email||'admin',version:1};
     await set(ref(db,HERO_IMAGE_LINKS_PATH),payload);
