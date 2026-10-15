@@ -29,6 +29,16 @@ button{border-radius:9px}button:hover{transform:translateY(-1px)}.quickGrid{disp
 
 .stats{grid-template-columns:repeat(4,minmax(0,1fr))}.sectionTools,.libraryFilters{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.libraryFilters{justify-content:flex-end}.libraryFilters .search{width:auto;min-width:135px}.statePill{display:inline-block;padding:3px 7px;border-radius:5px;font-size:10px;font-weight:800}.statePill.live{background:#15372f;color:#8de0b9}.statePill.off{background:#292f39;color:#b9c1cc}.analyticsPanel{border:1px solid var(--line);background:linear-gradient(145deg,#121720,#0c0e13);padding:18px;border-radius:16px}.analyticsSummary{display:flex;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:12px}.analyticsSummary b{color:var(--text);font-size:18px;margin-right:5px}.trendChart{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px;align-items:end;height:150px;margin-top:18px}.trendCol{display:flex;flex-direction:column;align-items:center;justify-content:end;height:100%;gap:4px}.trendTrack{height:105px;width:min(100%,46px);display:flex;align-items:end;background:#1a2029;border-radius:7px 7px 3px 3px;overflow:hidden}.trendTrack span{display:block;width:100%;background:linear-gradient(180deg,#ff737e,#e63946);border-radius:7px 7px 3px 3px;min-height:2px}.trendCol b{font-size:11px}.trendCol small{font-size:10px;color:var(--muted)}.cardActions{flex-wrap:wrap}.cardActions button{padding:8px 9px}.thumb{background:#141922}.thumb img{width:100%;height:100%;object-fit:cover}.empty{color:var(--muted);padding:22px;border:1px dashed var(--line);border-radius:12px}.login.open{display:flex}.loginBox button{width:100%;margin-top:9px}.loginBox .secondary{background:#27303a}@media(max-width:850px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.sectionHead{align-items:flex-start;flex-direction:column}.libraryFilters{justify-content:flex-start;width:100%}.libraryFilters .search{flex:1;min-width:120px}}@media(max-width:560px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{padding:13px}.stat b{font-size:28px}.sectionTools{width:100%;align-items:flex-start;flex-direction:column}.sectionTools .search{width:100%}.libraryFilters{display:grid;grid-template-columns:1fr 1fr}.libraryFilters #search{grid-column:1/-1}.libraryFilters .search{width:100%;min-width:0}.trendChart{gap:5px}.trendTrack{width:28px}.analyticsPanel{padding:12px}}
  .googleLogin{display:flex;align-items:center;justify-content:center;gap:12px;background:#fff!important;color:#202124!important;border:1px solid #dadce0!important;font-weight:700}.googleLogin:hover{background:#f7f8fa!important}.googleMark{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:conic-gradient(from -45deg,#4285f4 0 25%,#34a853 25% 50%,#fbbc05 50% 75%,#ea4335 75%);color:#fff;font:bold 14px Arial;box-shadow:inset 0 0 0 3px #fff} 
+
+/* Website article submissions with email attachment follow-up */
+.attachmentNotice{display:grid;gap:6px;margin:12px 0 3px;padding:12px 13px;border:1px solid rgba(222,147,107,.28);border-radius:4px;background:linear-gradient(100deg,rgba(111,46,35,.14),rgba(255,255,255,.015))}
+.attachmentNotice strong{color:#e9b18f;font:700 9px/1.6 var(--mono);letter-spacing:.065em;text-transform:uppercase}
+.attachmentNotice p{margin:0!important;color:#e1c6b5!important;font:10px/1.65 var(--sans)!important;overflow-wrap:anywhere}
+.attachmentNotice small{color:#a9978f;font-size:9px;line-height:1.65}
+.attachmentNotice .attachmentReceivedBtn{justify-self:start;margin-top:4px;padding:7px 10px;border:1px solid rgba(222,147,107,.35);border-radius:5px;background:rgba(222,147,107,.07);color:#f0d4c5;font:9px var(--mono);cursor:pointer}
+.attachmentNotice .attachmentReceivedBtn:hover{border-color:var(--red);background:rgba(240,68,82,.08)}
+.attachmentNotice.received{border-color:rgba(91,208,163,.24);background:rgba(47,154,131,.055)}
+.attachmentNotice.received strong{color:#95d8b5}
 </style>
 
 <style id="admin-dashboard-editorial-2">
@@ -245,8 +255,24 @@ function renderIncoming(){
   const arr=Object.entries(submissions||{}).filter(([,x])=>x&&x.status!=='published'&&JSON.stringify(x).toLowerCase().includes(q)).sort((a,b)=>(b[1]?.timestamp||b[1]?.createdAt||0)-(a[1]?.timestamp||a[1]?.createdAt||0));
   $('incomingCount').textContent=Object.values(submissions||{}).filter(x=>x&&x.status!=='published').length;
   $('incomingStatus').textContent=arr.length?arr.length+' pending':'No pending submissions';
-  $('incomingList').innerHTML=arr.length?arr.map(([id,x])=>'<div class="navCard incomingItem"><h2>'+esc(x.title||'Untitled')+'</h2><p class="meta">'+esc(x.author||'Reader')+' · '+esc(x.email||'')+' · '+esc(x.status==='review'?'In review':'Needs review')+'</p><p>'+esc((x.text||x.content||'').replace(/<[^>]*>/g,' ').slice(0,260))+'</p><div class="cardActions"><a class="secondary" href="./editor.html?id='+encodeURIComponent(id)+'" style="padding:9px 12px;border-radius:9px">Review / edit</a><button class="secondary" data-review="'+esc(id)+'">Mark in review</button><button class="green" data-pub="'+esc(id)+'">Publish</button><button class="danger" data-del="'+esc(id)+'">Delete</button></div></div>').join(''):'<div class="empty">No pending submissions.</div>';
+  $('incomingList').innerHTML=arr.length?arr.map(([id,x])=>{
+    const hasEmailAttachments=!!x.attachmentsExpected&&x.attachmentStatus!=='received';
+    const statusLabel=x.status==='review'?'In review':x.status==='pending_via_email'?'Website text pending · email follow-up':'Needs review';
+    const names=Array.isArray(x.attachmentNames)?x.attachmentNames:[];
+    const attachmentNote=x.attachmentsExpected?'<div class="attachmentNotice '+(x.attachmentStatus==='received'?'received':'')+'"><strong>'+(x.attachmentStatus==='received'?'✓ Attachments marked received':'↗ Some attachments will follow by email')+'</strong><p>'+esc(names.length?names.join(' · '):'Sender indicated files will be sent by email.')+'</p><small>'+esc(x.attachmentStatus==='received'?'Marked received by '+(x.attachmentReceivedBy||'admin')+'.':'Article text is already pending. Check the sender email for the listed files; Gmail sending is not verified automatically.')+'</small>'+(hasEmailAttachments?'<button class="attachmentReceivedBtn" type="button" data-attachments-received="'+esc(id)+'">Mark attachments received</button>':'')+'</div>':'';
+    return '<div class="navCard incomingItem"><h2>'+esc(x.title||'Untitled')+'</h2><p class="meta">'+esc(x.author||'Reader')+' · '+esc(x.email||'')+' · '+esc(statusLabel)+'</p><p>'+esc(String(x.text||x.content||'').replace(/<[^>]*>/g,' ').slice(0,260))+'</p>'+attachmentNote+'<div class="cardActions"><a class="secondary" href="./editor.html?id='+encodeURIComponent(id)+'" style="padding:9px 12px;border-radius:9px">Review / edit</a><button class="secondary" data-review="'+esc(id)+'">Mark in review</button><button class="green" data-pub="'+esc(id)+'">Publish</button><button class="danger" data-del="'+esc(id)+'">Delete</button></div></div>';
+  }).join(''):'<div class="empty">No pending submissions.</div>';
   document.querySelectorAll('[data-review]').forEach(b=>b.onclick=async()=>{if(!currentUser){openLogin();return}try{await set(ref(db,'submissions/'+b.dataset.review+'/status'),'review')}catch(e){alert('Could not update status: '+e.message)}});
+  document.querySelectorAll('[data-attachments-received]').forEach(b=>b.onclick=async()=>{
+    if(!currentUser){openLogin();return}
+    const id=b.dataset.attachmentsReceived;
+    if(!confirm('Mark the email attachments as received for this submission?'))return;
+    try{
+      await set(ref(db,'submissions/'+id+'/attachmentStatus'),'received');
+      await set(ref(db,'submissions/'+id+'/attachmentReceivedAt'),Date.now());
+      await set(ref(db,'submissions/'+id+'/attachmentReceivedBy'),currentUser.email||'admin');
+    }catch(e){alert('Could not update attachment status: '+e.message)}
+  });
   document.querySelectorAll('[data-pub]').forEach(b=>b.onclick=async()=>{
     if(!currentUser){openLogin();return}
     const id=b.dataset.pub,x=submissions[id];if(!x)return;
