@@ -98,8 +98,7 @@ document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()
  };
  import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js').then(appMod=>import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js').then(dbMod=>({appMod,dbMod}))).then(({appMod,dbMod})=>{
  const app=appMod.getApps().length?appMod.getApp():appMod.initializeApp(config);const db=dbMod.getDatabase(app);
- const state=document.querySelector('.live');if(state)state.innerHTML='<span class="dot"></span> LIVE FIREBASE';
- const watch=(path,fn)=>dbMod.onValue(dbMod.ref(db,path),snap=>{fn(snap.val()||{});render()},err=>{console.warn('Atomic dashboard listener '+path,err);if(state)state.textContent='DATABASE CONNECTION ERROR'});
+ const state=document.querySelector('.live');if(state)state.innerHTML='<span class="dot"></span> CONNECTING FIREBASE';let successfulReads=0;const watch=(path,fn)=>dbMod.onValue(dbMod.ref(db,path),snap=>{fn(snap.val()||{});successfulReads++;if(state&&successfulReads>=3)state.innerHTML='<span class="dot"></span> LIVE FIREBASE';render()},err=>{console.warn('Atomic dashboard listener '+path,err);if(state)state.innerHTML='<span class="dot" style="background:#e84b50"></span> DATABASE ACCESS LIMITED'});
  watch('publishedArticles',v=>pub=v);watch('draftArticles',v=>drafts=v);watch('submissions',v=>subs=v);
  }).catch(err=>{console.warn('Atomic dashboard Firebase connection failed',err);const state=document.querySelector('.live');if(state)state.innerHTML='<span class="dot" style="background:#e84b50"></span> OFFLINE · DEMO VIEW'});
 })();
