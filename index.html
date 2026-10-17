@@ -184,7 +184,28 @@ function filterStories(){const q=document.getElementById('search').value.toLower
 document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-filter]').forEach(x=>x.classList.remove('active'));b.classList.add('active');currentFilter=b.dataset.filter;filterStories()}));
 document.getElementById('search').addEventListener('input',filterStories);
 document.getElementById('viewAll').addEventListener('click',()=>{currentFilter='All';document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter==='All'));document.getElementById('search').value='';filterStories()});
-document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{const page=b.dataset.nav;if(page==='View Magazine'){window.open('https://iammdtanvirrahman.github.io/atomic-weekly/','_blank');return}document.querySelectorAll('[data-nav]').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('crumb').textContent=page;sidebar.classList.remove('open');if(page==='Articles'||page==='Review Queue'||page==='Published'){currentFilter=page==='Review Queue'?'In review':page==='Published'?'Published':'All';document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter===currentFilter));filterStories()}else if(page==='Media Library'||page==='Categories'||page==='Settings'){document.getElementById('crumb').textContent=page;document.querySelector('.hero p').textContent=page+' workspace preview — use the writing studio to create and manage article content.'}}));
+document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{
+ const page=b.dataset.nav;
+ if(page==='View Magazine'){window.open('https://iammdtanvirrahman.github.io/atomic-weekly/','_blank','noopener');return}
+ document.querySelectorAll('[data-nav]').forEach(x=>x.classList.toggle('active',x===b));
+ document.getElementById('crumb').textContent=page;sidebar.classList.remove('open');
+ const search=document.getElementById('search');
+ if(page==='Articles'||page==='Review Queue'||page==='Published'){
+   currentFilter=page==='Review Queue'?'In review':page==='Published'?'Published':'All';
+   search.value='';
+   document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter===currentFilter));
+   filterStories();document.getElementById('articleList').scrollIntoView({behavior:'smooth',block:'start'});
+ }else if(page==='Media Library'||page==='Settings'){
+   const manager=document.getElementById('heroManager');
+   if(manager){manager.scrollIntoView({behavior:'smooth',block:'start'});manager.style.outline='1px solid #e84b50';setTimeout(()=>manager.style.outline='',1200)}
+ }else if(page==='Categories'){
+   const categories=[...new Set([...document.querySelectorAll('.article .meta span:first-child')].map(x=>x.textContent.trim()).filter(Boolean))];
+   const choice=prompt('Enter a category to filter ('+categories.join(', ')+')');
+   if(choice!==null){search.value=choice.trim();currentFilter='All';document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter==='All'));filterStories();document.getElementById('articleList').scrollIntoView({behavior:'smooth',block:'start'})}
+ }else if(page==='Overview'){
+   currentFilter='All';search.value='';document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter==='All'));filterStories();window.scrollTo({top:0,behavior:'smooth'});
+ }
+}));
 
 // Live Atomic Magazine data: the dashboard listens to the same Firebase RTDB as the public site.
 (function connectDashboard(){
