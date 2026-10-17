@@ -1,1214 +1,268 @@
 <!doctype html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b0d10">
-<title>Atomic Admin — Pro Article Studio</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080809">
+<title>Editorial Studio — Atomic Weekly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#07090c;--panel:#0f1318;--panel2:#161c23;--line:#232a34;
-  --text:#f0f2f5;--muted:#828e9e;--red:#e63946;--red-hover:#ff4d5a;
-  --green:#2a9d8f;--accent:#4cc9f0;--paper-bg:#fff;--paper-text:#17191c;
-  --shadow:0 20px 60px rgba(0,0,0,.6)
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(1200px 600px at 80% -20%,#1a1528,transparent 70%),var(--bg);color:var(--text);font:14px Inter,system-ui,-apple-system,sans-serif;overflow-x:hidden}
-button,input,select,textarea{font:inherit}
-button{border:0;border-radius:8px;padding:8px 12px;background:#202731;color:#fff;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:.2s}
-button:hover{background:#2c3644;filter:brightness(1.08)}
-button.active{background:var(--red)!important}
-button.primary{background:var(--red)}
-button.primary:hover{background:var(--red-hover)}
-button.green{background:var(--green)}
-button.ghost{background:transparent;border:1px solid var(--line)}
-button:disabled{opacity:.4;cursor:not-allowed}
-.top{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;background:rgba(11,14,18,.88);border-bottom:1px solid var(--line);backdrop-filter:blur(16px)}
-.brand{font:900 20px Georgia,serif;letter-spacing:-.5px}.brand span{color:var(--red)}
-.statusBadge{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:20px;background:#18202a;border:1px solid var(--line);color:var(--muted)}
-.statusDot{width:8px;height:8px;border-radius:50%;background:#e9c46a}.statusDot.synced{background:var(--green)}.statusDot.error{background:var(--red)}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-.toolbarWrap{position:sticky;top:57px;z-index:90;background:rgba(18,23,30,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(10px);box-shadow:0 10px 30px rgba(0,0,0,.3)}
-.toolbar,.subbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 12px}
-.subbar{border-top:1px solid rgba(255,255,255,.05);overflow-x:auto;flex-wrap:nowrap}
-.toolbar select{background:#202731;color:#fff;border:1px solid var(--line);border-radius:6px;padding:6px 10px;outline:none}
-.toolSep{width:1px;height:24px;background:var(--line);margin:0 4px}.colorBtn{width:34px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;background:#202731;cursor:pointer;position:relative;border:1px solid transparent}.colorBtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
-.count{margin-left:auto;color:var(--muted);font:600 12px sans-serif;white-space:nowrap}
-.layout{display:grid;grid-template-columns:280px minmax(500px,1fr) 300px;min-height:calc(100vh - 115px)}
-body.focusMode .left,body.focusMode .right,body.focusMode .toolbarWrap{display:none!important}body.focusMode .layout{grid-template-columns:1fr}body.focusMode .workspace{padding:40px 0}
-.left,.right{background:var(--panel);padding:16px;overflow-y:auto}.left{border-right:1px solid var(--line)}.right{border-left:1px solid var(--line)}
-.sectionTitle{font:800 11px sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:12px 0 10px}
-.contentPages{display:grid;gap:7px;margin-bottom:18px}.contentPage{display:flex;align-items:center;gap:8px;width:100%;padding:9px 10px;text-align:left;background:#151b22;border:1px solid var(--line);border-radius:7px;color:#cbd3dd;font-size:11px}.contentPage:hover{border-color:var(--accent);background:#1b2630}.contentPage.active{border-color:var(--red);background:rgba(230,57,70,.14);color:#fff}.contentPage .pageNumber{min-width:24px;height:24px;display:grid;place-items:center;border-radius:5px;background:#27313d;color:var(--accent);font-weight:800}.contentPage.active .pageNumber{background:var(--red);color:#fff}.contentPage .pageText{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.contentPage .pageDelete{margin-left:auto;padding:3px 6px;background:transparent;color:var(--muted);font-size:13px}.contentPage .pageDelete:hover{background:var(--red);color:#fff}
-.field{margin-bottom:12px}.field label{display:block;font:700 11px sans-serif;text-transform:uppercase;color:var(--muted);margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:10px;background:#0b0e12;border:1px solid var(--line);border-radius:8px;color:#fff;outline:0;transition:border .2s}.field textarea{min-height:75px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
-.workspace{overflow:auto;background:#1a1e24;padding:40px 20px 120px;display:flex;flex-direction:column;align-items:center}
-.paper{width:800px;min-height:1120px;background:var(--paper-bg);color:var(--paper-text);box-shadow:var(--shadow);border-radius:4px;position:relative}
-body.darkPaper .paper{--paper-bg:#12161c;--paper-text:#e2e8f0}
-.articlePage{min-height:1120px;padding:80px;outline:0;font-family:Georgia,serif;font-size:18px;line-height:1.8}
-.articlePage h1{font-size:44px;line-height:1.1;margin:0 0 20px;font-weight:800}.articlePage h2{font-size:30px;line-height:1.2;margin:32px 0 14px}.articlePage h3{font-size:22px;line-height:1.3;margin:24px 0 10px}.articlePage p{margin:0 0 1.2em}
-.articlePage blockquote{margin:24px 0;padding:16px 24px;border-left:4px solid var(--red);background:rgba(0,0,0,.03);font-style:italic}.articlePage pre{background:#1e242c;color:#f8f9fa;padding:16px;border-radius:8px;font-family:monospace;overflow:auto}
-.articlePage table{width:100%;border-collapse:collapse;margin:24px 0}.articlePage td,.articlePage th{border:1px solid #9aa2ad;padding:10px 14px}.page-break{break-before:page;border-top:2px dashed var(--muted);margin:40px 0;text-align:center}.page-break:after{content:"Page Break";font-size:10px;color:var(--muted);text-transform:uppercase;position:relative;top:-10px;background:var(--paper-bg);padding:0 8px}
-.mediaLayer{position:absolute;display:block;left:80px;top:140px;width:300px;max-width:calc(100% - 24px);margin:0;user-select:none;touch-action:none;vertical-align:top;z-index:10;cursor:grab;transform-origin:center center;transition:outline-color .15s,box-shadow .15s}.mediaLayer:active{cursor:grabbing}.mediaLayer img,.mediaLayer iframe{display:block;width:100%;height:auto;border-radius:6px;pointer-events:none;opacity:var(--media-opacity,1);transition:opacity .15s}.mediaLayer iframe{height:420px;border:0}.youtubeLayer{background:#0d1117;border-radius:8px;overflow:hidden}.youtubeLayer iframe{aspect-ratio:16/9;height:auto;min-height:220px}.youtubeFallback{display:block;padding:9px 12px;background:#161c23;color:#fff;text-decoration:none;font:600 12px system-ui,sans-serif;text-align:center;opacity:var(--media-opacity,1);transition:opacity .15s}.youtubeFallback:hover{background:#232d38;color:#fff}.mediaLayer.selectedMedia{outline:2px solid var(--red);outline-offset:5px;box-shadow:0 0 0 7px rgba(230,57,70,.12),0 12px 28px rgba(0,0,0,.22)}
-.mediaLayer.selectedMedia .mediaToolbar{opacity:1;pointer-events:auto}.mediaLayer:not(.selectedMedia) .mediaHandles{display:none}
-.asset.selected{border-color:var(--red);box-shadow:0 0 0 2px rgba(230,57,70,.22)}
-@media(max-width:768px){.mediaToolbar{top:-42px;max-width:calc(100vw - 28px);overflow-x:auto}.mediaToolbar button{flex:0 0 auto}.mediaOpacityWrap{flex:0 0 auto}.mediaHandle{width:16px;height:16px}}
-.mediaLayer[data-align=left],.mediaLayer[data-align=right],.mediaLayer[data-align=center],.mediaLayer[data-align=full]{margin:0;float:none}
-.mediaHandles{position:absolute;inset:-14px;pointer-events:none;z-index:30}.mediaHandle{position:absolute;width:14px;height:14px;background:#fff;border:3px solid var(--red);border-radius:50%;pointer-events:auto;box-shadow:0 2px 8px rgba(0,0,0,.5)}
-.mediaHandle[data-action=resizeBR]{right:-6px;bottom:-6px;cursor:nwse-resize}.mediaHandle[data-action=resizeBL]{left:-6px;bottom:-6px;cursor:nesw-resize}.mediaHandle[data-action=resizeTR]{right:-6px;top:-6px;cursor:nesw-resize}.mediaHandle[data-action=resizeTL]{left:-6px;top:-6px;cursor:nwse-resize}.mediaHandle[data-action=rotate]{left:50%;top:-34px;transform:translateX(-50%);cursor:grab}.mediaHandle[data-action=rotate]:after{content:"↻";position:absolute;top:-18px;left:50%;transform:translateX(-50%);color:var(--red);font-weight:bold}
-.mediaToolbar{position:absolute;top:-48px;left:50%;transform:translateX(-50%);background:rgba(17,21,26,.98);border:1px solid #394352;border-radius:10px;padding:5px;display:flex;align-items:center;gap:4px;pointer-events:auto;box-shadow:0 8px 24px rgba(0,0,0,.55);z-index:40;white-space:nowrap}.mediaToolbar button{min-width:30px;padding:5px 8px;font-size:11px;height:28px}.mediaToolbar button:hover{background:#394352}.mediaDelete{background:var(--red)!important}.mediaOpacityWrap{display:inline-flex;align-items:center;gap:5px;padding:0 6px;color:var(--muted);font-size:10px;font-weight:700}.mediaOpacity{width:82px;height:4px;accent-color:var(--red);pointer-events:auto}.mediaSize{position:absolute;right:-4px;bottom:-34px;color:var(--muted);font:700 10px ui-monospace,monospace;white-space:nowrap;pointer-events:none}
-.assetPanel{padding:20px 16px;background:linear-gradient(180deg,#111820 0%,var(--panel) 42%)}
-.assetHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.assetHeader .sectionTitle{margin:2px 0 5px}.assetHeader h2{margin:0;font:800 20px Georgia,serif;color:var(--text)}.assetLive{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border:1px solid rgba(42,157,143,.35);border-radius:20px;color:#8ed9cf;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}.assetLive i{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}.assetIntro{margin:10px 0 16px;color:var(--muted);font-size:11px;line-height:1.55}.assetSearchWrap{display:flex;align-items:center;gap:7px;padding:0 10px;background:#0b0f14;border:1px solid var(--line);border-radius:8px;transition:border .2s}.assetSearchWrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(76,201,240,.08)}.assetSearchWrap>span{color:var(--muted);font-size:20px;line-height:1}.assetSearchWrap input{width:100%;padding:10px 0;background:transparent;border:0;outline:0;color:#fff;font-size:12px}.assetMeta{display:flex;justify-content:space-between;margin:16px 2px 8px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.1em}.gallery{display:grid;grid-template-columns:1fr 1fr;gap:9px;max-height:calc(100vh - 390px);overflow-y:auto;padding:2px}.asset{border:1px solid var(--line);background:linear-gradient(145deg,#18202a,#10151b);border-radius:9px;padding:6px;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}.asset:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 7px 16px rgba(0,0,0,.25)}.asset img{width:100%;height:82px;object-fit:cover;border-radius:5px;display:block;background:#0b0e12}.asset span{display:block;font-size:10px;color:#b7c0cc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:6px}.assetLoading{grid-column:1/-1;color:var(--muted);font-size:11px;padding:18px 4px;text-align:center}.assetNote{margin-top:14px;padding:10px;border:1px solid rgba(255,255,255,.06);border-radius:8px;color:var(--muted);font-size:10px;line-height:1.45}
-.sourceEditor{display:none;width:100%;min-height:1120px;border:0;outline:0;padding:80px;font:14px ui-monospace,monospace;resize:none;color:#70a1ff;background:#0d1117;line-height:1.6}.sourceMode .sourceEditor{display:block}.sourceMode #editor{display:none}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:20px;z-index:200;backdrop-filter:blur(4px)}.modal.open{display:flex}.modalBox{width:min(680px,100%);max-height:90vh;overflow-y:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px;box-shadow:var(--shadow)}.modalBox h3{font:800 20px Georgia;margin:0 0 16px}.previewBox{width:min(920px,100%);padding:0;background:#eef1f4;border-color:#394352}.previewHeader{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;background:#111820;border-bottom:1px solid #2b3541}.previewHeader .sectionTitle{margin:0 0 4px}.previewHeader h3{margin:0;color:#fff}.previewHeader button{width:34px;height:34px;padding:0;border-radius:50%}.previewBox .previewArticle{max-height:calc(90vh - 84px);overflow-y:auto;padding:clamp(24px,6vw,64px);background:#fff;border-radius:0 0 12px 12px}.tableBuilder{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}.tableBuilder .field{margin-bottom:0}.tableBuilder input{font-size:18px;text-align:center}.tableBuilderHint{color:var(--muted);font-size:12px;margin:-6px 0 18px}
-.previewArticle{font-family:Georgia,serif;line-height:1.75;color:#17191c}.previewArticle p{margin:0 0 1.2em}.previewArticle ul,.previewArticle ol{padding-left:1.4em;margin:0 0 1.2em}.previewArticle li{margin:.35em 0}.previewArticle blockquote{margin:24px 0;padding:14px 22px;border-left:4px solid #e63946;background:#f6f7f8;font-style:italic}.previewArticle pre{overflow:auto;padding:16px;border-radius:8px;background:#1e242c;color:#f8f9fa;font:14px/1.6 ui-monospace,monospace}.previewArticle .previewEyebrow{display:flex;align-items:center;gap:8px;margin-bottom:14px;color:#a42632;font:800 11px Inter,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase}.previewArticle .previewEyebrow:before{content:"";width:28px;height:2px;background:#e63946}.previewArticle h1{font-size:clamp(32px,5vw,52px);line-height:1.08;letter-spacing:-.03em;margin:0 0 14px}.previewArticle .previewDek{margin:0 0 18px;color:#5d6672;font:18px/1.55 Inter,system-ui,sans-serif}.previewArticle .previewByline{display:flex;flex-wrap:wrap;gap:6px 12px;margin:0 0 28px;color:#687281;font:600 12px Inter,system-ui,sans-serif}.previewArticle .previewCover{width:100%;max-height:360px;object-fit:cover;border-radius:10px;margin:0 0 30px;display:block}.previewArticle .previewRule{border:0;border-top:1px solid #e1e5ea;margin:0 0 28px}.previewArticle .previewBody{font-size:18px}.previewArticle .previewBody h1,.previewArticle .previewBody h2,.previewArticle .previewBody h3{color:#17191c}.previewArticle .previewBody img{max-width:100%;height:auto;border-radius:7px}.previewArticle .previewBody .mediaLayer{position:relative;left:auto!important;top:auto!important;max-width:100%;margin:24px auto;float:none}.previewArticle .previewBody .mediaHandles,.previewArticle .previewBody .mediaToolbar,.previewArticle .previewBody .mediaSize{display:none!important}.previewArticle .previewBody iframe{width:100%;height:420px;border:0}.previewArticle .previewBody table{font-family:Inter,system-ui,sans-serif;font-size:14px}.previewEmpty{padding:32px;border:1px dashed #cbd2da;border-radius:8px;color:#687281;text-align:center;font:14px Inter,system-ui,sans-serif}
-@media(max-width:1100px){.layout{grid-template-columns:240px 1fr}.right{display:none}}@media(max-width:768px){.top{align-items:flex-start;flex-direction:column}.layout{display:block}.left{display:none}.paper{width:100%;min-height:900px}.articlePage{padding:30px 20px}.toolbarWrap{top:0}.count{margin-left:0}}
-@media print{body{background:#fff!important;color:#000}.top,.toolbarWrap,.left,.right{display:none!important}.layout{display:block}.workspace{padding:0;background:#fff}.paper{width:100%;box-shadow:none}.articlePage{padding:20mm}.mediaHandles{display:none!important}}
+:root{color-scheme:dark;--bg:#070708;--panel:#101012;--panel2:#171719;--line:#29292d;--text:#f5f2ee;--muted:#9b989f;--red:#ff4d57;--red2:#ff6971;--copper:#ff737b;--paper:#070708;--ink:#f5f2ee;--green:#9de0b5;--radius:13px}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif}body{font-size:13px}button,input,textarea,select{font:inherit}button{cursor:pointer;color:inherit}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[contenteditable=true]:focus-visible{outline:2px solid var(--copper);outline-offset:2px}button:disabled{opacity:.45;cursor:not-allowed}.app{min-height:100vh;display:flex;flex-direction:column}.topbar{height:64px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;padding:0 22px;background:rgba(10,10,12,.94);position:sticky;top:0;z-index:30;backdrop-filter:blur(16px)}.brand{display:flex;align-items:center;gap:10px;min-width:220px}.brandmark{width:31px;height:31px;border-radius:9px;background:linear-gradient(145deg,#df5965,#8e2333);display:grid;place-items:center;font-family:'Playfair Display',serif;font-weight:700;font-size:18px;box-shadow:0 5px 18px #c83d4d2b}.brandname{font-size:13px;font-weight:700;letter-spacing:.025em}.brandname span{color:var(--red2)}.brandmeta{font-size:10px;color:var(--muted);margin-top:2px}.crumb{color:var(--muted);display:flex;align-items:center;gap:9px}.crumb strong{color:#dddde2;font-weight:500}.topspacer{flex:1}.save-status{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11px;white-space:nowrap}.dot{width:6px;height:6px;border-radius:50%;background:var(--green)}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);background:var(--panel2);padding:9px 12px;border-radius:9px;font-size:11px;font-weight:600;transition:background .16s,border .16s;white-space:nowrap}.btn:hover{background:#222228;border-color:#3b3b44}.btn.primary{background:var(--red);border-color:var(--red);color:white}.btn.primary:hover{background:var(--red2)}.btn.quiet{background:transparent}.btn.iconbtn{padding:8px;min-width:32px}.btn svg,.tool svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.workspace{display:grid;grid-template-columns:224px minmax(350px,1fr) 272px;min-height:calc(100vh - 64px);flex:1}.leftbar,.rightbar{background:var(--panel);min-width:0}.leftbar{border-right:1px solid var(--line);padding:20px 13px}.rightbar{border-left:1px solid var(--line);padding:19px 15px}.nav-label,.panel-label{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#777781;margin:3px 9px 11px}.navitem{width:100%;display:flex;align-items:center;gap:10px;padding:10px 11px;margin-bottom:3px;border:1px solid transparent;background:transparent;color:#a4a4ad;border-radius:8px;text-align:left;font-size:12px}.navitem:hover{background:#1b1b20;color:#eee}.navitem.active{background:#c83d4d17;color:#f0b6bc;border-color:#c83d4d35}.navicon{width:16px;height:16px;display:grid;place-items:center;font-size:14px}.navcount{margin-left:auto;font-size:10px;color:#777781}.left-divider{height:1px;background:var(--line);margin:20px 7px}.mini-card{margin:20px 5px 0;padding:13px;border:1px solid #373036;background:linear-gradient(145deg,#231519,#141215);border-radius:11px}.mini-card .eyebrow{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--copper)}.mini-card h3{font-family:'Playfair Display',serif;font-size:17px;line-height:1.2;font-weight:500;margin:9px 0 6px}.mini-card p{font-size:10px;color:#aaa0a3;line-height:1.6;margin:0}.mini-card button{margin-top:12px;border:0;background:none;color:#f1b1b7;padding:0;font-size:10px;font-weight:700}.editorarea{min-width:0;padding:0 0 48px}.editor-head{padding:22px 32px 17px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}.editor-head .tag{font-family:'DM Mono',monospace;color:var(--copper);font-size:10px;letter-spacing:.06em}.editor-head h1{font-size:15px;margin:4px 0 0;font-weight:600}.editor-head p{margin:4px 0 0;color:var(--muted);font-size:11px}.head-actions{margin-left:auto;display:flex;gap:7px}.mobile-toggle{display:none}.toolbar-wrap{position:sticky;top:64px;z-index:20;background:#0d0d0ff2;border-bottom:1px solid var(--line);padding:11px 22px;backdrop-filter:blur(14px)}.toolbar{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.toolgroup{display:flex;align-items:center;gap:3px;padding-right:8px;margin-right:5px;border-right:1px solid #303036}.toolgroup:last-child{border:0;margin:0;padding:0}.tool{height:31px;min-width:31px;padding:0 7px;border:1px solid transparent;border-radius:6px;background:transparent;color:#b9b9c2;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:11px}.tool:hover{background:#25252b;color:#fff}.tool.active{background:#c83d4d22;border-color:#c83d4d50;color:#ffb9c0}.tool select{max-width:104px;background:transparent;border:0;color:inherit;outline:0;font-size:11px}.tool select option{background:#18181c}.tool .letter{font-size:13px;font-weight:700}.tool .under{text-decoration:underline}.tool .strike{text-decoration:line-through}.colorpick{width:29px;height:30px;position:relative;display:grid;place-items:center;border:1px solid transparent;border-radius:6px;color:#ddd;background:transparent}.colorpick:hover{background:#25252b}.colorpick input{position:absolute;width:20px;height:20px;opacity:0;cursor:pointer}.colorbar{height:3px;width:15px;background:#c83d4d;border-radius:2px;position:absolute;bottom:3px}.canvas-wrap{padding:27px 25px 40px;max-width:960px;margin:0 auto}.doc-meta{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:10px;margin:0 0 17px}.pill{border:1px solid #37373e;background:#17171b;padding:4px 8px;border-radius:99px;font-size:9px;color:#c4c4cd}.pill.red{border-color:#c83d4d44;background:#c83d4d15;color:#e9a0a8}.paper{background:var(--paper);color:var(--ink);border:1px solid #ded7ca;border-radius:3px;min-height:700px;box-shadow:0 18px 65px #0003;padding:clamp(28px,5vw,66px) clamp(25px,7vw,88px);transition:background .2s,color .2s}.paper.dark-paper{background:#151519;color:#e9e7e5;border-color:#303036}.article-kicker{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--red);margin:0 0 17px}.title-input{width:100%;border:0;background:transparent;color:inherit;outline:none;resize:none;font-family:'Playfair Display',Georgia,serif;font-size:clamp(32px,4.4vw,53px);font-weight:600;line-height:1.08;letter-spacing:-.035em;padding:0;margin:0 0 15px;overflow:hidden}.title-input::placeholder{color:inherit;opacity:.36}.subtitle-input{display:block;width:100%;min-height:56px;resize:vertical;border:0;background:transparent;color:inherit;outline:none;font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.65;opacity:.75;padding:0;margin-bottom:24px}.subtitle-input::placeholder{color:inherit;opacity:.5}.byline{display:flex;align-items:center;gap:10px;padding:14px 0 19px;border-top:1px solid currentColor;border-bottom:1px solid currentColor;opacity:.75;margin-bottom:28px;font-size:10px;letter-spacing:.04em}.avatar{width:27px;height:27px;border-radius:50%;background:#d7c5ae;color:#5b3c31;display:grid;place-items:center;font-size:10px;font-weight:700}.byline input{width:125px;max-width:32%;background:transparent;border:0;color:inherit;outline:none;font-size:10px}.byline .separator{opacity:.45}.article-body{font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.88;min-height:360px;outline:none;overflow-wrap:anywhere}.article-body:empty:before{content:'Begin your story here…';color:currentColor;opacity:.35;pointer-events:none}.article-body p{margin:0 0 1.2em}.article-body h2{font-family:'Playfair Display',Georgia,serif;font-size:29px;line-height:1.2;letter-spacing:-.02em;margin:1.5em 0 .55em}.article-body h3{font-family:'DM Sans',sans-serif;font-size:20px;line-height:1.3;margin:1.4em 0 .5em}.article-body blockquote{margin:1.5em 0;padding:8px 0 8px 22px;border-left:3px solid var(--red);font-family:'Playfair Display',serif;font-size:23px;line-height:1.45;color:inherit}.article-body ul,.article-body ol{padding-left:1.5em;margin:0 0 1.3em}.article-body li{padding-left:.3em;margin:.35em 0}.article-body a{color:#b62e43;text-decoration:underline;text-underline-offset:3px}.article-body img{max-width:100%;height:auto;border-radius:3px;display:block;margin:25px auto}.article-body pre{background:#17171b;color:#f0edf0;padding:16px;border-radius:8px;overflow:auto;font:12px/1.6 'DM Mono',monospace}.article-body code{font-family:'DM Mono',monospace;font-size:.84em;background:#8882;padding:2px 5px;border-radius:4px}.article-body hr{border:0;border-top:1px solid currentColor;opacity:.3;margin:2em 0}.article-body .caption{font-family:'DM Sans',sans-serif;font-size:11px;opacity:.65;text-align:center;margin-top:-16px}.article-body .callout{padding:18px 20px;border:1px solid #c58d6970;background:#c58d6917;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.7}.doc-footer{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:10px;padding:14px 2px}.doc-footer .spacer{flex:1}.bottom-status{height:34px;border-top:1px solid var(--line);display:flex;align-items:center;gap:17px;padding:0 25px;color:#7e7e88;font-size:10px;background:#0c0c0e}.bottom-status .push{flex:1}.right-section{padding-bottom:19px;margin-bottom:18px;border-bottom:1px solid var(--line)}.right-section:last-child{border:0}.right-section .panel-label{margin:0 0 13px}.field{margin-bottom:13px}.field label{display:block;font-size:10px;color:#a6a6b0;margin-bottom:6px}.field input,.field textarea,.field select{width:100%;background:#18181d;border:1px solid #303037;border-radius:7px;padding:9px 10px;color:#ececf0;font-size:11px;outline:none}.field textarea{min-height:65px;resize:vertical;line-height:1.5}.field input:focus,.field textarea:focus,.field select:focus{border-color:#a84a55}.field input::placeholder,.field textarea::placeholder{color:#666671}.two-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.cover-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;box-sizing:border-box;width:100%;min-height:112px;border:1px dashed #44444e;border-radius:9px;padding:12px;text-align:center;background:linear-gradient(145deg,#19191e,#111115);cursor:pointer;overflow:hidden;transition:border-color .18s,background .18s}.cover-drop:hover{border-color:var(--copper);background:#1b1819}.cover-drop .cover-icon{font-size:24px;line-height:1.2;color:var(--copper)}.cover-drop p{font-size:11px;color:#d2cbd0;margin:2px 0}.cover-drop small{font-size:9px;line-height:1.5;color:#85818a}.cover-drop input{display:none}.cover-preview{display:block;width:100%;height:auto;max-height:170px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;margin:0 0 5px;border:1px solid #343038}.cover-url-box{display:grid;grid-template-columns:minmax(0,1fr);gap:7px;margin-top:12px;padding:10px;border:1px solid #2b292f;border-radius:8px;background:#141317}.cover-url-box label{display:block;font-size:9px;letter-spacing:.06em;color:#c4a4a0;margin:0}.cover-url-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:stretch}.cover-url-controls input{min-width:0;width:100%;box-sizing:border-box}.cover-url-controls button{white-space:nowrap;padding:0 11px}.cover-url-help{display:block;font-size:9px;line-height:1.5;color:#85818a}.cover-url-box input:focus{outline:1px solid var(--copper);border-color:var(--copper)}.cover-drop .cover-icon{font-size:22px;color:var(--copper)}.cover-drop p{font-size:10px;color:#b0b0ba;margin:7px 0 4px}.cover-drop small{font-size:9px;color:#777782}.cover-drop input{display:none}
+/* Cover panel layout fix: keep the picker and URL controls in separate, readable blocks. */
+.right-section .cover-drop{display:flex!important;position:relative;float:none;clear:both;width:100%;height:auto!important;min-height:126px!important;box-sizing:border-box;margin:8px 0 0;padding:16px 10px!important;overflow:hidden!important;line-height:1.45;border:1px dashed #44444e;border-radius:9px;background:#151519;}
+.right-section .cover-drop .cover-icon{display:block;font-size:24px;line-height:1.2;margin:0;color:var(--copper);}
+.right-section .cover-drop p{display:block;font-size:11px;line-height:1.4;margin:3px 0;color:#d2cbd0;}
+.right-section .cover-drop small{display:block;font-size:9px;line-height:1.5;margin:0;color:#85818a;}
+.right-section .cover-url-box{display:block;position:relative;clear:both;width:100%;box-sizing:border-box;margin:12px 0 0;padding:11px;border:1px solid #2b292f;border-radius:8px;background:#141317;}
+.right-section .cover-url-box label{display:block;margin:0 0 8px;font-size:9px;line-height:1.4;letter-spacing:.06em;color:#c4a4a0;}
+.right-section .cover-url-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:stretch;gap:6px;width:100%;box-sizing:border-box;}
+.right-section .cover-url-controls input{display:block;min-width:0;width:100%;height:34px;box-sizing:border-box;margin:0;}
+.right-section .cover-url-controls button{display:block;height:34px;box-sizing:border-box;margin:0;padding:0 10px;white-space:nowrap;}
+.right-section .cover-url-help{display:block;margin-top:7px;font-size:9px;line-height:1.5;color:#85818a;}
+.cover-preview{width:100%;max-height:125px;object-fit:cover;border-radius:6px;margin-bottom:9px}.tag-list{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.tag-chip{background:#242429;border:1px solid #38383f;border-radius:5px;padding:5px 7px;color:#d2d2d8;font-size:10px}.tag-chip button{background:none;border:0;color:#999;padding:0 0 0 5px}.tag-add{display:flex;gap:5px}.tag-add input{min-width:0;flex:1;background:#18181d;border:1px solid #303037;border-radius:6px;padding:7px;color:white;font-size:10px}.tag-add button{border:1px solid #37373e;background:#222228;border-radius:6px;padding:0 9px}.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0;font-size:11px;color:#c6c6ce}.switch{width:32px;height:18px;border-radius:99px;border:0;background:#42424b;padding:2px;flex-shrink:0}.switch:after{content:'';display:block;width:14px;height:14px;background:#ddd;border-radius:50%;transition:transform .15s}.switch[aria-checked=true]{background:var(--red)}.switch[aria-checked=true]:after{transform:translateX(14px);background:white}.outline-item{padding:7px 8px;border-left:2px solid #393940;color:#a0a0aa;font-size:10px;display:block;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.outline-item:hover{border-color:var(--red);color:#eee}.outline-item.sub{padding-left:18px}.toast{position:fixed;bottom:48px;left:50%;transform:translate(-50%,12px);background:#202025;border:1px solid #3b3b44;color:#f1f1f3;border-radius:10px;padding:11px 15px;font-size:11px;box-shadow:0 10px 30px #0007;opacity:0;pointer-events:none;transition:all .2s;z-index:80;max-width:calc(100vw - 30px)}.toast.show{opacity:1;transform:translate(-50%,0)}.modal-backdrop{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:70;padding:18px}.modal-backdrop.open{display:flex}.modal{width:min(720px,100%);max-height:90vh;overflow:auto;background:#111114;border:1px solid #34343b;border-radius:14px;padding:20px;box-shadow:0 30px 100px #0009}.modal-head{display:flex;align-items:center;margin-bottom:14px}.modal-head h2{font-size:15px;margin:0}.modal-head button{margin-left:auto}.preview-content{background:#f4f0e8;color:#25242a;padding:clamp(22px,5vw,55px);border-radius:5px;font-family:Georgia,serif;line-height:1.8;overflow-wrap:anywhere}.preview-content h1{font-family:'Playfair Display',serif;line-height:1.1;font-size:clamp(32px,5vw,50px)}.preview-content .preview-deck{font-family:'DM Sans',sans-serif;font-size:17px;color:#555}.preview-content img{max-width:100%}.mobile-drawer{display:none}
+@media(max-width:1180px){.workspace{grid-template-columns:190px minmax(320px,1fr)}.rightbar{display:none}.editor-head{padding-left:25px;padding-right:25px}.brand{min-width:185px}.toolbar-wrap{padding:10px 15px}}
+@media(max-width:760px){.topbar{height:58px;padding:0 12px;gap:10px}.brand{min-width:0}.brandmeta,.crumb{display:none}.brandname{font-size:12px}.save-status{font-size:0;gap:0}.save-status .dot{width:7px;height:7px}.topbar .btn{padding:8px 9px;font-size:10px}.workspace{display:block;min-height:calc(100vh - 58px)}.leftbar{display:none}.editorarea{width:100%}.editor-head{padding:16px 15px;gap:7px}.editor-head h1{font-size:14px}.editor-head p{font-size:10px}.editor-head .tag{font-size:9px}.head-actions{gap:5px}.head-actions .btn{padding:8px}.head-actions .desktop-only{display:none}.mobile-toggle{display:inline-flex}.toolbar-wrap{top:58px;padding:8px 9px}.toolbar{gap:3px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:3px;scrollbar-width:thin}.toolgroup{flex-shrink:0;padding-right:5px;margin-right:2px}.tool{min-width:30px;height:30px}.tool select{max-width:78px}.canvas-wrap{padding:16px 9px 25px}.doc-meta{margin:0 4px 12px;flex-wrap:wrap}.paper{padding:30px 22px;min-height:70vh}.title-input{font-size:36px}.subtitle-input{font-size:14px;min-height:50px}.article-body{font-size:16px;line-height:1.8}.article-body h2{font-size:25px}.article-body blockquote{font-size:21px}.byline{gap:7px;flex-wrap:wrap}.byline input{width:100px}.bottom-status{padding:0 12px;gap:10px;font-size:9px}.bottom-status .optional{display:none}.mobile-drawer{position:fixed;inset:0;z-index:60;background:#0009;display:none;justify-content:flex-end}.mobile-drawer.open{display:flex}.drawer-panel{width:min(340px,90vw);height:100%;overflow:auto;background:#101013;border-left:1px solid var(--line);padding:19px 16px;box-shadow:-20px 0 50px #0005}.drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}.drawer-head h2{font-size:14px}.right-section{padding-bottom:17px}.toast{bottom:45px}.head-actions .btn.primary{font-size:10px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
 
-.authBtn{border:1px solid rgba(240,68,82,.35)!important;background:rgba(240,68,82,.09)!important}
-.uploadBox{padding:12px;border:1px dashed rgba(240,68,82,.4);border-radius:10px;background:rgba(240,68,82,.035);margin:12px 0}
-.uploadBox strong{display:block;font-size:11px;margin-bottom:5px}.uploadBox p{font-size:10px;line-height:1.55;color:var(--muted);margin:0 0 9px}.uploadBox input[type=file]{width:100%;font-size:10px;color:var(--muted);margin:5px 0 10px}.uploadBox .uploadActions{display:flex;gap:6px;flex-wrap:wrap}.uploadBox button{font-size:10px;padding:8px 10px}.uploadStatus{font-size:10px;color:var(--muted);margin-top:8px;overflow-wrap:anywhere}.uploadStatus.error{color:#ff7881}.uploadStatus.ok{color:#75dfb3}
-.scheduleHelp{font-size:10px;line-height:1.55;color:var(--muted);margin:7px 0}.scheduleButton{width:100%;padding:10px;border:1px solid rgba(42,157,143,.4);border-radius:8px;background:rgba(42,157,143,.1);color:#a2eee0;font-weight:700;cursor:pointer}.scheduleButton:disabled{opacity:.55;cursor:wait}
-.loginShade{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(3,4,7,.92);backdrop-filter:blur(16px)}.loginShade.open{display:flex}.loginCard{width:min(420px,100%);padding:25px;border:1px solid var(--line);border-radius:17px;background:#11151b;box-shadow:0 25px 80px #0009}.loginCard h2{font:800 30px Georgia,serif;margin:6px 0}.loginCard p{font-size:12px;color:var(--muted);line-height:1.7}.loginCard label{display:block;margin:12px 0 6px;font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.1em}.loginCard input{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:#080b10;color:#fff}.loginCard button{margin-top:12px;width:100%}.loginError{min-height:17px;color:#ff7881;font-size:11px;margin-top:8px}
+/* Atomic Weekly editor: full dark canvas + stable sidebar cards */
+:root{color-scheme:dark;--bg:#070708;--panel:#101012;--panel2:#171719;--line:#29292d;--text:#f5f2ee;--muted:#9b989f}
+html,body,.app,.workspace,.editorarea{background:#080809;color:#f3f2f3}
+.leftbar,.rightbar{background:#101013;color:#f3f2f3}
+.mini-card{display:block;position:relative;box-sizing:border-box;width:calc(100% - 10px);max-width:100%;margin:20px 5px 0;padding:14px 12px;border:1px solid #373036;border-radius:11px;background:linear-gradient(145deg,#231519,#141215);overflow-wrap:anywhere}
+.mini-card h3{font-size:16px;line-height:1.22;margin:9px 0 7px;overflow-wrap:anywhere}
+.mini-card p{font-size:10px;line-height:1.65;max-width:100%}
+.mini-card button{display:inline-block;max-width:100%;white-space:normal;line-height:1.5}
+.leftbar{overflow-x:hidden}
+.paper,.paper.dark-paper{background:#111114!important;color:#f0eef0!important;border:1px solid #29292f!important;box-shadow:0 18px 65px #0005}
+.paper .title-input,.paper .subtitle-input,.paper .article-body{color:#f0eef0}
+.paper .title-input::placeholder,.paper .subtitle-input::placeholder,.paper .article-body:empty:before{color:#9a99a2}
+.paper .byline{border-color:#393940}
+.paper .avatar{background:#c83d4d;color:#fff}
+.paper .article-body a{color:#ff8794}
+.paper .article-body pre{background:#080809;border:1px solid #303037}
+.paper .article-body code{background:#29292f;color:#f2e9ec}
+.paper .article-body .callout{background:#c83d4d12;border-color:#c58d6970}
+.toolbar-wrap{background:#0d0d0ff7}
+.field input,.field textarea,.field select,.tag-add input{background:#18181d;color:#f0eef0;border-color:#303037}
+.cover-drop{min-height:126px!important}
+@media(max-width:1180px){.workspace{grid-template-columns:190px minmax(0,1fr)}.rightbar{display:none}}
+@media(max-width:760px){.mini-card{margin:14px 0 0;width:100%}.paper,.paper.dark-paper{min-height:70vh}}
 
 
+/* Keep the writing page itself black; surrounding editor controls remain separate */
+.paper{background:#080809!important;color:#f3f2f3!important;border-color:#29292f!important;box-shadow:0 18px 65px #0006}
+.paper.dark-paper{background:#080809!important;color:#f3f2f3!important;border-color:#29292f!important}
+.paper .title-input,.paper .subtitle-input,.paper .article-body,.paper .byline{color:#f3f2f3}
+.paper .title-input::placeholder,.paper .subtitle-input::placeholder,.paper .article-body:empty:before{color:#a4a4ad}
+.paper .byline{border-color:#393940}
+.paper .avatar{background:#c83d4d;color:#fff}
+.paper .article-body a{color:#ff8794}
 
-.aiTools{margin:12px 0 20px;padding:13px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(145deg,#171922,#101116)}
-.aiToolsTitle{font:600 14px Georgia,serif;color:var(--text)}
-.aiTools p{font-size:11px;color:var(--muted);line-height:1.5;margin:6px 0 10px}
-.aiActions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.aiActions button{padding:9px 7px;font-size:10px;border:1px solid var(--line);border-radius:8px;background:#20232c;color:var(--text);cursor:pointer}
-#aiStatus{min-height:15px;margin-top:8px;font-size:10px;color:var(--muted);line-height:1.5}
-.aiTools .aiActions{display:flex;flex-wrap:wrap;gap:6px}.aiTools .aiActions button{font-size:11px}.aiResultWrap{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.aiResultWrap[hidden]{display:none}.aiResultWrap label{display:block;font-size:10px;font-weight:800;color:var(--muted);margin-bottom:6px}.aiResultWrap textarea{width:100%;min-height:120px;resize:vertical;padding:10px;border:1px solid var(--line);border-radius:8px;background:#090c10;color:var(--text);line-height:1.6}.aiResultWrap .aiActions{margin-top:8px}
-@media(max-width:620px){.aiActions{grid-template-columns:1fr}.aiTools{padding:11px}}
 
-
-.articlePage img{max-width:100%;height:auto}
-.mobileOnly,.mobileDrawerHead{display:none}
-.mobileDrawerHead{align-items:center;justify-content:space-between;gap:12px;padding:0 0 14px;margin-bottom:12px;border-bottom:1px solid var(--line)}
-.mobileDrawerHead b{font:800 15px Georgia,serif}
-.mobileDrawerHead button{padding:6px 9px}
-.assetFilters,.assetQuickActions{display:flex;gap:7px;margin-top:9px}
-.assetFilters select{flex:1;min-width:0;background:#0b0f14;border:1px solid var(--line);border-radius:7px;color:#fff;padding:8px;font-size:11px}
-.assetQuickActions button{flex:1;font-size:10px;padding:8px 6px}
-.previewDevices{display:flex;gap:5px;margin-left:auto}
-.previewDevices button{padding:7px 9px;font-size:10px;border:1px solid var(--line)}
-.previewDevices button.active{background:var(--red)!important}
-#previewModal[data-device="tablet"] .previewArticle{max-width:768px;margin:0 auto}
-#previewModal[data-device="mobile"] .previewArticle{max-width:390px;margin:0 auto;min-height:70vh;padding:28px 20px;box-shadow:0 0 0 1px #c9cdd3}
-@media(max-width:768px){
-  .top{gap:8px;padding:10px 12px}.top .actions{width:100%;gap:5px}.top .actions button{font-size:10px;padding:8px 9px}.brand{font-size:19px}
-  .mobileOnly{display:inline-flex!important}
-  .mobileDrawerHead{display:flex}
-  .layout{display:block}
-  .left,.right{display:none}
-  body.mobileMetaOpen .left{display:block!important;position:fixed;inset:0 auto 0 0;width:min(88vw,370px);z-index:400;padding:18px 16px 90px;box-shadow:20px 0 70px #000b;overflow-y:auto}
-  body.mobileAssetsOpen .right{display:block!important;position:fixed;inset:0 0 0 auto;width:min(88vw,370px);z-index:400;padding:18px 16px 90px;box-shadow:-20px 0 70px #000b;overflow-y:auto}
-  body.mobileMetaOpen:before,body.mobileAssetsOpen:before{content:"";position:fixed;inset:0;background:#0009;z-index:390}
-  .workspace{padding:20px 8px 70px}.paper{width:100%;min-height:calc(100vh - 180px)}.articlePage{padding:24px 18px;font-size:17px;min-height:700px}.articlePage h1{font-size:34px}
-  .toolbar,.subbar{gap:5px;padding:6px}.toolbar button,.subbar button{flex:0 0 auto;padding:7px 9px;font-size:11px}
-  .previewHeader{padding:12px;flex-wrap:wrap}.previewHeader>div:first-child{flex:1}.previewDevices{order:3;flex:1;width:100%;margin:0}.previewDevices button{flex:1}
-  .previewBox .previewArticle{padding:24px 18px;max-height:calc(90vh - 132px)}
-  .gallery{max-height:44vh}
-}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
- .googleLogin{display:flex;align-items:center;justify-content:center;gap:12px;background:#fff!important;color:#202124!important;border:1px solid #dadce0!important;font-weight:700}.googleLogin:hover{background:#f7f8fa!important}.googleMark{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:conic-gradient(from -45deg,#4285f4 0 25%,#34a853 25% 50%,#fbbc05 50% 75%,#ea4335 75%);color:#fff;font:bold 14px Arial;box-shadow:inset 0 0 0 3px #fff}
+/* Match the dashboard's black/crimson editorial theme */
+.brandmark{background:linear-gradient(145deg,#ff6269,#c82e39);box-shadow:0 8px 24px #e84b5028}
+.navitem.active{background:linear-gradient(90deg,#2a171a,#171214);color:#fff;border-color:#472529;box-shadow:inset 2px 0 var(--red)}
+.tool.active{background:#ff4d5722;border-color:#ff4d5750;color:#ffb9c0}
+.colorbar{background:#ff4d57}
+.mini-card .eyebrow{color:#ff737b}
+.mini-card button{color:#ffb1b7}
+.article-kicker{color:var(--red)}
 </style>
-
-<style id="editorial-2-theme">
-:root{--bg:#08090c;--panel:#101014;--panel2:#17171d;--line:#302729;--text:#f3ece7;--muted:#a69a95;--red:#f04452;--red-hover:#ff626d;--green:#2f9a83;--accent:#de936b;--paper-bg:#151110;--paper-text:#e8dcd3;--shadow:0 26px 86px rgba(0,0,0,.65)}
-html{scroll-behavior:smooth;scroll-padding-top:110px}body{background:radial-gradient(1100px 530px at 78% -22%,rgba(143,48,32,.18),transparent 68%),radial-gradient(700px 380px at 7% 16%,rgba(122,25,46,.1),transparent 70%),#08090c;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif}
-body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.1;background-image:radial-gradient(rgba(255,220,198,.25) .6px,transparent .6px);background-size:5px 5px;mask-image:linear-gradient(90deg,#000,transparent 85%)}
-button{border-radius:7px;font-weight:650;letter-spacing:.005em;transition:background .18s,border-color .18s,color .18s,transform .18s,box-shadow .18s}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[contenteditable=true]:focus-visible{outline:2px solid var(--accent);outline-offset:3px}button:hover:not(:disabled){transform:translateY(-1px)}button.primary,.top .green{background:var(--red)!important;color:#fff;border:1px solid var(--red)!important;box-shadow:0 6px 18px rgba(240,68,82,.12)}button.primary:hover,.top .green:hover{background:var(--red-hover)!important}button.green{background:rgba(240,68,82,.1);border:1px solid rgba(240,68,82,.28);color:#fff}button.ghost{background:rgba(255,255,255,.018);border:1px solid var(--line);color:#dfd4cd}
-.top{min-height:72px;padding:12px clamp(14px,2.4vw,34px);gap:18px;background:rgba(8,9,12,.96);border-bottom:1px solid rgba(224,119,83,.24);box-shadow:0 8px 30px rgba(0,0,0,.22)}.brand{display:flex;align-items:center;gap:7px;flex-wrap:wrap;min-width:205px;text-decoration:none;color:var(--text)}.brandWord{font:900 19px/1 Georgia,serif;letter-spacing:-.055em}.brandSlash{font:400 19px/1 Georgia,serif;color:var(--red)}.brandAccent{color:#f5c1a5}.brand small{flex-basis:100%;margin-top:-2px;color:#93847e;font:8px/1.3 ui-monospace,SFMono-Regular,monospace;letter-spacing:.19em}
-.statusBadge{border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(255,255,255,.035);color:#d1c4bc;padding:6px 10px;white-space:nowrap;font-size:10px}.statusDot{width:6px;height:6px}.statusDot.synced{box-shadow:0 0 10px rgba(47,154,131,.5)}.actions{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap}.top .actions>button{padding:9px 11px;font-size:10px}#undo,#redo{width:32px;padding:8px 0;font-size:15px}#signInOpen{border:1px solid rgba(222,147,107,.36)!important;background:rgba(222,147,107,.08)!important}
-.studioIntro{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:25px;padding:22px clamp(16px,3vw,44px) 21px;border-bottom:1px solid rgba(255,255,255,.055);background:linear-gradient(110deg,rgba(101,37,28,.15),rgba(8,9,12,.25) 46%,rgba(255,255,255,.012))}.studioIntroCopy{min-width:0}.studioEyebrow{display:flex;align-items:center;gap:9px;color:#bd9a8b;font:9px/1.5 ui-monospace,SFMono-Regular,monospace;letter-spacing:.18em}.studioEyebrow i,.studioRibbonNote i{width:5px;height:5px;display:inline-block;border-radius:50%;background:var(--red);box-shadow:0 0 10px rgba(240,68,82,.5)}.studioIntro h1{margin:7px 0 2px;font:600 clamp(27px,3vw,42px)/1 Georgia,serif;letter-spacing:-.045em;color:#fff1e8}.studioIntro h1 em{color:var(--red);font-weight:500}.studioIntro p{margin:7px 0 0;color:#9f928d;font-size:11px}.studioIntroMeta{display:flex;align-items:center;justify-content:flex-end;gap:18px 23px;flex-wrap:wrap}.studioMetaItem{display:flex;align-items:center;gap:7px}.studioMetaItem strong{font:italic 20px/1 Georgia,serif;color:#db8968}.studioMetaItem span{font:8px ui-monospace,SFMono-Regular,monospace;letter-spacing:.15em;color:#b2a29a}.studioRibbonNote{display:flex;align-items:center;gap:7px;color:#9b8f8a;font:9px ui-monospace,SFMono-Regular,monospace;white-space:nowrap}
-.toolbarWrap{position:sticky;top:0;z-index:90;background:rgba(15,14,16,.97);border-bottom:1px solid rgba(222,147,107,.22);backdrop-filter:blur(18px);box-shadow:0 12px 28px rgba(0,0,0,.32)}.toolbar,.subbar{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:7px clamp(8px,1.25vw,18px)}.toolbar select,.assetFilters select{background:#171417;color:#eaded5;border:1px solid #393033;border-radius:6px;padding:7px 9px;font-size:11px}.toolbar button,.subbar button{border:1px solid transparent;background:transparent;color:#d7cbc4;padding:7px 10px;font-size:11px}.toolbar button:hover,.subbar button:hover{border-color:rgba(222,147,107,.27);background:rgba(222,147,107,.08)}.toolSep{background:#3a2e2c;height:22px;margin:0 5px}.colorBtn{height:31px;border:1px solid #393033;background:#1a1515;color:#f4ded2}.count{margin-left:auto;color:#c8a796;font:9px ui-monospace,SFMono-Regular,monospace;letter-spacing:.035em}.subbar{background:rgba(255,255,255,.012);border-top:1px solid rgba(255,255,255,.04)}
-.layout{grid-template-columns:clamp(245px,20vw,305px) minmax(400px,1fr) clamp(260px,22vw,330px);min-height:calc(100vh - 225px);align-items:stretch}.left,.right{background:rgba(15,14,17,.97);padding:20px 16px 24px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#4a3431 transparent}.left{border-right:1px solid rgba(222,147,107,.17)}.right{border-left:1px solid rgba(222,147,107,.17)}.sectionTitle{font:800 9px/1.4 ui-monospace,SFMono-Regular,monospace;text-transform:uppercase;letter-spacing:.17em;color:#c08e78;margin:17px 0 12px}.left>.sectionTitle:first-child{margin-top:0}.field{margin-bottom:13px}.field label{font:750 9px/1.5 ui-monospace,SFMono-Regular,monospace;letter-spacing:.07em;text-transform:uppercase;color:#c7b6ad;margin-bottom:6px}.field input,.field select,.field textarea{padding:10px 11px;background:#0a090b;border:1px solid #312729;border-radius:7px;color:#f1e7e0;font-size:12px;line-height:1.55}.field textarea{min-height:90px}.field input::placeholder,.field textarea::placeholder{color:#655b5a}.field input:focus,.field select:focus,.field textarea:focus{border-color:#b87457;box-shadow:0 0 0 3px rgba(184,116,87,.11)}#coverPreview{border:1px solid rgba(222,147,107,.25);background:#100c0c}
-.aiTools{margin:17px 0 22px;padding:14px;border:1px solid rgba(222,147,107,.22);border-radius:9px;background:linear-gradient(145deg,rgba(106,44,31,.16),rgba(16,14,17,.92))}.aiToolsTitle{font:600 16px Georgia,serif;color:#f3e3d9}.aiTools p{color:#a79991;font-size:10px;line-height:1.65}.aiTools .aiActions button{border:1px solid rgba(255,255,255,.075);background:#191518;color:#ded0c7}.aiTools .aiActions button:hover{border-color:rgba(240,68,82,.4);background:rgba(240,68,82,.09)}.scheduleHelp{color:#a3948d;font-size:10px;line-height:1.65}.scheduleButton{border-color:rgba(92,175,147,.34);background:rgba(47,154,131,.1);color:#a8e5d4}.contentPage{border:1px solid rgba(255,255,255,.055);background:#171416;color:#d7c9c0}.contentPage.active{border-color:rgba(240,68,82,.6);background:rgba(240,68,82,.11)}.contentPage .pageNumber{background:#29201f;color:#e8a181}#tocList{font-size:11px!important;color:#aa9b94!important;overflow-wrap:anywhere}
-.workspace{min-width:0;overflow:auto;padding:25px clamp(12px,2vw,28px) 80px;gap:10px;align-items:center;background:radial-gradient(ellipse at 50% 0,rgba(110,49,35,.13),transparent 55%),linear-gradient(135deg,#111012,#171415 48%,#100e10)}.canvasEyebrow{width:min(100%,790px);display:flex;align-items:center;gap:10px;color:#b5a09a;font:8px ui-monospace,SFMono-Regular,monospace;letter-spacing:.17em}.canvasEyebrowLine{height:1px;flex:1;background:linear-gradient(90deg,rgba(222,147,107,.4),transparent)}.paper{width:min(100%,790px);min-width:0;min-height:1080px;border:1px solid rgba(222,147,107,.3);border-radius:2px;background:var(--paper-bg);color:var(--paper-text);box-shadow:0 30px 90px rgba(0,0,0,.5),0 0 0 5px rgba(255,255,255,.012);overflow:visible;transition:background .2s,color .2s}.articlePage{min-height:1080px;padding:clamp(30px,5vw,78px);font-family:Georgia,"Times New Roman",serif;font-size:18px;line-height:1.9;color:var(--paper-text);caret-color:#f04452;overflow-wrap:anywhere}.articlePage h1{font-size:clamp(36px,4.2vw,56px);line-height:1.02;margin:0 0 24px;font-weight:700;letter-spacing:-.045em;color:var(--paper-text);text-wrap:balance}.articlePage h2{padding-top:15px;border-top:1px solid rgba(222,147,107,.3);font-size:clamp(25px,2.8vw,34px);line-height:1.14;margin:42px 0 16px;color:var(--paper-text);letter-spacing:-.025em}.articlePage h3{font-size:23px;line-height:1.23;margin:30px 0 12px;color:var(--paper-text)}.articlePage p{margin:0 0 1.35em}.articlePage blockquote{margin:30px 0;padding:20px 22px;border-left:2px solid var(--red);background:linear-gradient(110deg,rgba(240,68,82,.11),transparent 85%);font-style:italic;color:var(--paper-text)}.articlePage a{color:#f28b7d;text-underline-offset:3px}.articlePage pre{background:#0b090a;color:#f3d5c5;border:1px solid #49312c;padding:17px;border-radius:2px;font:12px/1.8 ui-monospace,monospace;overflow:auto}.articlePage table{width:100%;border-collapse:collapse;margin:26px 0;background:rgba(255,255,255,.015);font:12px/1.7 system-ui,sans-serif}.articlePage td,.articlePage th{border:1px solid rgba(222,147,107,.3);padding:10px 12px}.articlePage th{background:rgba(240,68,82,.1);color:#f0b99e;text-align:left;font:9px ui-monospace,monospace;text-transform:uppercase;letter-spacing:.08em}body.lightPaper .paper{--paper-bg:#fffaf4;--paper-text:#211a18;border-color:#e5d5c9;box-shadow:0 24px 70px rgba(0,0,0,.28)}body.lightPaper .articlePage blockquote{background:#fbf0e9}body.lightPaper .articlePage pre{background:#18161a;color:#f3d5c5}body.lightPaper .articlePage th{color:#8f392d}
-.page-break{border-top:1px dashed #a46e5c;margin:45px 0}.mediaLayer.selectedMedia{outline:2px solid var(--red);outline-offset:4px;box-shadow:0 0 0 6px rgba(240,68,82,.12)}
-.assetPanel{background:linear-gradient(180deg,#131011,#0f0e11 45%);padding:20px 15px}.assetHeader h2{font:600 24px Georgia,serif;letter-spacing:-.035em;color:#f2e4db}.assetLive{border-color:rgba(47,154,131,.35);background:rgba(47,154,131,.07);color:#b3e4d7}.assetSearchWrap{border-color:#3b2d2b;background:#0a090b}.assetSearchWrap:focus-within{border-color:#b87457;box-shadow:0 0 0 3px rgba(184,116,87,.09)}.assetSearchWrap input{font-size:11px}.assetFilters select{font-size:10px;padding:8px 6px}.assetQuickActions button{font-size:10px}.uploadBox{border-color:rgba(222,147,107,.35);border-radius:9px;background:rgba(222,147,107,.045)}.uploadBox strong{color:#efddd3;font-size:11px}.uploadBox p{color:#a3948d}.uploadStatus{line-height:1.6}.assetMeta{font:9px ui-monospace,SFMono-Regular,monospace;letter-spacing:.12em}.gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;scrollbar-width:thin;scrollbar-color:#493332 transparent}.asset{border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,#1e1717,#110f11);border-radius:3px}.asset img{height:92px;border-radius:2px}.asset span{font-size:9px;color:#ccbab1}.asset:hover{border-color:var(--accent)}.assetNote{background:rgba(255,255,255,.02);border-radius:3px;line-height:1.6}.sourceEditor{background:#0c0a0d;color:#e4a0a5;border-color:#3a272b}
-.modal{background:rgba(2,2,4,.82);backdrop-filter:blur(13px)}.modalBox{border:1px solid rgba(222,147,107,.28);border-radius:10px;background:linear-gradient(145deg,#181315,#0e0d10);box-shadow:0 35px 100px rgba(0,0,0,.68);color:var(--text)}.modalBox h3{font:600 24px Georgia,serif;letter-spacing:-.035em}.previewHeader{gap:12px;border-bottom:1px solid rgba(222,147,107,.22)}.previewArticle{background:#151110;color:#ebddd3;font-family:Georgia,serif;line-height:1.85}.previewArticle h1,.previewArticle h2,.previewArticle h3{color:#fff0e6;line-height:1.1;letter-spacing:-.035em}.previewArticle h1{font-size:clamp(32px,5vw,58px)}.previewArticle .previewDek{color:#cfada0;font:italic 19px/1.5 Georgia,serif}.previewArticle .previewCover{width:100%;max-height:390px;object-fit:cover;border-radius:2px;border:1px solid rgba(222,147,107,.2)}.previewRule{border:0;border-top:1px solid rgba(222,147,107,.3);margin:25px 0}.previewByline{color:#ba9d90;font:9px ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase}.loginShade{background:rgba(3,2,4,.9);backdrop-filter:blur(18px)}.loginCard{border-color:rgba(222,147,107,.32);border-radius:11px;background:linear-gradient(145deg,#1b1414,#0d0c0f)}.loginCard h2{font-size:32px;color:#fff0e8}.loginCard p{color:#b8a39a}.statusBadge[hidden],button[hidden]{display:none!important}
-@media(max-width:1320px){.layout{grid-template-columns:250px minmax(0,1fr) 285px}.left,.right{padding-left:12px;padding-right:12px}.actions{gap:4px}.top .actions>button{padding:8px 9px}.studioIntroMeta{gap:14px}}
-@media(max-width:1100px){.layout{display:block;min-height:0}.left,.right{display:none}.mobileOnly{display:inline-flex!important}.top{flex-wrap:wrap}.brand{min-width:180px}.studioIntro{align-items:flex-start}.studioIntroMeta{gap:12px}.workspace{padding:22px 12px 64px}.paper{width:min(100%,820px)}.toolbarWrap{top:0}body.mobileMetaOpen .left{display:block!important;position:fixed;inset:0 auto 0 0;width:min(88vw,360px);z-index:400;padding:19px 16px 75px;box-shadow:20px 0 70px #000c;overflow-y:auto}body.mobileAssetsOpen .right{display:block!important;position:fixed;inset:0 0 0 auto;width:min(88vw,370px);z-index:400;padding:19px 16px 75px;box-shadow:-20px 0 70px #000c;overflow-y:auto}body.mobileMetaOpen:before,body.mobileAssetsOpen:before{content:"";position:fixed;inset:0;background:#000b;z-index:390}}
-@media(max-width:700px){.top{gap:8px;padding:10px 12px}.brand{min-width:0;flex:1}.brandWord{font-size:17px}.brand small{font-size:7px;letter-spacing:.13em}.top>.statusBadge{order:3}.top .actions{width:100%;justify-content:flex-start;gap:5px}.top .actions>button{font-size:10px;padding:8px 9px}#authSuccess{display:none}.studioIntro{padding:18px 14px;flex-direction:column;gap:15px}.studioIntro h1{font-size:34px}.studioIntroMeta{width:100%;justify-content:space-between;gap:9px}.studioMetaItem{gap:5px}.studioMetaItem strong{font-size:17px}.studioMetaItem span{font-size:7px}.studioRibbonNote{width:100%;font-size:8px;white-space:normal}.toolbar,.subbar{gap:4px;padding:6px}.toolbar select{max-width:125px;padding:7px 6px;font-size:10px}.toolbar button,.subbar button{padding:7px 8px;font-size:10px}.count{width:100%;margin:3px 0 0;font-size:9px;white-space:normal}.canvasEyebrow{font-size:7px}.workspace{padding:16px 7px 55px}.paper{width:100%;min-height:calc(100vh - 220px)}.articlePage{min-height:760px;padding:28px 21px;font-size:16px;line-height:1.8}.articlePage h1{font-size:35px}.articlePage h2{font-size:26px;margin-top:34px}.articlePage h3{font-size:20px}.previewHeader{align-items:flex-start}.previewHeader>div:first-child{width:100%}.previewDevices{width:100%;margin:0}.previewDevices button{flex:1}.modal{padding:9px}.modalBox{max-height:92vh;overflow:auto;padding:16px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-@media print{body{background:#fff!important;color:#000}.studioIntro,.canvasEyebrow{display:none!important}.paper{--paper-bg:#fff!important;--paper-text:#111!important;border:0;box-shadow:none}.articlePage{color:#111!important}}
-
-.field input.modeTarget{border-color:var(--red)!important;box-shadow:0 0 0 4px rgba(240,68,82,.14)!important;transition:border-color .2s,box-shadow .2s}
-@media(prefers-reduced-motion:reduce){.field input.modeTarget{transition:none!important}}
-
-/* Full-screen Art Gallery Mode */
-.galleryExitBtn{display:none;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(222,147,107,.34);border-radius:5px;background:rgba(222,147,107,.06);color:#f0d5c6;font:10px var(--mono);cursor:pointer}
-.galleryExitBtn:hover{border-color:rgba(240,68,82,.6);background:rgba(240,68,82,.09)}
-.assetHeaderActions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-.gallerySelectionStatus{display:none;color:#bd9b8d;font:9px/1.5 var(--mono);letter-spacing:.025em}
-body.assetGalleryMode .studioIntro,body.assetGalleryMode .toolbarWrap,body.assetGalleryMode .layout>.left,body.assetGalleryMode .workspace{display:none!important}
-body.assetGalleryMode .layout{display:block;min-height:calc(100vh - 76px)}
-body.assetGalleryMode .right.assetPanel{display:block!important;position:static;width:100%;height:auto;max-height:none;overflow:visible;border:0;padding:clamp(20px,3.4vw,46px) clamp(15px,4vw,58px) 60px;background:transparent}
-body.assetGalleryMode .right.assetPanel>.mobileDrawerHead{display:none!important}
-body.assetGalleryMode .assetHeader{max-width:1560px;margin:0 auto;align-items:flex-end}
-body.assetGalleryMode .assetHeader .sectionTitle{font-size:9px;letter-spacing:.2em;color:var(--red);margin:0 0 11px}
-body.assetGalleryMode .assetHeader h2{font:600 clamp(36px,5vw,64px)/.98 Georgia,serif;letter-spacing:-.055em;color:#fff0e7}
-body.assetGalleryMode .assetHeaderActions{justify-content:flex-end}
-body.assetGalleryMode .galleryExitBtn{display:inline-flex}
-body.assetGalleryMode .assetIntro{max-width:900px;margin:16px auto 25px;color:#bba9a0;font-size:13px;line-height:1.85}
-body.assetGalleryMode .assetSearchWrap{max-width:1560px;min-height:52px;margin:0 auto 12px;padding:0 15px;border-color:rgba(222,147,107,.24);border-radius:4px;background:rgba(255,255,255,.025)}
-body.assetGalleryMode .assetSearchWrap input{font-size:13px;padding:15px 0}
-body.assetGalleryMode .assetFilters{max-width:1560px;margin:0 auto 14px;justify-content:flex-start}
-body.assetGalleryMode .assetFilters select{min-width:160px;padding:10px 12px;font-size:11px;background:#151113;border-color:rgba(222,147,107,.19)}
-body.assetGalleryMode .assetQuickActions{max-width:1560px;margin:0 auto 14px;align-items:center;flex-wrap:wrap}
-body.assetGalleryMode .assetQuickActions button{min-height:37px;padding:10px 16px;border:1px solid rgba(222,147,107,.22);border-radius:4px;background:rgba(222,147,107,.065);color:#f0d9cb;font:10px var(--mono)}
-body.assetGalleryMode .assetQuickActions button.primary{background:var(--red);color:#fff;border-color:var(--red)}
-body.assetGalleryMode .gallerySelectionStatus{display:block;flex:1;min-width:220px;text-align:right}
-body.assetGalleryMode .uploadBox{max-width:1560px;margin:18px auto 23px;padding:15px 17px;display:grid;grid-template-columns:minmax(180px,.7fr) minmax(200px,1.2fr) minmax(220px,1.1fr) auto;align-items:center;gap:8px 18px;border:1px dashed rgba(222,147,107,.3);border-radius:4px;background:linear-gradient(100deg,rgba(116,50,37,.11),rgba(255,255,255,.014))}
-body.assetGalleryMode .uploadBox strong{font:600 17px Georgia,serif;margin:0}
-body.assetGalleryMode .uploadBox p{margin:0;font-size:10px;line-height:1.6}
-body.assetGalleryMode .uploadBox input[type=file]{margin:0;min-width:0}
-body.assetGalleryMode .uploadBox .uploadActions{flex-wrap:nowrap}
-body.assetGalleryMode .uploadBox .uploadStatus{grid-column:1/-1;margin:0;padding-top:7px;border-top:1px solid rgba(255,255,255,.055)}
-body.assetGalleryMode .assetMeta{max-width:1560px;margin:0 auto 10px;padding-bottom:10px;border-bottom:1px solid rgba(222,147,107,.21);font-size:9px;letter-spacing:.15em}
-body.assetGalleryMode .gallery{max-width:1560px;margin:0 auto;grid-template-columns:repeat(5,minmax(0,1fr));gap:15px;max-height:none;overflow:visible;padding:0}
-body.assetGalleryMode .asset{padding:8px;border-radius:3px;border-color:rgba(255,255,255,.08);background:linear-gradient(145deg,#1a1415,#100e11)}
-body.assetGalleryMode .asset img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:1px;background:#0b0a0d;transition:transform .25s,filter .25s}
-body.assetGalleryMode .asset span{margin-top:10px;white-space:normal;overflow-wrap:anywhere;font:10px/1.5 var(--mono);color:#d3c1b7;min-height:30px}
-body.assetGalleryMode .asset:hover{transform:translateY(-3px);border-color:rgba(222,147,107,.45)}
-body.assetGalleryMode .asset:hover img{filter:brightness(1.08)}
-body.assetGalleryMode .asset.selected{border-color:var(--red);box-shadow:0 0 0 1px rgba(240,68,82,.45),0 14px 35px rgba(0,0,0,.3);background:linear-gradient(145deg,rgba(95,32,38,.24),#100e11)}
-body.assetGalleryMode .asset.selected span{color:#ffb2aa}
-body.assetGalleryMode .assetNote{max-width:1560px;margin:18px auto 0;border-radius:3px;color:#8d7c76;font:9px/1.7 var(--mono);letter-spacing:.035em}
-@media(max-width:1200px){body.assetGalleryMode .gallery{grid-template-columns:repeat(4,minmax(0,1fr))}body.assetGalleryMode .uploadBox{grid-template-columns:1fr 1.2fr}body.assetGalleryMode .uploadBox .uploadActions{justify-content:flex-start}}
-@media(max-width:800px){body.assetGalleryMode .gallery{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}body.assetGalleryMode .assetHeader{align-items:flex-start;flex-direction:column}body.assetGalleryMode .assetHeaderActions{width:100%;justify-content:space-between}body.assetGalleryMode .assetIntro{margin-top:12px;font-size:12px}body.assetGalleryMode .uploadBox{grid-template-columns:1fr;gap:10px}body.assetGalleryMode .uploadBox .uploadStatus{grid-column:auto}body.assetGalleryMode .gallerySelectionStatus{text-align:left;flex-basis:100%}}
-@media(max-width:520px){body.assetGalleryMode .right.assetPanel{padding:20px 12px 42px}body.assetGalleryMode .assetHeader h2{font-size:38px}body.assetGalleryMode .gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}body.assetGalleryMode .asset{padding:5px}body.assetGalleryMode .asset img{aspect-ratio:1/1}body.assetGalleryMode .asset span{font-size:9px}body.assetGalleryMode .assetFilters select{min-width:0;flex:1;width:50%}body.assetGalleryMode .assetHeaderActions{align-items:flex-start;flex-direction:column}body.assetGalleryMode .assetQuickActions button{flex:1}body.assetGalleryMode .gallerySelectionStatus{min-width:100%}}
-</style>
-
 </head>
 <body>
-
-
-
-<header class="top">
-  <a class="brand" href="./editor.html" aria-label="Atomic Editorial Studio home"><span class="brandWord">ATOMIC</span><span class="brandSlash">/</span><span class="brandWord brandAccent">EDITORIAL</span><small>STUDIO 02 · SCIENCE &amp; STORIES</small></a>
-  <div class="statusBadge"><span class="statusDot" id="statusDot"></span><span id="statusMsg">Ready</span></div>
-  <div class="actions">
-    <button id="togglePaperTheme">🌓 Dark/Light</button>
-    <button id="undo" title="Undo">↶</button>
-    <button id="redo" title="Redo">↷</button>
-    <button id="mobileMetaToggle" class="mobileOnly" type="button">☰ Metadata</button><button id="mobileAssetsToggle" class="mobileOnly" type="button">▦ Assets</button><button id="focus">🧘 Focus</button>
-    <button id="preview">👁 Preview</button>
-    <button id="versionHistory" type="button" hidden>🕘 History</button>
-    <button id="saveDraft">💾 Draft</button>
-    <span id="authSuccess" class="statusBadge" role="status" hidden>✓ Signed in successfully</span>
-    <button id="signInOpen" class="authBtn">🔐 Sign in</button>
-    <button id="signOutEditor" hidden>↪ Sign out</button>
-    <button class="green" id="publish">🚀 Publish</button>
-  </div>
+<div class="app">
+<header class="topbar">
+ <div class="brand"><div class="brandmark">A</div><div><div class="brandname">ATOMIC <span>WEEKLY</span></div><div class="brandmeta">EDITORIAL WORKSPACE</div></div></div>
+ <div class="crumb">Workspace <span>／</span> <strong>Writing Studio</strong></div>
+ <div class="topspacer"></div>
+ <div class="save-status" id="saveStatus" aria-live="polite"><span class="dot"></span><span id="saveText">Local draft ready</span></div>
+ <button class="btn quiet desktop-only" id="advancedTools" title="Open full-featured legacy studio">Advanced tools ↗</button>
+ <button class="btn quiet desktop-only" id="previewTop" title="Preview article">Preview ↗</button>
+ <button class="btn primary" id="publishTop">Publish <span aria-hidden="true">↗</span></button>
 </header>
-
-<section class="studioIntro" aria-label="Editorial workspace introduction"><div class="studioIntroCopy"><div class="studioEyebrow"><span>ATOMIC MAGAZINE</span><i></i><span>EDITORIAL / 02</span></div><h1>Article <em>Studio.</em></h1><p>Research deeply. Edit precisely. Publish beautifully.</p></div><div class="studioIntroMeta"><div class="studioMetaItem"><strong>01</strong><span>WRITE</span></div><div class="studioMetaItem"><strong>02</strong><span>REFINE</span></div><div class="studioMetaItem"><strong>03</strong><span>PUBLISH</span></div><div class="studioRibbonNote"><i></i><span>Local autosave · Cloud sync after sign-in</span></div></div></section>
-
-<div class="toolbarWrap">
-  <div class="toolbar" id="toolbar">
-    <select id="fontName"><option value="Georgia">Georgia</option><option value="Arial">Arial</option><option value="Times New Roman">Times New Roman</option><option value="Verdana">Verdana</option><option value="Courier New">Courier New</option></select>
-    <select id="fontSize"><option value="2">12px</option><option value="3" selected>16px</option><option value="4">18px</option><option value="5">24px</option><option value="6">32px</option><option value="7">48px</option></select>
-    <select id="block"><option value="p">Paragraph</option><option value="h1">Heading 1</option><option value="h2">Heading 2</option><option value="h3">Heading 3</option><option value="blockquote">Quote</option><option value="pre">Code Block</option></select>
-    <span class="toolSep"></span>
-    <button data-cmd="bold"><b>B</b></button><button data-cmd="italic"><i>I</i></button><button data-cmd="underline"><u>U</u></button><button data-cmd="strikeThrough"><s>S</s></button>
-    <label class="colorBtn" title="Text Color">A<input id="textColor" type="color" value="#111111"></label>
-    <label class="colorBtn" title="Highlight">▰<input id="highlight" type="color" value="#fff19a"></label>
-    <span class="toolSep"></span>
-    <button data-cmd="justifyLeft">⯇</button><button data-cmd="justifyCenter">⯎</button><button data-cmd="justifyRight">⯈</button><button data-cmd="justifyFull">☰</button>
-    <span class="toolSep"></span>
-    <button data-cmd="insertUnorderedList">• List</button><button data-cmd="insertOrderedList">1. List</button>
-    <button id="clear">Tx Clean</button>
+<div class="workspace">
+<aside class="leftbar">
+ <div class="nav-label">Workspace</div>
+ <button class="navitem"><span class="navicon">⌂</span>Overview</button>
+ <button class="navitem"><span class="navicon">▤</span>All articles <span class="navcount">—</span></button>
+ <button class="navitem active"><span class="navicon">✎</span>Writing studio</button>
+ <button class="navitem" id="openMedia"><span class="navicon">▧</span>Media library</button>
+ <button class="navitem"><span class="navicon">▣</span>Magazine / PDF</button>
+ <button class="navitem"><span class="navicon">↗</span>Submissions</button>
+ <div class="left-divider"></div>
+ <div class="nav-label">Document</div>
+ <a class="outline-item" href="#articleTitle">Article title</a>
+ <a class="outline-item" href="#articleBody">Body content</a>
+ <div id="outlineList"></div>
+ <div class="mini-card"><div class="eyebrow">THE EDITOR'S DESK</div><h3>Make every word matter.</h3><p>A quiet space for curious minds and stories worth staying with.</p><button id="focusMode">↗ Enter focus mode</button></div>
+</aside>
+<main class="editorarea" id="editorArea">
+ <div class="editor-head"><div><div class="tag">ISSUE  /  DIGITAL EDITION</div><h1>New article <span class="pill red">DRAFT</span></h1><p>Shape a story for curious minds.</p></div><div class="head-actions"><button class="btn mobile-toggle" id="mobileMeta">Details</button><button class="btn desktop-only" id="exportTop">Export HTML</button><button class="btn iconbtn" id="paperToggle" title="Toggle writing canvas theme" aria-label="Toggle writing canvas theme">◐</button></div></div>
+ <div class="toolbar-wrap" id="toolbarWrap">
+  <div class="toolbar" role="toolbar" aria-label="Text formatting toolbar">
+   <div class="toolgroup">
+    <button class="tool" data-cmd="undo" title="Undo (Ctrl+Z)">↶</button><button class="tool" data-cmd="redo" title="Redo (Ctrl+Y)">↷</button>
+   </div>
+   <div class="toolgroup">
+    <label class="tool" title="Text style"><select id="blockFormat" aria-label="Text style"><option value="p">Paragraph</option><option value="h1">Heading 1</option><option value="h2">Heading 2</option><option value="h3">Heading 3</option><option value="blockquote">Quote</option><option value="pre">Code block</option></select></label>
+    <label class="tool" title="Font family"><select id="fontFamily" aria-label="Font family"><option value="Georgia">Editorial serif</option><option value="'DM Sans',sans-serif">DM Sans</option><option value="Arial,sans-serif">Arial</option><option value="'Times New Roman',serif">Times New Roman</option><option value="'DM Mono',monospace">Monospace</option></select></label>
+    <label class="tool" title="Text size"><select id="fontSize" aria-label="Text size"><option value="3">Normal</option><option value="2">Small</option><option value="4">Large</option><option value="5">XL</option><option value="6">XXL</option></select></label>
+   </div>
+   <div class="toolgroup">
+    <button class="tool" data-cmd="bold" title="Bold (Ctrl+B)"><span class="letter">B</span></button><button class="tool" data-cmd="italic" title="Italic (Ctrl+I)"><span class="letter" style="font-style:italic">I</span></button><button class="tool" data-cmd="underline" title="Underline (Ctrl+U)"><span class="letter under">U</span></button><button class="tool" data-cmd="strikeThrough" title="Strikethrough"><span class="letter strike">S</span></button>
+    <button class="tool" data-cmd="superscript" title="Superscript">x²</button><button class="tool" data-cmd="subscript" title="Subscript">x₂</button>
+   </div>
+   <div class="toolgroup">
+    <label class="colorpick" title="Text colour">A<span class="colorbar" id="textColorBar"></span><input type="color" id="textColor" value="#b62e43" aria-label="Text colour"></label>
+    <label class="colorpick" title="Highlight colour">▰<span class="colorbar" style="background:#f4ce65"></span><input type="color" id="highlightColor" value="#f4ce65" aria-label="Highlight colour"></label>
+    <button class="tool" data-cmd="removeFormat" title="Clear formatting">Tx</button>
+   </div>
+   <div class="toolgroup">
+    <button class="tool" data-cmd="justifyLeft" title="Align left">≡</button><button class="tool" data-cmd="justifyCenter" title="Align center">☰</button><button class="tool" data-cmd="justifyRight" title="Align right">≣</button>
+    <button class="tool" data-cmd="insertUnorderedList" title="Bullet list">•≡</button><button class="tool" data-cmd="insertOrderedList" title="Numbered list">1≡</button>
+   </div>
+   <div class="toolgroup">
+    <button class="tool" id="linkBtn" title="Insert link">↗</button><button class="tool" id="imageBtn" title="Insert image">▧</button><button class="tool" id="quoteBtn" title="Pull quote">❝</button><button class="tool" id="calloutBtn" title="Insert editorial callout">▤</button><button class="tool" id="hrBtn" title="Horizontal divider">―</button><button class="tool" id="tableBtn" title="Insert table">▦</button>
+   </div>
   </div>
-  <div class="subbar">
-    <button id="insertImage">🖼 Image</button><button id="embedVideo">▶ YouTube</button>
-    <button class="tableMenuToggle" id="tableMenuToggle">▦ Table</button>
-    <button id="pageBreak">↵ Page break</button><button id="exportHtml">📥 HTML</button><button id="exportMd">📝 MD</button><button id="print">🖨 Print</button><button id="source">&lt;&gt; Source</button>
-    <span class="count" id="count">0 words · 0 chars · 0 min read</span>
-  </div>
+ </div>
+ <div class="canvas-wrap">
+  <div class="doc-meta"><span class="pill">DIGITAL ARTICLE</span><span id="categoryMeta">Science</span><span>•</span><span id="readMeta">1 min read</span><span class="spacer"></span><span id="autosaveMeta">Autosave on</span></div>
+  <article class="paper" id="paper">
+   <div class="article-kicker" id="kickerPreview">ATOMIC WEEKLY &nbsp; / &nbsp; SCIENCE &amp; IDEAS</div>
+   <textarea id="articleTitle" class="title-input" rows="2" maxlength="180" placeholder="Give your story a title…"></textarea>
+   <textarea id="articleSubtitle" class="subtitle-input" rows="2" maxlength="300" placeholder="A compelling deck that draws the reader into your story."></textarea>
+   <div class="byline"><div class="avatar" id="avatar">AW</div><input id="authorInline" aria-label="Author name" value="Atomic Weekly Desk" placeholder="Author name"><span class="separator">/</span><span id="dateInline">EDITORIAL</span><span class="separator">/</span><span id="readInline">1 MIN READ</span></div>
+   <div class="article-body" id="articleBody" contenteditable="true" spellcheck="true" role="textbox" aria-label="Article body editor" aria-multiline="true"></div>
+  </article>
+  <div class="doc-footer"><span id="wordCount">0 words</span><span>·</span><span id="charCount">0 characters</span><span class="spacer"></span><span>Editorial canvas</span></div>
+ </div>
+ <div class="bottom-status"><span>● Local editor</span><span id="bottomWords">0 words</span><span class="optional">English (US)</span><span class="push"></span><span class="optional">Atomic Weekly Studio</span><span id="bottomSave">Draft ready</span></div>
+</main>
+<aside class="rightbar" id="rightbar">
+ <div class="right-section"><div class="panel-label">Article details</div>
+  <div class="field"><label for="category">CATEGORY</label><select id="category"><option>Science</option><option>Space</option><option>Physics</option><option>Love</option><option>Culture</option><option>Technology</option><option>Ideas</option></select></div>
+  <div class="two-fields"><div class="field"><label for="author">BYLINE</label><input id="author" value="Atomic Weekly Desk" placeholder="Author"></div><div class="field"><label for="status">STATUS</label><select id="status"><option>Draft</option><option>In review</option></select></div></div>
+  <div class="field"><label for="summary">SHORT SUMMARY</label><textarea id="summary" maxlength="300" placeholder="A short introduction for article cards…"></textarea></div>
+  <div class="field"><label>TAGS</label><div class="tag-list" id="tagList"></div><div class="tag-add"><input id="tagInput" placeholder="Add a tag"><button id="addTag" aria-label="Add tag">+</button></div></div>
+ </div>
+ <div class="right-section"><div class="panel-label">Cover image</div>
+  <label class="cover-drop" for="coverFile" id="coverDrop"><div class="cover-icon">＋</div><p>Choose a cover image</p><small>JPG, PNG or WebP · local preview</small><input id="coverFile" type="file" accept="image/*"></label>
+  <div class="cover-url-box"><label for="coverUrlInput">USE AN ONLINE IMAGE LINK</label><div class="cover-url-controls"><input id="coverUrlInput" type="url" placeholder="Paste a direct image URL"><button type="button" id="applyCoverUrl" class="secondary">Use link</button></div><small class="cover-url-help">Paste a public image URL. The cover preview will appear above.</small></div>
+  <div class="field" style="margin-top:10px"><label for="coverAlt">IMAGE DESCRIPTION</label><input id="coverAlt" placeholder="Describe the image"></div>
+ </div>
+ <div class="right-section"><div class="panel-label">Reading experience</div>
+  <div class="toggle-row"><span>Show author byline</span><button class="switch" id="bylineToggle" role="switch" aria-checked="true" aria-label="Show author byline"></button></div>
+  <div class="toggle-row"><span>Show reading time</span><button class="switch" id="readingToggle" role="switch" aria-checked="true" aria-label="Show reading time"></button></div>
+  <div class="toggle-row"><span>Paper writing canvas</span><button class="switch" id="paperSwitch" role="switch" aria-checked="true" aria-label="Use paper canvas"></button></div>
+ </div>
+ <div class="right-section"><div class="panel-label">Document stats</div>
+  <div class="toggle-row"><span>Words</span><strong id="statWords">—</strong></div><div class="toggle-row"><span>Reading time</span><strong id="statRead">—</strong></div><div class="toggle-row"><span>Last saved</span><strong id="statSaved">Now</strong></div>
+ </div>
+ <button class="btn" id="exportBtn" style="width:100%;margin-bottom:8px">↓ Export article HTML</button>
+ <button class="btn" id="previewBtn" style="width:100%">◉ Preview article</button>
+</aside>
 </div>
-
-<div class="layout">
-  <aside class="left"><div class="mobileDrawerHead"><b>Article metadata</b><button id="closeMobileMeta" type="button" aria-label="Close metadata">✕</button></div>
-    <div class="sectionTitle">Metadata</div>
-    <div class="field"><label for="title">Article Title</label><input id="title" placeholder="Enter article title..."></div>
-    <div class="field"><label for="author">Author</label><input id="author" value="Atomic Desk"></div>
-    <div class="field"><label for="section">Category / Section</label><select id="section"><option>Science</option><option>Space</option><option>Technology</option><option>Humanity</option><option>Love</option><option>Life</option><option>Philosophy</option><option>Nature</option><option>Art</option><option>Physics</option><option>Stories</option></select></div>
-    <div class="field"><label for="dek">Short Deck / Excerpt</label><textarea id="dek" placeholder="Brief summary for preview cards..."></textarea></div>
-    <div class="aiTools"><div class="aiToolsTitle">AI Editorial Assistant</div><p>Draft, refine and prepare your article. AI output is a suggestion; review facts and wording before publishing.</p><div class="aiActions"><button type="button" id="aiTitle">✦ Headline</button><button type="button" id="aiSummary">✦ Summary</button><button type="button" id="aiPolish">✦ Polish selection</button><button type="button" id="aiGrammar">✓ Grammar fix</button><button type="button" id="aiDraft">✎ Draft article</button><button type="button" id="aiOutline">☷ Outline</button><button type="button" id="aiSEO">⌕ SEO pack</button><button type="button" id="aiSources">⚑ Source checklist</button></div><div id="aiStatus" role="status" aria-live="polite"></div><div class="aiResultWrap" id="aiResultWrap" hidden><label for="aiResult">AI result · review before inserting</label><textarea id="aiResult" rows="8" placeholder="Your AI result will appear here…"></textarea><div class="aiActions"><button type="button" id="aiInsertResult" class="primary">Insert at cursor</button><button type="button" id="aiCopyResult">Copy result</button><button type="button" id="aiDismissResult" class="ghost">Dismiss</button></div></div></div>
-    <div class="field"><label for="cover">Cover Asset Path / URL</label><input id="cover" placeholder="e.g. assets/cover.jpg or image URL"><img id="coverPreview" style="width:100%;height:100px;object-fit:cover;margin-top:6px;border-radius:6px;display:none"></div>
-    <div class="sectionTitle">Publishing schedule</div>
-    <div class="field"><label for="scheduleAt">Publish date &amp; time (your local time)</label><input id="scheduleAt" type="datetime-local" aria-describedby="scheduleHelp"></div>
-    <p id="scheduleHelp" class="scheduleHelp">Choose a future time, then tap Schedule. The cloud scheduler checks every 5 minutes.</p>
-    <button id="schedulePublish" type="button" class="scheduleButton">◷ Schedule article</button>
-    <p id="scheduleStatus" class="scheduleHelp" role="status" aria-live="polite"></p>
-    <div class="sectionTitle">Content Pages</div>
-    <div id="contentPages" class="contentPages"></div>
-    <div class="sectionTitle">Structure</div>
-    <div id="tocList" style="font-size:12px;color:var(--muted);line-height:1.6">No headings added yet.</div>
-  </aside>
-
-  <main class="workspace" aria-label="Article canvas"><div class="canvasEyebrow"><span>LIVE CANVAS</span><span class="canvasEyebrowLine"></span><span>LONG-FORM / EDITORIAL</span></div>
-    <div class="paper" id="paper">
-      <article id="editor" class="articlePage" contenteditable="true"></article>
-      <textarea id="sourceEditor" class="sourceEditor" spellcheck="false"></textarea>
-    </div>
-  </main>
-
-  <aside class="right assetPanel" id="assets"><div class="mobileDrawerHead"><b>Editorial media</b><button id="closeMobileAssets" type="button" aria-label="Close media library">✕</button></div>
-    <div class="assetHeader">
-      <div>
-        <div class="sectionTitle" id="assetGalleryKicker">ASSET MANAGER</div>
-        <h2 id="assetGalleryTitle">Editorial Media</h2>
-      </div>
-      <div class="assetHeaderActions"><span class="assetLive"><i></i> Shared magazine library</span><button id="exitAssetGallery" class="galleryExitBtn" type="button">← Return to Article Studio</button></div>
-    </div>
-    <p class="assetIntro">Browse the visual library for your next cover or scientific illustration. Select an artwork to use it as a cover, or insert it into the article canvas.</p>
-    <div class="assetSearchWrap">
-      <span>⌕</span>
-      <input id="assetSearch" placeholder="Search magazine assets…" aria-label="Search magazine assets">
-    </div>
-    <div class="assetFilters"><select id="assetTypeFilter" aria-label="Filter assets by type"><option value="all">All image types</option><option value="raster">Raster images</option><option value="vector">SVG vectors</option></select><select id="assetSort" aria-label="Sort assets"><option value="name">Name A–Z</option><option value="reverse">Name Z–A</option></select></div>
-    <div class="assetQuickActions"><button id="useAssetAsCover" type="button">Use as cover</button><button id="insertSelectedAsset" type="button" class="primary">Insert selected</button><span id="gallerySelectionStatus" class="gallerySelectionStatus" role="status" aria-live="polite">Choose an artwork to see its selection here.</span></div>
-    <div class="uploadBox"><strong>＋ Upload new artwork</strong><p>Upload a cover or inline image to the shared magazine repository. Images up to 8 MB.</p><input id="assetFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"><div class="uploadActions"><button class="primary" id="uploadAsset">Upload image</button><button id="refreshAssets">Refresh library</button></div><div class="uploadStatus" id="uploadStatus">Sign in to upload assets.</div></div>
-    <div class="assetMeta"><span>MAGAZINE LIBRARY</span><span id="assetCount">Loading…</span></div>
-    <div id="gallery" class="gallery"><div class="assetLoading">Loading media assets…</div></div>
-    <div class="assetNote">☁ Images are loaded from the shared magazine library.</div>
-  </aside>
 </div>
+<div class="mobile-drawer" id="mobileDrawer" aria-hidden="true"><div class="drawer-panel"><div class="drawer-head"><h2>Article details</h2><button class="btn iconbtn" id="closeDrawer" aria-label="Close details">✕</button></div><div id="drawerContent"></div></div></div>
+<div class="modal-backdrop" id="previewModal" role="dialog" aria-modal="true" aria-labelledby="previewHeading"><div class="modal"><div class="modal-head"><h2 id="previewHeading">Article preview</h2><button class="btn iconbtn" id="closePreview" aria-label="Close preview">✕</button></div><div id="previewContent" class="preview-content"></div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px"><button class="btn" id="closePreview2">Back to editor</button><button class="btn primary" id="exportPreview">Export HTML</button></div></div></div>
+<div class="modal-backdrop" id="publishModal" role="dialog" aria-modal="true" aria-labelledby="publishHeading"><div class="modal"><div class="modal-head"><h2 id="publishHeading">Publish to Atomic Magazine</h2><button class="btn iconbtn" id="closePublish" aria-label="Close">✕</button></div><p style="color:#b7b7c1;line-height:1.7;font-size:12px">This will write your article to the existing Firebase <code>publishedArticles</code> feed. It can then appear on the public Atomic Magazine website. Check the headline, summary and cover before publishing.</p><div id="publishConnection" style="font-size:11px;color:#d8b875;margin-top:10px">Checking magazine connection…</div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:18px"><button class="btn" id="publishCancel">Keep editing</button><button class="btn" id="publishExport">Export HTML</button><button class="btn primary" id="publishConfirm">Publish article ↗</button></div></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="inlineImageFile" accept="image/*" hidden>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const body = $('articleBody'), title = $('articleTitle'), subtitle = $('articleSubtitle');
+const STORAGE_KEY = 'atomic-weekly-editorial-studio-v1';
+let tags = [], saveTimer = null, toastTimer = null, lastSavedAt = null, coverData = '', savedRange = null;
+const initialBody = body.innerHTML;
+let cloudDb=null, cloudApi=null, cloudSaveTimer=null, cloudStatus='connecting', articleId=new URLSearchParams(location.search).get('id')||('aw-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)), articleCreatedAt=Date.now(), cloudLoading=false, sourceSubmissionId=new URLSearchParams(location.search).get('submission')||'';
+const firebaseConfig={apiKey:'AIzaSyCit_SKjXRUpr8FNY1ahKHiG5sdDyOlW6k',authDomain:'atomictanvir.firebaseapp.com',projectId:'atomictanvir',storageBucket:'atomictanvir.firebasestorage.app',messagingSenderId:'140595401471',appId:'1:140595401471:web:8f92115a8c8b58d1ec32ca',databaseURL:'https://atomictanvir-default-rtdb.firebaseio.com'};
+function articleRecord(published=false){const plain=textFromBody().trim();return {id:articleId,title:title.value.trim()||'Untitled story',headline:title.value.trim()||'Untitled story',subtitle:subtitle.value.trim(),dek:$('summary').value.trim()||subtitle.value.trim(),description:$('summary').value.trim()||subtitle.value.trim(),content:body.innerHTML,text:plain,body:body.innerHTML,author:$('author').value.trim()||$('authorInline').value.trim()||'Atomic Weekly Desk',category:$('category').value,tags:Array.isArray(tags)?tags:[],cover:coverData||'',coverImage:coverData||'',coverAlt:$('coverAlt').value.trim(),status:published?'published':($('status').value==='In review'?'review':'draft'),published:published,publishedAt:published?Date.now():null,createdAt:articleCreatedAt,updatedAt:Date.now(),readTime:Math.max(1,Math.ceil(plain.split(/\s+/).filter(Boolean).length/220)),source:'atomic-weekly-admin-panel'};}
+async function syncDraftToCloud(showMessage=false){if(!cloudDb||!cloudApi)return;try{const record=articleRecord(false);await cloudApi.set(cloudApi.ref(cloudDb,'draftArticles/'+articleId),record);cloudStatus='connected';setStatus('Saved to Atomic cloud');$('autosaveMeta').textContent='Cloud synced';if(showMessage)showToast('Draft synced with Atomic Magazine')}catch(err){cloudStatus='error';setStatus('Cloud sync failed · local copy kept','error');if(showMessage)showToast('Firebase write failed. Local draft is preserved.');console.warn('Atomic draft sync failed:',err)}}
+async function connectAtomicDatabase(){try{const [appMod,dbMod]=await Promise.all([import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js'),import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js')]);const app=appMod.getApps().length?appMod.getApp():appMod.initializeApp(firebaseConfig);cloudDb=dbMod.getDatabase(app);cloudApi=dbMod;cloudStatus='connected';const indicator=$('publishConnection');if(indicator)indicator.textContent='Connected to the Atomic Magazine Firebase project.';const params=new URLSearchParams(location.search);if(params.get('submission')){cloudLoading=true;try{const snap=await dbMod.get(dbMod.ref(cloudDb,'submissions/'+params.get('submission')));if(snap.exists()){const d=snap.val()||{};tags=[];coverData='';renderTags();title.value=d.title||d.headline||'';subtitle.value=d.section||d.category||'Reader submission';body.innerHTML='<p>'+String(d.text||d.content||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'</p><p>')+'</p>';$('author').value=d.author||'Reader submission';$('authorInline').value=$('author').value;$('category').value=['Science','Space','Physics','Love','Culture','Technology','Ideas'].includes(d.section)?d.section:'Science';$('summary').value=(d.text||'').slice(0,220);articleCreatedAt=d.createdAt||d.timestamp||Date.now();showToast('Website submission loaded into editor')}}catch(loadErr){console.warn('Could not load website submission:',loadErr)}finally{cloudLoading=false}}else if(params.get('id')){cloudLoading=true;try{let snap=await dbMod.get(dbMod.ref(cloudDb,'draftArticles/'+articleId));let d=snap.exists()?snap.val():null;if(!d){snap=await dbMod.get(dbMod.ref(cloudDb,'publishedArticles/'+articleId));d=snap.exists()?snap.val():null}if(d){title.value=d.title||d.headline||'';subtitle.value=d.subtitle||d.dek||'';body.innerHTML=d.content||d.body||d.text||initialBody;$('author').value=d.author||'Atomic Weekly Desk';$('authorInline').value=$('author').value;$('category').value=d.category||'Science';$('summary').value=d.summary||d.description||d.dek||'';tags=Array.isArray(d.tags)?d.tags:[];coverData=d.cover||d.coverImage||'';$('coverAlt').value=d.coverAlt||'';articleCreatedAt=d.createdAt||Date.now();renderTags();if(coverData)renderCover();updateStats();showToast('Article loaded from Atomic cloud')}}catch(loadErr){console.warn('Could not load cloud article:',loadErr)}finally{cloudLoading=false}}if(params.get('submission'))await syncDraftToCloud(false);setStatus('Connected · cloud autosave active');}catch(err){cloudStatus='error';const indicator=$('publishConnection');if(indicator)indicator.textContent='Firebase connection unavailable. Local drafts still work.';console.warn('Atomic Firebase connection failed:',err)}}
+async function publishToMagazine(){if(!cloudDb||!cloudApi){showToast('Firebase is not connected yet. Please wait and retry.');return}if(!title.value.trim()){showToast('Add an article title before publishing.');title.focus();return}const record=articleRecord(true);record.summary=$('summary').value.trim()||subtitle.value.trim();try{await cloudApi.set(cloudApi.ref(cloudDb,'publishedArticles/'+articleId),record);await cloudApi.remove(cloudApi.ref(cloudDb,'draftArticles/'+articleId));if(sourceSubmissionId){try{await cloudApi.update(cloudApi.ref(cloudDb,'submissions/'+sourceSubmissionId),{status:'published',processedAt:Date.now(),linkedArticleId:articleId})}catch(subErr){console.warn('Article published, but submission status could not be updated:',subErr)}}$('publishModal').classList.remove('open');$('status').value='Published';setStatus('Published to Atomic Magazine');showToast('Published to the Atomic Magazine feed');history.replaceState({},'',location.pathname+'?id='+encodeURIComponent(articleId));}catch(err){console.error('Atomic publish failed:',err);showToast('Publish failed. Firebase rules may not allow writing to publishedArticles.');const indicator=$('publishConnection');if(indicator)indicator.textContent='Publish failed: database write was rejected or unavailable.'}}
 
-<div id="authGate" class="loginShade"><div class="loginCard"><div class="sectionTitle">Editorial access</div><h2>Sign in to Atomic.</h2><p>Use your authorised Google account to save drafts, publish articles and upload artwork.</p><div class="loginError" id="authError" aria-live="polite"></div><button class="primary googleLogin" id="googleAuth" type="button"><span class="googleMark" aria-hidden="true">G</span> Continue with Google</button><button type="button" class="ghost" id="authCancel">Continue editing offline</button></div></div>
-<div id="tableModal" class="modal">
-  <div class="modalBox" style="width:360px"><h3>Create Table</h3>
-    <p class="tableBuilderHint">Choose how many rows and columns you need.</p>
-    <div class="tableBuilder">
-      <div class="field"><label>Rows</label><input id="tableRows" type="number" min="1" max="30" value="2"></div>
-      <div class="field"><label>Columns</label><input id="tableCols" type="number" min="1" max="15" value="2"></div>
-    </div>
-    <div class="actions"><button id="closeTable">Cancel</button><button class="primary" id="createTable">Create Table</button></div>
-  </div>
-</div>
-
-<div id="previewModal" class="modal">
-  <div class="modalBox previewBox" role="dialog" aria-modal="true" aria-labelledby="previewTitle">
-    <div class="previewHeader"><div><div class="sectionTitle">Reader View</div><h3 id="previewTitle">Article Preview</h3></div><div class="previewDevices" role="group" aria-label="Preview device size"><button id="previewDesktop" type="button" class="active">Desktop</button><button id="previewTablet" type="button">Tablet</button><button id="previewMobile" type="button">Mobile</button></div><button id="closePreview" class="ghost" aria-label="Close preview">✕</button></div>
-    <div id="previewContent" class="previewArticle"></div>
-  </div>
-</div>
-<div id="historyModal" class="modal"><div class="modalBox" role="dialog" aria-modal="true" aria-labelledby="historyTitle"><h3 id="historyTitle">Published Article History</h3><p style="color:var(--muted);font-size:12px;line-height:1.6">Earlier published versions are saved before updates. Restoring a version loads it into the editor; it does not publish it automatically.</p><div id="revisionList"><div class="assetLoading">Loading revisions…</div></div><div class="actions" style="justify-content:flex-end;margin-top:18px"><button id="closeHistory" type="button">Close</button></div></div></div>
-
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, set, get, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-
-const cfg={
-  apiKey:'AIzaSyCit_SKjXRUpr8FNY1ahKhiG5sdDyOlW6k',
-  authDomain:'atomictanvir.firebaseapp.com',
-  projectId:'atomictanvir',
-  databaseURL:'https://atomictanvir-default-rtdb.firebaseio.com'
-};
-const app=initializeApp(cfg),db=getDatabase(app),auth=getAuth(app);
-const AI_ENDPOINT='https://us-central1-atomictanvir.cloudfunctions.net/atomicAi';
-const $=id=>document.getElementById(id);
-const ASSET_BRANCH='atomic-weekly-2.0';
-const ASSET_API='https://api.github.com/repos/iammdtanvirrahman/atomic-weekly/contents/assets?ref='+encodeURIComponent(ASSET_BRANCH);
-
-let savedRange=null,selectedMedia=null,selectedGalleryUrl='',sourceMode=false;
-let history=[],historyIndex=-1,historyTimer=null,saveTimer=null,cloudTimer=null,dragState=null,allAssets=[];
-let suppressHistory=false,authUser=null;
-
-function setStatus(msg,status='synced'){
-  $('statusMsg').textContent=msg;
-  $('statusDot').className='statusDot '+status;
-}
-function saveSelection(){
-  const s=window.getSelection();
-  if(s && s.rangeCount) savedRange=s.getRangeAt(0).cloneRange();
-}
-function restoreSelection(){
-  const s=window.getSelection();
-  s.removeAllRanges();
-  if(savedRange) s.addRange(savedRange);
-  else $('editor').focus();
-}
-function stripTransient(root){
-  const clone=root.cloneNode(true);
-  clone.querySelectorAll('.mediaHandles').forEach(x=>x.remove());
-  clone.querySelectorAll('.selectedMedia').forEach(x=>x.classList.remove('selectedMedia'));
-  return clone.innerHTML;
-}
-function editorHTML(){return stripTransient($('editor'))}
-function cmd(c,v=null){
-  restoreSelection();
-  document.execCommand(c,false,v);
-  $('editor').focus();
-  pushHistory();
-  updateStats();
-  scheduleLocalSave();
-}
-function pushHistory(){
-  clearTimeout(historyTimer);historyTimer=null;
-  if(sourceMode||suppressHistory)return;
-  const html=editorHTML();
-  if(history[historyIndex]===html)return;
-  history=history.slice(0,historyIndex+1);
-  history.push(html);
-  if(history.length>60)history.shift();
-  historyIndex=history.length-1;
-}
-function applyHistory(dir){
-  clearTimeout(historyTimer);historyTimer=null;
-  if(!history.length)return;
-  const next=Math.max(0,Math.min(history.length-1,historyIndex+dir));
-  if(next===historyIndex)return;
-  historyIndex=next;
-  suppressHistory=true;
-  clearMediaSelection();
-  $('editor').innerHTML=history[historyIndex]||'';
-  suppressHistory=false;
-  updateStats();
-  scheduleLocalSave();
-}
-function renderContentPages(){
-  const editor=$('editor'),list=$('contentPages');
-  if(!editor||!list)return;
-  const groups=[];let current=[];
-  [...editor.children].forEach(node=>{
-    if(node.classList.contains('page-break')){groups.push(current);current=[]}
-    else current.push(node);
-  });
-  groups.push(current);
-  const pages=groups.filter((group,index)=>group.length||index===0);
-  list.innerHTML='';
-  pages.forEach((group,index)=>{
-    const item=document.createElement('div');item.className='contentPage';
-    const text=group.map(n=>n.innerText||n.textContent||'').join(' ').replace(/\s+/g,' ').trim();
-    const heading=group.find(n=>/^H[1-3]$/.test(n.tagName));
-    const label=(heading?.innerText||text||'Empty page').slice(0,42);
-    item.innerHTML=`<span class="pageNumber">${index+1}</span><span class="pageText" title="${escapeAttr(label)}">${escapeHtml(label)}</span><button class="pageDelete" title="Delete page" aria-label="Delete page">✕</button>`;
-    item.onclick=()=>selectContentPage(index);
-    item.querySelector('.pageDelete').onclick=e=>{e.stopPropagation();deleteContentPage(index)};
-    list.appendChild(item);
-  });
-  list.querySelector('.contentPage')?.classList.add('active');
-}
-function getContentPageGroups(){
-  const groups=[];let current=[];
-  [...$('editor').children].forEach(node=>{
-    if(node.classList.contains('page-break')){groups.push(current);current=[]}
-    else current.push(node);
-  });
-  groups.push(current);return groups.filter((group,index)=>group.length||index===0);
-}
-function selectContentPage(index){
-  const groups=getContentPageGroups(),group=groups[index];
-  document.querySelectorAll('.contentPage').forEach((x,i)=>x.classList.toggle('active',i===index));
-  if(group?.[0])group[0].scrollIntoView({behavior:'smooth',block:'center'});
-}
-function deleteContentPage(index){
-  const groups=getContentPageGroups();
-  if(!groups[index])return;
-  if(!confirm(`Delete page ${index+1}?`))return;
-  const children=[...$('editor').children];let page=0;
-  children.forEach(node=>{
-    if(node.classList.contains('page-break')){page++;return}
-    if(page===index)node.remove();
-  });
-  const breaks=[...$('editor').children].filter(n=>n.classList.contains('page-break'));
-  if(index<breaks.length)breaks[index].remove();
-  else if(index>0)breaks[index-1]?.remove();
-  clearMediaSelection();renderContentPages();updateStats();pushHistory();scheduleLocalSave();
-}
-
+function showToast(message){$('toast').textContent=message;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2600)}
+function setStatus(message, state='saved'){$('saveText').textContent=message;$('bottomSave').textContent=message;$('saveStatus').querySelector('.dot').style.background=state==='error'?'#e06464':state==='saving'?'#d6a04d':'#72c6a0'}
+function textFromBody(){return body.innerText||body.textContent||''}
 function updateStats(){
-  const text=(sourceMode?$('sourceEditor').value:$('editor').innerText).trim();
-  const words=text?text.split(/\s+/).length:0;
-  const chars=text.length;
-  const read=Math.max(1,Math.ceil(words/200));
-  $('count').textContent=`${words} words · ${chars} chars · ${read} min read`;
-  const headings=[...$('editor').querySelectorAll('h1,h2,h3')];
-  $('tocList').innerHTML=headings.length
-    ? headings.map(h=>`<div>• ${escapeHtml(h.innerText||'Untitled Heading')}</div>`).join('')
-    : 'No headings present.';
-  renderContentPages();
+ const words=(title.value+' '+subtitle.value+' '+textFromBody()).trim().split(/\s+/).filter(Boolean).length;
+ const chars=(title.value+subtitle.value+textFromBody()).length;
+ const minutes=Math.max(1,Math.ceil(textFromBody().trim().split(/\s+/).filter(Boolean).length/220));
+ $('wordCount').textContent=words+' words';$('bottomWords').textContent=words+' words';$('charCount').textContent=chars+' characters';$('statWords').textContent=words;$('statRead').textContent=minutes+' min';$('readMeta').textContent=minutes+' min read';$('readInline').textContent=minutes+' MIN READ';$('statSaved').textContent=lastSavedAt?'Just now':'Not saved';
+ $('kickerPreview').textContent='ATOMIC WEEKLY  /  '+$('category').value.toUpperCase()+' & IDEAS';$('categoryMeta').textContent=$('category').value;
+ const plain=title.value+' '+subtitle.value+' '+textFromBody();
+ $('summary').dataset.auto = $('summary').dataset.auto || '';
+ if(!$('summary').value.trim() && textFromBody().trim()) $('summary').placeholder=(textFromBody().trim().slice(0,115)+'…');
+ updateOutline();
 }
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+function snapshot(){return {title:title.value,subtitle:subtitle.value,body:body.innerHTML,author:$('author').value,category:$('category').value,status:$('status').value,summary:$('summary').value,tags,coverData,coverAlt:$('coverAlt').value,byline:$('bylineToggle').getAttribute('aria-checked'),reading:$('readingToggle').getAttribute('aria-checked'),paper:$('paperSwitch').getAttribute('aria-checked'),updatedAt:new Date().toISOString()}}
+function saveDraft(showMessage=false){
+ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(snapshot()));lastSavedAt=new Date();setStatus(cloudDb?'Saved locally · syncing…':'Saved locally');$('autosaveMeta').textContent='Saved just now';$('statSaved').textContent='Just now';if(showMessage)showToast('Draft saved locally')}
+ catch(e){setStatus('Could not save locally','error');if(showMessage)showToast('Browser storage is full or unavailable. Export your article to keep a copy.')}
+ if(cloudDb){clearTimeout(cloudSaveTimer);cloudSaveTimer=setTimeout(()=>syncDraftToCloud(showMessage),450)}
 }
-
-function addMediaToolbar(layer){
-  if(layer.querySelector('.mediaHandles'))return;
-  const h=document.createElement('div');
-  h.className='mediaHandles';h.contentEditable='false';
-  h.innerHTML=`<div class="mediaToolbar">
-    <button data-align="left" title="Align left">↤</button><button data-align="center" title="Center horizontally">↔</button><button data-align="right" title="Align right">↦</button>
-    <button data-action="resetRotate" title="Reset rotation">⟳</button><button class="mediaDelete" title="Delete image">✕</button></div>
-    <span class="mediaSize"></span>
-    <span class="mediaHandle" data-action="resizeTL"></span>
-    <span class="mediaHandle" data-action="resizeTR"></span>
-    <span class="mediaHandle" data-action="resizeBL"></span>
-    <span class="mediaHandle" data-action="resizeBR"></span>
-    <span class="mediaHandle" data-action="rotate"></span>
-    <label class="mediaOpacityWrap" title="Media opacity">◐ <input class="mediaOpacity" type="range" min="10" max="100" value="${Math.round((parseFloat(layer.style.getPropertyValue('--media-opacity'))||1)*100)}"></label>`;
-  layer.appendChild(h);
-  h.querySelectorAll('[data-align]').forEach(btn=>btn.onclick=e=>{
-    e.stopPropagation();
-    if(btn.dataset.align==='left') layer.style.left='80px';
-    if(btn.dataset.align==='center') layer.style.left=Math.max(0,(($('paper').clientWidth-layer.offsetWidth)/2))+'px';
-    if(btn.dataset.align==='right') layer.style.left=Math.max(0,$('paper').clientWidth-layer.offsetWidth-80)+'px';
-    layer.dataset.align=btn.dataset.align;
-    pushHistory();scheduleLocalSave();
-  });
-  h.querySelector('[data-action="resetRotate"]').onclick=e=>{
-    e.stopPropagation();layer.dataset.rotate='0';layer.style.transform='rotate(0deg)';
-    pushHistory();scheduleLocalSave();
-  };
-  const sizeLabel=h.querySelector('.mediaSize');
-  const updateSize=()=>{sizeLabel.textContent=`${Math.round(layer.offsetWidth)} × ${Math.round(layer.offsetHeight)} px`};
-  layer.addEventListener('resize',updateSize);
-  updateSize();
-  h.querySelector('.mediaDelete').onclick=e=>{
-    e.stopPropagation();layer.remove();clearMediaSelection();pushHistory();scheduleLocalSave();
-  };
-  h.querySelector('.mediaOpacity').oninput=e=>{
-    layer.style.setProperty('--media-opacity',(e.target.value/100).toFixed(2));
-    scheduleLocalSave();
-  };
-  h.querySelectorAll('.mediaHandle').forEach(handle=>handle.onpointerdown=e=>startMediaAction(e,layer,handle.dataset.action));
-  layer.onpointerdown=e=>{if(e.target.closest('.mediaHandles'))return; selectMedia(layer); startMediaAction(e,layer,'move')};
-}
-function selectMedia(layer){
-  clearMediaSelection();selectedMedia=layer;layer.classList.add('selectedMedia');addMediaToolbar(layer);
-}
-function clearMediaSelection(){
-  if(selectedMedia){selectedMedia.classList.remove('selectedMedia');selectedMedia.querySelector('.mediaHandles')?.remove()}
-  selectedMedia=null;
-}
-function startMediaAction(e,layer,action){
-  e.preventDefault();e.stopPropagation();
-  const rect=layer.getBoundingClientRect(), paperRect=$('editor').getBoundingClientRect();
-  dragState={layer,action,startX:e.clientX,startY:e.clientY,startW:rect.width,startH:rect.height,
-    maxW:Math.max(70,paperRect.width-24),startL:parseFloat(layer.style.left)||0,startT:parseFloat(layer.style.top)||0,
-    startR:parseFloat(layer.dataset.rotate||'0')};
-  document.addEventListener('pointermove',mediaPointerMove);
-  document.addEventListener('pointerup',mediaPointerUp,{once:true});
-}
-function mediaPointerMove(e){
-  if(!dragState)return;
-  const dx=e.clientX-dragState.startX,dy=e.clientY-dragState.startY;
-  const a=dragState.action,l=dragState.layer;
-  if(a.startsWith('resize')){
-    const horizontal=a.endsWith('R')?dx:-dx;
-    const w=Math.max(70,Math.min(dragState.maxW,dragState.startW+horizontal));
-    l.style.width=Math.round(w)+'px';l.style.height='auto';
-    if(a.endsWith('L'))l.style.left=Math.max(0,dragState.startL+dragState.startW-w)+'px';
-    if(a.startsWith('resizeT'))l.style.top=Math.max(0,dragState.startT+dragState.startH-l.offsetHeight)+'px';
-    l.dispatchEvent(new Event('resize'));
-  }else if(a==='rotate'){
-    const r=dragState.startR+dx*.5;l.dataset.rotate=r.toFixed(1);l.style.transform=`rotate(${r.toFixed(1)}deg)`;
-  }else if(a==='move'){
-    const paper=$('editor').getBoundingClientRect();
-    l.style.left=Math.max(0,Math.min(paper.width-l.offsetWidth,dragState.startL+dx))+'px';
-    l.style.top=Math.max(0,dragState.startT+dy)+'px';
-  }
-}
-function mediaPointerUp(){
-  if(dragState){pushHistory();scheduleLocalSave();dragState=null}
-  document.removeEventListener('pointermove',mediaPointerMove);
-}
-
-$('toolbar').querySelectorAll('[data-cmd]').forEach(b=>b.onclick=()=>cmd(b.dataset.cmd));
-$('tableMenuToggle').onclick=()=>{
-  $('tableModal').classList.add('open');
-  setTimeout(()=>$('tableRows')?.focus(),50);
-};
-$('fontName').onchange=e=>cmd('fontName',e.target.value);
-$('fontSize').onchange=e=>cmd('fontSize',e.target.value);
-$('block').onchange=e=>cmd('formatBlock',`<${e.target.value}>`);
-$('textColor').oninput=e=>cmd('foreColor',e.target.value);
-$('highlight').oninput=e=>cmd('hiliteColor',e.target.value);
-$('undo').onclick=()=>applyHistory(-1);
-$('redo').onclick=()=>applyHistory(1);
-$('togglePaperTheme').onclick=()=>{document.body.classList.toggle('lightPaper');$('togglePaperTheme').setAttribute('aria-pressed',document.body.classList.contains('lightPaper')?'true':'false');$('togglePaperTheme').textContent=document.body.classList.contains('lightPaper')?'◐ Light paper':'◑ Dark paper'};
-$('focus').onclick=()=>document.body.classList.toggle('focusMode');
-$('print').onclick=()=>window.print();
-
-$('editor').addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='copy';$('editor').style.outline='2px dashed var(--accent)'});
-$('editor').addEventListener('dragleave',e=>{if(!$('editor').contains(e.relatedTarget))$('editor').style.outline=''});
-$('editor').addEventListener('drop',e=>{
-  e.preventDefault();$('editor').style.outline='';
-  const url=e.dataTransfer.getData('text/plain');
-  if(!url)return;
-  const r=document.caretRangeFromPoint?document.caretRangeFromPoint(e.clientX,e.clientY):null;
-  if(r){const s=window.getSelection();s.removeAllRanges();s.addRange(r);savedRange=r.cloneRange()}
-  insertHtml('<div class="mediaLayer" data-align="center"><img src="'+escapeAttr(url)+'" alt="Article image"></div>');
-});
-$('editor').addEventListener('click',e=>{
-  const layer=e.target.closest('.mediaLayer');
-  if(layer){selectMedia(layer);return}
-  clearMediaSelection();
-});
-$('editor').addEventListener('keydown',e=>{
-  if(e.key==='Escape'){
-    clearMediaSelection();
-    $('editor').focus();
-  }
-});
-$('editor').addEventListener('keyup',()=>{saveSelection();updateStats();scheduleLocalSave()});
-function scheduleHistoryPush(){clearTimeout(historyTimer);historyTimer=setTimeout(()=>{historyTimer=null;pushHistory()},320)}
-$('editor').addEventListener('input',()=>{saveSelection();updateStats();scheduleLocalSave();scheduleHistoryPush()});
-$('editor').addEventListener('mouseup',saveSelection);
-$('editor').addEventListener('blur',saveSelection);
-
-function insertHtml(html){
-  restoreSelection();
-  document.execCommand('insertHTML',false,html);
-  $('editor').focus();pushHistory();updateStats();scheduleLocalSave();
-}
-$('insertImage').onclick=()=>{
-  if(!selectedGalleryUrl){alert('Please select an asset from the gallery first.');return}
-  insertHtml(`<div class="mediaLayer" data-align="center"><img src="${escapeAttr(selectedGalleryUrl)}" alt="Article image"></div>`);
-  selectedGalleryUrl='';
-  document.querySelectorAll('.asset').forEach(a=>a.classList.remove('selected'));
-};
-function escapeAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-$('embedVideo').onclick=()=>{
-  const url=prompt('Enter YouTube Video URL:');
-  if(!url)return;
-  const id=getYouTubeId(url);
-  if(!id){alert('Invalid YouTube URL.');return}
-  const watchUrl=`https://www.youtube.com/watch?v=${encodeURIComponent(id)}`;
-  insertHtml(`<div class="mediaLayer youtubeLayer" data-align="center" data-youtube-id="${escapeAttr(id)}"><iframe src="https://www.youtube.com/embed/${escapeAttr(id)}" title="YouTube video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe><a class="youtubeFallback" href="${escapeAttr(watchUrl)}" target="_blank" rel="noopener">▶ Watch this video on YouTube</a></div>`);
-};
-function getYouTubeId(url){
-  try{
-    const u=new URL(url.trim());
-    const host=u.hostname.replace(/^www\./,'').toLowerCase();
-    if(host==='youtu.be')return u.pathname.slice(1).split('/')[0]||null;
-    if(host==='youtube.com'||host==='m.youtube.com'||host==='youtube-nocookie.com'){
-      if(u.searchParams.get('v'))return u.searchParams.get('v');
-      const m=u.pathname.match(/\/(?:embed|shorts|live)\/([^/?]+)/);
-      return m?m[1]:null;
-    }
-    return null;
-  }catch{return null}
-}
-$('closeTable').onclick=()=>$('tableModal')?.classList.remove('open');
-$('createTable').onclick=()=>{
-  const rows=Math.max(1,Math.min(30,parseInt($('tableRows')?.value,10)||1));
-  const cols=Math.max(1,Math.min(15,parseInt($('tableCols')?.value,10)||1));
-  const head=Array.from({length:cols},(_,i)=>`<th>Header ${i+1}</th>`).join('');
-  const body=Array.from({length:rows-1},()=>`<tr>${Array.from({length:cols},()=>'<td>New Cell</td>').join('')}</tr>`).join('');
-  insertHtml(`<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`);
-  $('tableModal').classList.remove('open');
-};
-$('pageBreak').onclick=()=>insertHtml('<div class="page-break"></div>');
-
-$('clear').onclick=()=>cmd('removeFormat');
-
-const queryParams=new URLSearchParams(location.search);
-const editId=queryParams.get('id');
-const draftId=queryParams.get('draftId');
-let editingPublishedId=editId||null;
-$('versionHistory').hidden=!editingPublishedId;
-let editingDraftId=draftId||null;
-let editingSubmissionId=null;
-let editingSource='publishedArticles';
-async function loadPublishedArticleForEdit(){
-  // Cloud drafts open in-place so subsequent saves update the same record.
-  if(draftId){
-    try{
-      const draftSnap=await get(ref(db,'atomicWeekly/drafts/'+draftId));
-      if(!draftSnap.exists()){setStatus('Cloud draft not found','error');alert('This cloud draft could not be found.');return false}
-      const article=draftSnap.val()||{};editingDraftId=draftId;editingPublishedId=null;editingSubmissionId=null;editingSource='atomicWeekly/drafts';
-      $('title').value=article.title||'';$('author').value=article.author||'Atomic Desk';
-      if(article.section&&[...$('section').options].some(o=>o.value===article.section))$('section').value=article.section;
-      $('dek').value=article.dek||'';$('cover').value=article.cover||article.coverImage||article.image||'';
-      $('editor').innerHTML=typeof article.content==='string'?article.content:'<p></p>';
-      updateCoverPreview();updateStats();pushHistory();setStatus('Editing cloud draft','synced');document.title='Atomic Admin — Cloud Draft';return true;
-    }catch(e){setStatus('Draft load failed','error');console.error(e);return false}
-  }
-  // Incoming submissions use the same editor, but remain unpublished until Admin presses Publish.
-  if(editId){
-    try{
-      const incoming=await get(ref(db,'submissions/'+editId));
-      if(incoming.exists() && incoming.val()?.status!=='published'){
-        const article=incoming.val()||{};
-        editingSubmissionId=editId;
-        editingPublishedId=null;
-        editingSource='submissions';
-        $('title').value=article.title||'';
-        $('author').value=article.author||'Atomic Desk';
-        const incomingSection=String(article.section||'').trim();
-        const incomingType=String(article.type||article.submissionType||'').toLowerCase();
-        $('section').value=(incomingType.includes('story')||incomingSection.toLowerCase()==='story'||incomingSection.toLowerCase()==='stories')?'Stories':(incomingSection||'Science');
-        $('dek').value=article.dek||article.description||'';
-        $('cover').value=article.cover||article.coverImage||article.image||'';
-        $('editor').innerHTML=typeof article.content==='string'&&article.content.trim()?article.content:(article.text?'<p>'+escapeHtml(article.text).replace(/\\n/g,'</p><p>')+'</p>':'<p></p>');
-        updateCoverPreview(); updateStats(); pushHistory();
-        await recoverScopedAutosave('atomicWeekly/reviewAutosave/'+editId,article);
-        setStatus('Editing incoming submission — not published yet','synced');
-        document.title='Atomic Admin — Review Submission';
-        return true;
-      }
-    }catch(e){console.error('Submission load failed:',e)}
-  }
-  if(!editId)return false;
-  try{
-    setStatus('Loading published article…','error');
-    const snap=await get(ref(db,'publishedArticles/'+editId));
-    if(!snap.exists()){
-      setStatus('Published article not found','error');
-      alert('This published article could not be found.');
-      return false;
-    }
-    const article=snap.val()||{};
-    $('title').value=article.title||'';
-    $('author').value=article.author||'Atomic Desk';
-    $('section').value=article.section||'Science';
-    $('dek').value=article.dek||'';
-    $('cover').value=article.cover||article.coverImage||article.image||'';
-    $('editor').innerHTML=typeof article.content==='string'?article.content:'<p></p>';
-    updateCoverPreview();
-    updateStats();
-    pushHistory();
-    await recoverScopedAutosave('atomicWeekly/articleAutosave/'+editId,article);
-    setStatus('Editing published article','synced');
-    document.title='Atomic Admin — Edit Published Article';
-    return true;
-  }catch(e){
-    console.error('Published article load failed:',e);
-    setStatus('Failed to load published article','error');
-    alert('Could not load the published article content.');
-    return false;
-  }
-}
-const MAGAZINE_BASE_URL='https://iammdtanvirrahman.github.io/atomic-weekly/';
-function resolveCoverUrl(value){
-  const raw=String(value||'').trim();
-  if(!raw)return '';
-  if(/^(?:https?:|data:|blob:)/i.test(raw))return raw;
-  // Relative asset paths belong to the public magazine, not this admin-panel URL.
-  try{return new URL(raw.replace(/^\.\//,''),MAGAZINE_BASE_URL).href}
-  catch(e){return raw}
-}
-function payload(){
-  return {
-    title:$('title').value.trim()||'Untitled',
-    author:$('author').value.trim()||'Atomic Desk',
-    section:$('section').value,
-    dek:$('dek').value.trim(),
-    cover:resolveCoverUrl($('cover').value),
-    content:sourceMode?sourceContent():editorHTML(),
-    updatedAt:Date.now()
-  };
-}
-function localDraftKey(){
-  if(editingSubmissionId)return 'atomic_article_draft_submission_'+editingSubmissionId;
-  if(editingDraftId)return 'atomic_article_draft_cloud_'+editingDraftId;
-  if(editingPublishedId)return 'atomic_article_draft_article_'+editingPublishedId;
-  return 'atomic_article_draft_new';
-}
-function saveLocalNow(){
-  try{const data=JSON.stringify(payload());localStorage.setItem(localDraftKey(),data);if(!editingSubmissionId&&!editingPublishedId&&!editingDraftId)localStorage.setItem('atomic_article_draft',data);setStatus('Draft saved locally','synced')}
-  catch(e){setStatus('Local save failed','error')}
-}
-function scheduleLocalSave(){
-  setStatus('Saving…','error');
-  clearTimeout(saveTimer);saveTimer=setTimeout(saveLocalNow,700);
-  scheduleCloudSave();
-}
-function scheduleCloudSave(){
-  clearTimeout(cloudTimer);
-  cloudTimer=setTimeout(async()=>{
-    try{
-      if(!authUser)return;
-      const cloudPath=editingSubmissionId?'atomicWeekly/reviewAutosave/'+editingSubmissionId:editingPublishedId?'atomicWeekly/articleAutosave/'+editingPublishedId:'atomicWeekly/autosave';
-      if(editingDraftId){
-        const draftRef=ref(db,'atomicWeekly/drafts/'+editingDraftId);
-        const existingDraft=(await get(draftRef)).val()||{};
-        await set(draftRef,{...existingDraft,...payload(),id:editingDraftId,status:'draft',createdAt:existingDraft.createdAt||Date.now(),updatedAt:Date.now()});
-      }else{
-        await set(ref(db,cloudPath),{...payload(),id:editingPublishedId||editingSubmissionId||'new',updatedAt:Date.now()});
-      }
-      setStatus('Auto-saved to cloud','synced');
-    }catch(e){setStatus('Cloud autosave failed','error')}
-  },4000);
-}
-$('saveDraft').onclick=async()=>{
-  if(!authUser){$('authGate').classList.add('open');setStatus('Sign in to save cloud drafts','error');return}
-  saveLocalNow();
-  try{
-    const draftKey=editingDraftId||String(Date.now());
-    const existingDraft=editingDraftId?(await get(ref(db,'atomicWeekly/drafts/'+editingDraftId))).val()||{}:{};
-    await set(ref(db,'atomicWeekly/drafts/'+draftKey),{...existingDraft,...payload(),id:draftKey,status:'draft',createdAt:existingDraft.createdAt||Date.now(),updatedAt:Date.now()});
-    editingDraftId=draftKey;editingPublishedId=null;editingSubmissionId=null;
-    setStatus('Saved to Cloud','synced');
-  }catch(e){setStatus('Cloud save failed','error');console.error(e)}
-};
-$('schedulePublish').onclick=async()=>{
-  const status=$('scheduleStatus');
-  if(!authUser){$('authGate').classList.add('open');status.textContent='Sign in to schedule an article.';return}
-  const p=payload();
-  if(!p.title||p.title==='Untitled'){status.textContent='Add an article title first.';return}
-  if(!p.content.trim()){status.textContent='Article content is empty.';return}
-  const localValue=$('scheduleAt').value;
-  const scheduledAt=localValue?new Date(localValue).getTime():NaN;
-  if(!Number.isFinite(scheduledAt)||scheduledAt<=Date.now()){status.textContent='Choose a valid future date and time.';return}
-  const button=$('schedulePublish');button.disabled=true;status.textContent='Saving schedule…';
-  try{
-    const id=editingPublishedId||String(Date.now());
-    const existing=editingPublishedId?(await get(ref(db,'publishedArticles/'+editingPublishedId))).val()||{}:{};
-    const sourceRecord=editingSubmissionId?(await get(ref(db,'submissions/'+editingSubmissionId))).val()||{}:editingDraftId?(await get(ref(db,'atomicWeekly/drafts/'+editingDraftId))).val()||{}:existing;
-    const record={...sourceRecord,...p,id,type:sourceRecord.type||'article',status:'scheduled',published:false,scheduledAt,scheduleStatus:'scheduled',scheduledBy:authUser.uid,scheduledEmail:authUser.email||'',createdAt:sourceRecord.createdAt||Date.now(),updatedAt:Date.now()};
-    await set(ref(db,'atomicWeekly/scheduledArticles/'+id),record);
-    const verify=await get(ref(db,'atomicWeekly/scheduledArticles/'+id));
-    if(!verify.exists()||verify.val()?.scheduleStatus!=='scheduled')throw new Error('Schedule could not be verified.');
-    if(editingDraftId){await remove(ref(db,'atomicWeekly/drafts/'+editingDraftId));editingDraftId=null}
-    if(editingSubmissionId){await set(ref(db,'submissions/'+editingSubmissionId),{...sourceRecord,status:'scheduled',scheduledAt,id})}
-    status.textContent='Scheduled ✓ '+new Date(scheduledAt).toLocaleString();
-    setStatus('Article scheduled','synced');
-  }catch(error){console.error(error);status.textContent=error.message||'Could not schedule this article.';setStatus('Schedule failed','error')}
-  finally{button.disabled=false}
-};
-$('publish').onclick=async()=>{
-  if(!authUser){$('authGate').classList.add('open');setStatus('Sign in to publish articles','error');return}
-  const p=payload();
-  if(!p.title||p.title==='Untitled'){alert('Please enter an article title first.');return}
-  if(!p.content.trim()){alert('Article content is empty.');return}
-  try{
-    setStatus(editingSubmissionId?'Publishing reviewed submission…':editingPublishedId?'Updating published article…':'Publishing…','error');
-    const id=editingPublishedId||String(Date.now());
-    const existing=editingPublishedId?(await get(ref(db,'publishedArticles/'+editingPublishedId))).val()||{}:{};
-    const sourceRecord=editingSubmissionId?(await get(ref(db,'submissions/'+editingSubmissionId))).val()||{}:editingDraftId?(await get(ref(db,'atomicWeekly/drafts/'+editingDraftId))).val()||{}:existing;
-    const publishedRecord={...sourceRecord,...p,status:'published',published:true,publishedAt:existing.publishedAt||Date.now(),timestamp:Date.now(),id,type:sourceRecord.type||'article'};
-    if(editingPublishedId&&existing&&(existing.title||existing.content)){
-      try{
-        const revisionAt=Date.now();
-        await set(ref(db,'atomicWeekly/revisionHistory/'+editingPublishedId+'/'+revisionAt),{...existing,revisionAt});
-      }catch(historyError){console.warn('Could not save previous revision; continuing publish:',historyError)}
-    }
-    await set(ref(db,'publishedArticles/'+id),publishedRecord);
-    const verify=await get(ref(db,'publishedArticles/'+id));
-    if(!verify.exists() || verify.val()?.status!=='published'){
-      throw new Error('Publish verification failed. The article was not confirmed in the public feed.');
-    }
-    await set(ref(db,'atomicWeekly/latestPublished'),publishedRecord);
-    if(editingPublishedId)await remove(ref(db,'atomicWeekly/articleAutosave/'+editingPublishedId));
-    if(editingSubmissionId)await remove(ref(db,'atomicWeekly/reviewAutosave/'+editingSubmissionId));
-    if(editingSubmissionId){
-      await set(ref(db,'submissions/'+editingSubmissionId),{...sourceRecord,...p,status:'published',published:true,publishedAt:publishedRecord.publishedAt,timestamp:Date.now(),id});
-    }
-    if(editingDraftId){await remove(ref(db,'atomicWeekly/drafts/'+editingDraftId));editingDraftId=null;}
-    saveLocalNow();
-    setStatus(editingSubmissionId?'Submission reviewed and published ✓':editingPublishedId?'Published article updated ✓':'Published to magazine ✓','synced');
-    alert(editingSubmissionId?'The edited submission has been published successfully.':editingPublishedId?'Published article updated successfully.':'Published successfully — the article is now in the public magazine.');
-  }catch(e){setStatus(editingSubmissionId?'Submission publish failed':editingPublishedId?'Update failed':'Publish failed','error');console.error(e)}
-};
-
-$('exportHtml').onclick=()=>{
-  const p=payload();
-  const doc=`<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(p.title)}</title><style>body{max-width:800px;margin:40px auto;padding:20px;font:18px Georgia,serif;line-height:1.8}img{max-width:100%}iframe{width:100%;height:420px;border:0}.youtubeFallback{display:block;padding:10px;background:#161c23;color:#fff;text-align:center}table{width:100%;border-collapse:collapse}td,th{border:1px solid #999;padding:8px}</style></head><body><h1>${escapeHtml(p.title)}</h1><p><em>By ${escapeHtml(p.author)} · ${escapeHtml(p.section)}</em></p><p>${escapeHtml(p.dek)}</p>${p.content}</body></html>`;
-  downloadBlob(doc,'article.html','text/html');
-};
-$('exportMd').onclick=()=>{
-  const p=payload();
-  const md=`# ${p.title}\\n\\n**By:** ${p.author}\\n**Section:** ${p.section}\\n\\n${p.dek}\\n\\n${htmlToMarkdown(p.content)}`;
-  downloadBlob(md,'article.md','text/markdown');
-};
-async function loadRevisionHistory(){
- const list=$('revisionList');
- if(!authUser){list.innerHTML='<p class="uploadStatus">Sign in to view revision history.</p>';return}
- if(!editingPublishedId){list.innerHTML='<p class="uploadStatus">History is available when editing an already-published article.</p>';return}
- list.innerHTML='<div class="assetLoading">Loading saved versions…</div>';
- try{
-   const snap=await get(ref(db,'atomicWeekly/revisionHistory/'+editingPublishedId)),raw=snap.val()||{};
-   const entries=Object.entries(raw).map(([key,value])=>({key,...(value||{})})).sort((a,b)=>Number(b.revisionAt||a.key)-Number(a.revisionAt||b.key));
-   list.innerHTML='';
-   if(!entries.length){list.innerHTML='<p class="uploadStatus">No previous published versions have been saved yet. A backup is created the next time you update this article.</p>';return}
-   entries.forEach(revision=>{
-     const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)';
-     const details=document.createElement('div');details.style.minWidth='0';
-     const title=document.createElement('strong');title.textContent=revision.title||'Untitled version';title.style.cssText='display:block;font-size:13px;overflow-wrap:anywhere';
-     const date=document.createElement('div');date.textContent=new Date(Number(revision.revisionAt||revision.key)).toLocaleString();date.style.cssText='font-size:10px;color:var(--muted);margin-top:5px';
-     details.append(title,date);
-     const restore=document.createElement('button');restore.type='button';restore.className='ghost';restore.textContent='Restore';restore.onclick=()=>{
-       if(!confirm('Load this previous version into the editor? Your current unsaved text will be replaced.'))return;
-       $('title').value=revision.title||'';$('author').value=revision.author||'Atomic Desk';$('section').value=revision.section||'Science';$('dek').value=revision.dek||'';$('cover').value=revision.cover||'';
-       $('editor').innerHTML=typeof revision.content==='string'?revision.content:'<p></p>';
-       if(sourceMode){$('sourceEditor').value=revision.content||''}
-       updateCoverPreview();updateStats();pushHistory();scheduleLocalSave();$('historyModal').classList.remove('open');setStatus('Previous version restored into editor — review before publishing','synced');
-     };
-     row.append(details,restore);list.append(row);
-   });
- }catch(e){list.innerHTML='<p class="uploadStatus error">Could not load history. Check Firebase database rules and try again.</p>';console.error('Revision history load failed:',e)}
-}
-$('versionHistory').onclick=()=>{if(!authUser){$('authGate').classList.add('open');return}$('historyModal').classList.add('open');loadRevisionHistory()};
-$('closeHistory').onclick=()=>$('historyModal').classList.remove('open');
-function sourceTemplate(content=''){
-  return `<article class="articlePage">\n${content}\n</article>`;
-}
-function sourceContent(){
-  const value=$('sourceEditor').value.trim();
-  if(!value)return '';
-  const doc=new DOMParser().parseFromString(value,'text/html');
-  const wrapper=doc.querySelector('article.articlePage');
-  return wrapper?wrapper.innerHTML.trim():value;
-}
-function downloadBlob(data,name,type){
-  const blob=new Blob([data],{type}),a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-}
-function htmlToMarkdown(html){
-  const temp=document.createElement('div');temp.innerHTML=html;
-  function walk(n){
-    if(n.nodeType===3)return n.nodeValue;
-    if(n.nodeType!==1)return '';
-    const inner=[...n.childNodes].map(walk).join('');
-    const tag=n.tagName.toLowerCase();
-    if(tag==='h1')return `# ${inner}\\n\\n`;if(tag==='h2')return `## ${inner}\\n\\n`;if(tag==='h3')return `### ${inner}\\n\\n`;
-    if(tag==='p')return `${inner}\\n\\n`;if(tag==='strong'||tag==='b')return `**${inner}**`;if(tag==='em'||tag==='i')return `*${inner}*`;
-    if(tag==='blockquote')return `> ${inner}\\n\\n`;if(tag==='li')return `- ${inner}\\n`;
-    if(tag==='br')return '\\n';if(tag==='img')return `![image](${n.getAttribute('src')||''})\\n\\n`;
-    if(tag==='a')return `[${inner}](${n.getAttribute('href')||''})`;
-    if(tag==='table')return [...n.querySelectorAll('tr')].map(r=>`| ${[...r.cells].map(c=>c.innerText.trim()).join(' | ')} |`).join('\\n')+'\\n\\n';
-    if(['ul','ol','pre','div'].includes(tag))return inner+'\\n';
-    return inner;
-  }
-  return walk(temp).replace(/\\n{3,}/g,'\\n\\n').trim();
-}
-
-$('source').onclick=()=>{
-  sourceMode=!sourceMode;
-  document.body.classList.toggle('sourceMode',sourceMode);
-  if(sourceMode){
-    $('sourceEditor').value=sourceTemplate(editorHTML());
-    $('sourceEditor').focus();
-  }else{
-    clearMediaSelection();
-    $('editor').innerHTML=sourceContent()||'<p></p>';
-    pushHistory();updateStats();scheduleLocalSave();
-  }
-};
-$('sourceEditor').addEventListener('input',()=>{updateStats();scheduleLocalSave()});
-
-
-/* AI Editorial Assistant. The endpoint must be configured and live-tested separately. */
-let aiSavedRange=null;
-function rememberAISelection(){
-  const selection=window.getSelection();
-  if(selection&&selection.rangeCount)aiSavedRange=selection.getRangeAt(0).cloneRange();
-}
-function restoreAISelection(){
-  if(!aiSavedRange)return false;
-  const selection=window.getSelection();
-  selection.removeAllRanges();selection.addRange(aiSavedRange);return true;
-}
-function escapeAIText(value){
-  return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-function insertAIText(value){
-  const text=String(value||'').trim();if(!text)return;
-  $('editor').focus();
-  if(aiSavedRange)restoreAISelection();
-  const safe=text.split(/\n{2,}/).map(part=>'<p>'+escapeAIText(part).replace(/\n/g,'<br>')+'</p>').join('');
-  document.execCommand('insertHTML',false,safe);
-  pushHistory();updateStats();scheduleLocalSave();
-}
-async function requestAISuggestion(kind){
-  const buttons={title:'aiTitle',summary:'aiSummary',polish:'aiPolish',grammar:'aiGrammar',draft:'aiDraft',outline:'aiOutline',seo:'aiSEO',sources:'aiSources'};
-  const button=$(buttons[kind]),status=$('aiStatus'),p=payload();
-  const selectionText=(aiSavedRange?aiSavedRange.toString():'')||window.getSelection()?.toString()||'';
-  const needsSelection=kind==='polish'||kind==='grammar';
-  const bodyText=(needsSelection?selectionText:$('editor').innerText.trim()).slice(0,12000);
-  if(needsSelection&&!selectionText.trim()){status.textContent='Select a passage in the article first, then choose this action.';return}
-  if(!bodyText&&!p.title&&kind!=='draft'&&kind!=='outline'&&kind!=='seo'){status.textContent='Write an article title or some content first.';return}
-  if((kind==='draft'||kind==='outline'||kind==='seo')&&!p.title.trim()&&!bodyText){status.textContent='Enter a working title or a topic in the article first.';return}
-  button.disabled=true;status.textContent='Working…';
-  const prompts={
-    title:'Suggest 5 distinct, compelling and accurate magazine headlines. Return the single strongest headline only. Do not invent facts.',
-    summary:'Write an engaging, accurate 1–2 sentence magazine-card summary. Do not add claims absent from the article.',
-    polish:'Polish the selected passage for clarity, natural flow and readability. Preserve its original language, meaning, tone and factual claims. Return only the revised passage.',
-    grammar:'Correct spelling, grammar and punctuation in the selected passage. Preserve the original language, voice, meaning and factual claims. Return only the corrected passage.',
-    draft:'Write a well-structured first draft for a science and culture magazine based on the supplied title/topic and any existing notes. Use the same language as the title/notes, a clear introduction, informative headings and a conclusion. Do not fabricate citations, quotations, statistics or specific factual claims. Mark uncertain claims for later verification. Return plain text with paragraph breaks and headings.',
-    outline:'Create a useful article outline for this topic, including a working thesis, section headings, key questions and a conclusion. Match the language of the supplied title/content. Do not invent research findings.',
-    seo:'Prepare an SEO pack for this article: one SEO title, one meta description (about 150–160 characters), 5 relevant keywords, and a short suggested URL slug. Base everything on the provided article and clearly avoid unsupported claims.',
-    sources:'Create a fact-checking checklist for this article. Identify specific claims that need verification and suggest credible source types or search queries for each. Do not claim that you verified facts or consulted sources. Label this as a checklist, not a fact-check verdict.'
-  };
-  try{
-    const token=authUser?await authUser.getIdToken():'';
-    const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),45000);
-    let response;
-    try{
-      response=await fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify({action:prompts[kind],kind,title:p.title,content:bodyText,section:p.section,language:'match-input',maxOutputChars:kind==='draft'?14000:6000}),signal:controller.signal});
-    }finally{clearTimeout(timeout)}
-    const data=await response.json().catch(()=>({}));
-    if(!response.ok)throw new Error(data.error||data.message||('AI service returned '+response.status));
-    const candidate=typeof data==='string'?data:(data.text||data.suggestion||data.title||data.summary||data.result||data.output||data.data?.suggestion||data.data?.title||data.data?.summary||'');
-    if(!String(candidate||'').trim())throw new Error('AI service returned no text. Check the endpoint response format.');
-    const result=String(candidate).trim();
-    if(kind==='title')$('title').value=result.replace(/^[\"'“”]+|[\"'“”]+$/g,'').trim();
-    else if(kind==='summary')$('dek').value=result;
-    else if(kind==='polish'||kind==='grammar'){restoreAISelection();document.execCommand('insertText',false,result);$('editor').focus();pushHistory();updateStats()}
-    else{$('aiResult').value=result;$('aiResultWrap').hidden=false}
-    scheduleLocalSave();
-    status.textContent=kind==='polish'||kind==='grammar'?'Passage updated — review it carefully.':kind==='title'?'Headline suggestion added — review before publishing.':kind==='summary'?'Summary suggestion added — review before publishing.':'AI result ready. Review it before inserting.';
-  }catch(err){
-    status.textContent=(err.name==='AbortError'?'AI request timed out.':(err.message||'AI suggestion failed'))+' You can continue editing manually.';
-  }finally{button.disabled=false}
-}
-$('aiTitle').onclick=()=>requestAISuggestion('title');
-$('aiSummary').onclick=()=>requestAISuggestion('summary');
-$('aiPolish').onmousedown=rememberAISelection;$('aiPolish').onclick=()=>requestAISuggestion('polish');
-$('aiGrammar').onmousedown=rememberAISelection;$('aiGrammar').onclick=()=>requestAISuggestion('grammar');
-$('aiDraft').onclick=()=>requestAISuggestion('draft');
-$('aiOutline').onclick=()=>requestAISuggestion('outline');
-$('aiSEO').onclick=()=>requestAISuggestion('seo');
-$('aiSources').onclick=()=>requestAISuggestion('sources');
-$('aiInsertResult').onclick=()=>{insertAIText($('aiResult').value);$('aiStatus').textContent='Result inserted. Review the article and save/publish when ready.'};
-$('aiCopyResult').onclick=async()=>{try{await navigator.clipboard.writeText($('aiResult').value);$('aiStatus').textContent='AI result copied.'}catch(e){$('aiResult').focus();$('aiResult').select();$('aiStatus').textContent='Select the result and copy it manually.'}};
-$('aiDismissResult').onclick=()=>{$('aiResultWrap').hidden=true};
-$('editor').addEventListener('mouseup',rememberAISelection);
-$('editor').addEventListener('keyup',rememberAISelection);
-
-function setPreviewDevice(device){
-  $('previewModal').dataset.device=device;
-  [['previewDesktop','desktop'],['previewTablet','tablet'],['previewMobile','mobile']].forEach(([id,value])=>$(id).classList.toggle('active',value===device));
-}
-$('previewDesktop').onclick=()=>setPreviewDevice('desktop');$('previewTablet').onclick=()=>setPreviewDevice('tablet');$('previewMobile').onclick=()=>setPreviewDevice('mobile');
-$('preview').onclick=()=>{
-  setPreviewDevice('desktop');
-  saveSelection();
-  const p=payload();
-  const title=escapeHtml(p.title||'Untitled Article');
-  const dek=p.dek?`<p class="previewDek">${escapeHtml(p.dek)}</p>`:'';
-  const cover=p.cover?`<img class="previewCover" src="${escapeAttr(p.cover)}" alt="${escapeAttr(p.title||'Article cover')}" onerror="this.remove()">`:'';
-  const body=p.content.trim()?`<div class="previewBody">${p.content}</div>`:'<div class="previewEmpty">No article content has been added yet.</div>';
-  $('previewContent').innerHTML=`<div class="previewEyebrow">${escapeHtml(p.section||'Article')}</div><h1>${title}</h1>${dek}<p class="previewByline"><span>By ${escapeHtml(p.author||'Atomic Desk')}</span><span>•</span><span>${escapeHtml(p.section||'Uncategorized')}</span></p>${cover}<hr class="previewRule">${body}`;
-  $('previewModal').classList.add('open');
-  $('closePreview').focus();
-};
-$('closePreview').onclick=()=>$('previewModal').classList.remove('open');
-document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
-
-function closeMobileDrawers(){document.body.classList.remove('mobileMetaOpen','mobileAssetsOpen')}
-$('mobileMetaToggle').onclick=()=>{document.body.classList.toggle('mobileMetaOpen');document.body.classList.remove('mobileAssetsOpen')};
-$('mobileAssetsToggle').onclick=()=>{document.body.classList.toggle('mobileAssetsOpen');document.body.classList.remove('mobileMetaOpen')};
-$('closeMobileMeta').onclick=closeMobileDrawers;$('closeMobileAssets').onclick=closeMobileDrawers;
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMobileDrawers()});
-
-onAuthStateChanged(auth,user=>{
-  authUser=user||null;
-  $('signInOpen').hidden=!!user;
-  $('signOutEditor').hidden=!user;
-  $('authSuccess').hidden=!user;
-  $('uploadAsset').disabled=!user;
-  $('uploadStatus').textContent=user?'Signed in as '+(user.email||'admin')+'. Ready to upload.':'Sign in to upload assets.';
-  if(user){$('authGate').classList.remove('open');setStatus('Admin signed in ✓','synced');recoverCloudDraft()}
-  else setStatus('Offline editing · sign in to publish','error');
-});
-const googleProvider=new GoogleAuthProvider();googleProvider.setCustomParameters({prompt:'select_account'});
-$('signInOpen').onclick=()=>{$('authGate').classList.add('open')};
-$('authCancel').onclick=()=>{$('authGate').classList.remove('open')};
-$('googleAuth').onclick=async()=>{
-  const btn=$('googleAuth');$('authError').textContent='';btn.disabled=true;btn.textContent='Connecting to Google…';
-  try{await signInWithRedirect(auth,googleProvider)}
-  catch(err){
-    $('authError').textContent=err.code==='auth/unauthorized-domain'?'This website domain is not authorised in Firebase Authentication.':(err.message||'Google sign-in failed.');
-    btn.disabled=false;btn.innerHTML='<span class="googleMark" aria-hidden="true">G</span> Continue with Google';
-  }
-};
-getRedirectResult(auth).catch(err=>{if(err)$('authError').textContent=err.message||'Google sign-in failed.'});
-$('signOutEditor').onclick=async()=>{await signOut(auth);$('authGate').classList.add('open')};
-$('uploadAsset').onclick=uploadAsset;
-$('refreshAssets').onclick=loadAssets;
-async function uploadAsset(){
-  const file=$('assetFile').files?.[0];const status=$('uploadStatus');
-  if(!authUser){$('authGate').classList.add('open');status.textContent='Please sign in first.';return}
-  if(!file){status.textContent='Choose an image file first.';return}
-  const allowed=['image/png','image/jpeg','image/webp','image/gif','image/svg+xml'];
-  if(!allowed.includes(file.type)){status.textContent='Choose PNG, JPG, WEBP, GIF or SVG.';status.className='uploadStatus error';return}
-  if(file.size>8*1024*1024){status.textContent='This image is larger than 8 MB.';status.className='uploadStatus error';return}
-  $('uploadAsset').disabled=true;status.className='uploadStatus';status.textContent='Preparing '+file.name+'…';
-  try{
-    const dataUrl=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result||''));r.onerror=()=>reject(new Error('Could not read the selected file.'));r.readAsDataURL(file)});
-    const data=dataUrl.split(',')[1];if(!data)throw new Error('Image data could not be prepared.');
-    status.textContent='Uploading to the shared magazine library…';
-    const token=await authUser.getIdToken();
-    const response=await fetch('https://us-central1-atomictanvir.cloudfunctions.net/atomicUploadAsset',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({filename:file.name,mimeType:file.type,data})});
-    const result=await response.json().catch(()=>({}));
-    if(!response.ok||!result.ok)throw new Error(result.error||('Upload failed ('+response.status+').'));
-    const coverUrl=result.url;
-    $('cover').value=coverUrl;updateCoverPreview();scheduleLocalSave();
-    status.className='uploadStatus ok';status.textContent='Uploaded ✓ '+result.filename+' — URL added as the article cover.';
-    $('assetFile').value='';await loadAssets();
-    selectedGalleryUrl=coverUrl;toastAsset('Image uploaded and selected.');
-  }catch(err){status.className='uploadStatus error';status.textContent=err.message||'Upload failed. Check Firebase function configuration.'}
-  finally{$('uploadAsset').disabled=!authUser}
-}
-function toastAsset(msg){setStatus(msg,'synced')}
-
-
-async function recoverScopedAutosave(path,currentArticle){
-  try{
-    const snap=await get(ref(db,path));if(!snap.exists())return;
-    const saved=snap.val()||{};if(!(saved.title||saved.content||saved.dek))return;
-    const savedAt=Number(saved.updatedAt||0),baseAt=Number(currentArticle?.updatedAt||currentArticle?.timestamp||currentArticle?.publishedAt||0);
-    if(savedAt>baseAt&&confirm('A newer cloud autosave was found for this article. Recover it?')){applyDraftData(saved);saveLocalNow();setStatus('Recovered newer cloud autosave','synced')}
-  }catch(e){console.warn('Scoped autosave recovery unavailable',e)}
-}
-function applyDraftData(draft){
-  if(draft.title)$('title').value=draft.title;
-  if(draft.author)$('author').value=draft.author;
-  if(draft.section&&[...$('section').options].some(o=>o.value===draft.section))$('section').value=draft.section;
-  if(draft.dek)$('dek').value=draft.dek;
-  if(draft.cover)$('cover').value=draft.cover;
-  if(typeof draft.content==='string')$('editor').innerHTML=draft.content;
-  updateCoverPreview();updateStats();pushHistory();setStatus('Draft recovered','synced');
-}
+function scheduleSave(){setStatus('Unsaved changes','saving');$('autosaveMeta').textContent='Saving…';clearTimeout(saveTimer);saveTimer=setTimeout(()=>saveDraft(false),550)}
 function restoreDraft(){
-  try{
-    const raw=localStorage.getItem(localDraftKey())||localStorage.getItem('atomic_article_draft');
-    if(!raw)return false;
-    const draft=JSON.parse(raw);
-    if(!draft || !(draft.title||draft.content||draft.dek))return false;
-    if(confirm('A locally saved draft was found. Restore it?')){
-      applyDraftData(draft);
-      return true;
-    }
-  }catch(e){setStatus('Could not recover the local draft','error')}
-  return false;
+ try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const d=JSON.parse(raw);if(d.title!==undefined)title.value=d.title;if(d.subtitle!==undefined)subtitle.value=d.subtitle;if(d.body)body.innerHTML=d.body;if(d.author){$('author').value=d.author;$('authorInline').value=d.author}if(d.category)$('category').value=d.category;if(d.status)$('status').value=d.status;if(d.summary)$('summary').value=d.summary;if(Array.isArray(d.tags)){tags=d.tags;renderTags()}if(d.coverData){coverData=d.coverData;renderCover()}if(d.coverAlt)$('coverAlt').value=d.coverAlt;['byline','reading','paper'].forEach(k=>{const id={byline:'bylineToggle',reading:'readingToggle',paper:'paperSwitch'}[k];if(d[k])setSwitch($(id),d[k]==='true')});lastSavedAt=d.updatedAt?new Date(d.updatedAt):new Date();setStatus('Draft recovered');showToast('Your previous local draft was restored')}
+ catch(e){console.warn('Could not restore local draft',e)}
 }
-async function recoverCloudDraft(){
-  if(!authUser || editId || draftId)return;
-  try{
-    const snap=await get(ref(db,'atomicWeekly/autosave'));
-    if(!snap.exists())return;
-    const draft=snap.val();
-    if(!(draft.title||draft.content||draft.dek))return;
-    const localRaw=localStorage.getItem('atomic_article_draft');
-    const local=localRaw?JSON.parse(localRaw):null;
-    const cloudTime=Number(draft.updatedAt||0),localTime=Number(local?.updatedAt||0);
-    if(cloudTime<=localTime)return;
-    if(confirm('A newer cloud autosave was found. Recover it?')){
-      applyDraftData(draft);
-      saveLocalNow();
-    }
-  }catch(e){console.warn('Cloud draft recovery unavailable',e)}
-}
-
-async function loadAssets(){
-  try{
-    const r=await fetch(ASSET_API,{cache:'no-store'});
-    if(!r.ok)throw new Error('GitHub API '+r.status);
-    const files=await r.json();
-    allAssets=files.filter(x=>x.type==='file'&&/\.(png|jpe?g|webp|gif|svg)$/i.test(x.name))
-      .map(x=>({name:x.name,url:x.download_url}));
-    renderAssets();
-  }catch(e){
-    $('gallery').innerHTML='<div class="assetLoading">Unable to load the shared magazine library.</div>';
-    $('assetCount').textContent='Unavailable';
-  }
-}
-function renderAssets(){
-  const q=$('assetSearch').value.toLowerCase().trim(),type=$('assetTypeFilter').value,sort=$('assetSort').value;
-  const items=allAssets.filter(x=>x.name.toLowerCase().includes(q)&&(type==='all'||(type==='vector'?/\.svg$/i.test(x.name):!/\.svg$/i.test(x.name))));
-  items.sort((a,b)=>sort==='reverse'?b.name.localeCompare(a.name):a.name.localeCompare(b.name));
-  $('assetCount').textContent=`${items.length} ${items.length===1?'asset':'assets'}`;
-  $('gallery').innerHTML='';
-  if(!items.length){$('gallery').innerHTML='<div style="color:var(--muted);font-size:11px">No matching assets.</div>';return}
-  items.forEach(x=>{
-    const d=document.createElement('div');d.className='asset';d.tabIndex=0;d.setAttribute('role','button');d.setAttribute('aria-pressed',String(x.url===selectedGalleryUrl));if(x.url===selectedGalleryUrl)d.classList.add('selected');
-    const img=document.createElement('img');img.src=x.url;img.loading='lazy';img.decoding='async';img.alt=x.name;
-    const span=document.createElement('span');span.textContent=x.name;
-    d.append(img,span);
-    d.draggable=true;
-    d.ondragstart=e=>{e.dataTransfer.setData('text/plain',x.url);e.dataTransfer.effectAllowed='copy';selectedGalleryUrl=x.url};
-    const selectAsset=()=>{selectedGalleryUrl=x.url;document.querySelectorAll('.asset').forEach(a=>{a.classList.remove('selected');a.setAttribute('aria-pressed','false')});d.classList.add('selected');d.setAttribute('aria-pressed','true');$('gallerySelectionStatus').textContent='Selected · '+x.name+' — choose “Use as cover” or “Insert selected”.';};
-    d.onclick=selectAsset;
-    d.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectAsset()}};
-    $('gallery').appendChild(d);
-  });
-}
-$('assetSearch').oninput=renderAssets;$('assetTypeFilter').onchange=renderAssets;$('assetSort').onchange=renderAssets;
-$('useAssetAsCover').onclick=()=>{if(!selectedGalleryUrl){toastAsset('Choose an artwork first.');return}const item=allAssets.find(x=>x.url===selectedGalleryUrl);$('cover').value=selectedGalleryUrl;updateCoverPreview();scheduleLocalSave();const message=(item?.name||'Selected image')+' set as cover.';if(document.body.classList.contains('assetGalleryMode'))exitAssetGalleryMode();toastAsset(message)};
-$('insertSelectedAsset').onclick=()=>{if(!selectedGalleryUrl){alert('Select an image from the library first.');return}const item=allAssets.find(x=>x.url===selectedGalleryUrl);const markup='<div class="mediaLayer" data-align="center"><img loading="lazy" src="'+escapeAttr(selectedGalleryUrl)+'" alt="'+escapeAttr(item?.name||'Article image')+'"></div>';if(document.body.classList.contains('assetGalleryMode')){exitAssetGalleryMode();window.setTimeout(()=>{insertHtml(markup);closeMobileDrawers()},80)}else{insertHtml(markup);closeMobileDrawers()}};
-
-['title','author','section','dek','cover'].forEach(id=>{
-  $(id).addEventListener('input',()=>{
-    if(id==='cover')updateCoverPreview();
-    scheduleLocalSave();
-  });
-  $(id).addEventListener('change',scheduleLocalSave);
-});
-function updateCoverPreview(){
-  const v=$('cover').value.trim(),img=$('coverPreview');
-  if(!v){img.style.display='none';img.removeAttribute('src');return}
-  img.onerror=()=>img.style.display='none';
-  img.src=resolveCoverUrl(v);img.style.display='block';
-}
-
-document.addEventListener('keydown',e=>{
-  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();$('saveDraft').click()}
-  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();applyHistory(-1)}
-  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();applyHistory(1)}
-  if(e.key==='Escape'){document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open'));clearMediaSelection()}
-});
-
-// Restore the latest local draft when available; otherwise open a blank page.
-$('editor').innerHTML='';
-updateCoverPreview();updateStats();
-if(editId||draftId){
-  await loadPublishedArticleForEdit();
-}else{
-  restoreDraft();
-  if(!$('editor').innerHTML.trim())pushHistory();
-}
-loadAssets();
-
-// Dedicated fullscreen art gallery and schedule routes from the dashboard.
-const requestedEditorMode=new URLSearchParams(location.search).get('mode');
-function exitAssetGalleryMode(){
-  document.body.classList.remove('assetGalleryMode','mobileAssetsOpen','mobileMetaOpen');
-  document.title='Atomic Admin — Pro Article Studio';
-  $('assetGalleryKicker').textContent='ASSET MANAGER';
-  $('assetGalleryTitle').textContent='Editorial Media';
-  const u=new URL(location.href);u.searchParams.delete('mode');
-  history.replaceState({},'',u.pathname+(u.search?u.search:'')+u.hash);
-  window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
-  setStatus('Returned to Article Studio','synced');
-}
-$('exitAssetGallery').onclick=exitAssetGalleryMode;
-function openRequestedEditorMode(){
-  const isMobile=window.matchMedia('(max-width:768px)').matches;
-  if(requestedEditorMode==='assets'||requestedEditorMode==='gallery'){
-    document.body.classList.remove('mobileMetaOpen','mobileAssetsOpen');
-    document.body.classList.add('assetGalleryMode');
-    document.title='Editorial Art Gallery — Atomic Magazine';
-    $('assetGalleryKicker').textContent='VISUAL LIBRARY / ISSUE 02';
-    $('assetGalleryTitle').textContent='Editorial Art Gallery';
-    setStatus('Art Gallery Mode','synced');
-    window.setTimeout(()=>{
-      const search=$('assetSearch');
-      if(search)search.focus({preventScroll:true});
-      window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
-    },140);
-    return;
-  }
-  if(requestedEditorMode==='schedule'){
-    if(isMobile){document.body.classList.remove('mobileAssetsOpen');document.body.classList.add('mobileMetaOpen')}
-    setStatus('Publishing schedule selected','synced');
-    window.setTimeout(()=>{
-      const field=$('scheduleAt');
-      if(field){field.classList.add('modeTarget');field.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});field.focus({preventScroll:true})}
-    },120);
-  }
-}
-if(requestedEditorMode==='assets'||requestedEditorMode==='gallery'||requestedEditorMode==='schedule')openRequestedEditorMode();
+function setSwitch(el,on){el.setAttribute('aria-checked',String(on))}
+function renderTags(){$('tagList').replaceChildren();tags.forEach((tag,i)=>{const chip=document.createElement('span');chip.className='tag-chip';chip.textContent=tag+' ';const b=document.createElement('button');b.type='button';b.textContent='×';b.setAttribute('aria-label','Remove '+tag);b.onclick=()=>{tags.splice(i,1);renderTags();scheduleSave()};chip.appendChild(b);$('tagList').appendChild(chip)})}
+function applyOnlineCover(){const input=$('coverUrlInput');const raw=String(input.value||'').trim();if(!raw){showToast('Paste an image URL first');return}let url;try{url=new URL(raw);if(!['http:','https:'].includes(url.protocol))throw new Error('bad')}catch(_){showToast('Enter a valid public http(s) image URL');return}const test=new Image();test.onload=()=>{coverData=url.href;renderCover();$('coverUrlInput').value=url.href;scheduleSave();showToast('Online cover applied')};test.onerror=()=>showToast('Image could not load. Use a direct, publicly accessible image URL.');test.src=url.href} $('applyCoverUrl').addEventListener('click',applyOnlineCover);$('coverUrlInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();applyOnlineCover()}});
+function renderCover(){const drop=$('coverDrop');drop.innerHTML='';if(coverData){const img=document.createElement('img');img.className='cover-preview';img.src=coverData;img.alt=$('coverAlt').value||'Cover preview';drop.appendChild(img)}const p=document.createElement('p');p.textContent=coverData?'Change cover image':'Choose a cover image';const small=document.createElement('small');small.textContent='JPG, PNG or WebP · local preview';const input=document.createElement('input');input.id='coverFile';input.type='file';input.accept='image/*';input.hidden=true;input.addEventListener('change',handleCover);drop.append(p,small,input);drop.onclick=()=>input.click()}
+function handleCover(e){const file=e.target.files&&e.target.files[0];if(!file)return;if(!file.type.startsWith('image/')){showToast('Choose an image file');return}if(file.size>3*1024*1024){showToast('For local preview, choose an image under 3 MB');return}const reader=new FileReader();reader.onload=()=>{coverData=reader.result;renderCover();scheduleSave()};reader.readAsDataURL(file)}
+function saveSelection(){const sel=window.getSelection();if(sel&&sel.rangeCount&&body.contains(sel.anchorNode))savedRange=sel.getRangeAt(0).cloneRange()}
+function restoreSelection(){if(savedRange){const sel=window.getSelection();sel.removeAllRanges();sel.addRange(savedRange)}body.focus()}
+function command(cmd,value=null){body.focus();if(savedRange)restoreSelection();document.execCommand(cmd,false,value);saveSelection();updateStats();scheduleSave()}
+document.querySelectorAll('[data-cmd]').forEach(btn=>btn.addEventListener('mousedown',e=>e.preventDefault()));
+document.querySelectorAll('[data-cmd]').forEach(btn=>btn.addEventListener('click',()=>command(btn.dataset.cmd)));
+$('blockFormat').addEventListener('change',e=>command('formatBlock',e.target.value));
+$('fontFamily').addEventListener('change',e=>command('fontName',e.target.value));
+$('fontSize').addEventListener('change',e=>command('fontSize',e.target.value));
+$('textColor').addEventListener('input',e=>{$('textColorBar').style.background=e.target.value;command('foreColor',e.target.value)});
+$('highlightColor').addEventListener('input',e=>command('hiliteColor',e.target.value));
+body.addEventListener('mouseup',saveSelection);body.addEventListener('keyup',saveSelection);body.addEventListener('input',()=>{updateStats();scheduleSave()});
+[title,subtitle,$('author'),$('category'),$('status'),$('summary'),$('coverAlt')].forEach(el=>el.addEventListener('input',()=>{if(el===$('author'))$('authorInline').value=el.value;if(el===$('authorInline'))$('author').value=el.value;updateStats();scheduleSave()}));
+$('authorInline').addEventListener('input',()=>{$('author').value=$('authorInline').value;const name=$('authorInline').value.trim();$('avatar').textContent=name.split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'AW';scheduleSave()});
+$('category').addEventListener('change',()=>{updateStats();scheduleSave()});
+$('addTag').onclick=()=>{const v=$('tagInput').value.trim().replace(/\s+/g,' ');if(v&&!tags.includes(v)){tags.push(v);renderTags();$('tagInput').value='';scheduleSave()}};
+$('tagInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('addTag').click()}});
+$('linkBtn').onclick=()=>{saveSelection();const url=prompt('Enter a full link (https://…)');if(!url)return;if(!/^https?:\/\//i.test(url)){showToast('Please use a full http:// or https:// link');return}command('createLink',url)};
+$('imageBtn').onclick=()=>{$('inlineImageFile').click()};
+$('inlineImageFile').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;if(!f.type.startsWith('image/')){showToast('Choose an image file');return}if(f.size>3*1024*1024){showToast('Choose an image under 3 MB');return}const r=new FileReader();r.onload=()=>{restoreSelection();document.execCommand('insertHTML',false,'<img src="'+String(r.result).replace(/"/g,'&quot;')+'" alt="Article image">');updateStats();scheduleSave()};r.readAsDataURL(f);e.target.value=''};
+$('quoteBtn').onclick=()=>command('formatBlock','blockquote');
+$('calloutBtn').onclick=()=>{restoreSelection();document.execCommand('insertHTML',false,'<p class="callout">Add a concise editorial note or key takeaway.</p><p><br></p>');updateStats();scheduleSave()};
+$('hrBtn').onclick=()=>{restoreSelection();document.execCommand('insertHTML',false,'<hr><p><br></p>');updateStats();scheduleSave()};
+$('tableBtn').onclick=()=>{const rows=Math.max(1,Math.min(8,parseInt(prompt('Number of rows (1–8)','3'),10)||3));const cols=Math.max(1,Math.min(6,parseInt(prompt('Number of columns (1–6)','2'),10)||2));let html='<table style="width:100%;border-collapse:collapse;margin:1.5em 0"><tbody>';for(let r=0;r<rows;r++){html+='<tr>';for(let c=0;c<cols;c++)html+='<td style="border:1px solid #999;padding:8px;min-width:50px">'+(r===0?'Heading':'Cell text')+'</td>';html+='</tr>'}html+='</tbody></table><p><br></p>';restoreSelection();document.execCommand('insertHTML',false,html);updateStats();scheduleSave()};
+function updateOutline(){const list=$('outlineList');list.replaceChildren();body.querySelectorAll('h2,h3').forEach((h,i)=>{if(!h.id)h.id='outline-'+i;const a=document.createElement('a');a.href='#'+h.id;a.className='outline-item'+(h.tagName==='H3'?' sub':'');a.textContent=h.textContent||'Untitled heading';a.onclick=()=>{setTimeout(()=>h.scrollIntoView({behavior:'smooth',block:'center'}),0)};list.appendChild(a)})}
+function getArticleHtml(){const safeTitle=escapeHtml(title.value.trim()||'Untitled article');const safeSubtitle=escapeHtml(subtitle.value.trim());const byline=$('bylineToggle').getAttribute('aria-checked')==='true'?'<p class="byline">'+escapeHtml($('author').value)+'</p>':'';const cover=coverData?'<figure><img style="max-width:100%;height:auto" src="'+coverData+'" alt="'+escapeHtml($('coverAlt').value)+'"></figure>':'';return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+safeTitle+' — Atomic Weekly</title><style>body{max-width:760px;margin:60px auto;padding:0 24px;color:#25242a;background:#f4f0e8;font:18px/1.85 Georgia,serif}h1{font:600 clamp(36px,7vw,60px)/1.1 Georgia,serif;letter-spacing:-.03em}h2,h3{font-family:Georgia,serif;line-height:1.25}header{font:11px/1.5 Arial,sans-serif;letter-spacing:.13em;color:#b62e43;text-transform:uppercase}.deck{font:18px/1.6 Arial,sans-serif;color:#5b5a60}.byline{font:12px Arial,sans-serif;border-top:1px solid #aaa;border-bottom:1px solid #aaa;padding:14px 0}blockquote{border-left:3px solid #c83d4d;padding-left:20px;font-size:24px}img{max-width:100%}table{border-collapse:collapse;width:100%}td{border:1px solid #aaa;padding:8px}pre{background:#17171b;color:#eee;padding:16px;overflow:auto}</style></head><body><header>Atomic Weekly / '+escapeHtml($('category').value)+'</header><h1>'+safeTitle+'</h1>'+(safeSubtitle?'<p class="deck">'+safeSubtitle+'</p>':'')+byline+cover+body.innerHTML+'<footer style="margin-top:50px;border-top:1px solid #aaa;padding-top:15px;font:11px Arial,sans-serif">ATOMIC WEEKLY · END OF ARTICLE</footer></body></html>'}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function exportHtml(){const blob=new Blob([getArticleHtml()],{type:'text/html;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=((title.value.trim()||'atomic-weekly-article').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'atomic-weekly-article')+'.html';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);showToast('Article HTML exported')}
+function openPreview(){saveDraft(false);$('previewContent').innerHTML='<div style="font:10px Arial,sans-serif;letter-spacing:.14em;color:#b62e43">ATOMIC WEEKLY / '+escapeHtml($('category').value.toUpperCase())+'</div><h1>'+escapeHtml(title.value||'Untitled article')+'</h1>'+(subtitle.value?'<p class="preview-deck">'+escapeHtml(subtitle.value)+'</p>':'')+'<p style="font:11px Arial,sans-serif;border-top:1px solid #aaa;border-bottom:1px solid #aaa;padding:12px 0">'+escapeHtml($('author').value)+' · '+Math.max(1,Math.ceil(textFromBody().trim().split(/\s+/).filter(Boolean).length/220))+' min read</p>'+(coverData?'<img src="'+coverData+'" alt="'+escapeHtml($('coverAlt').value)+'">':'')+body.innerHTML;$('previewModal').classList.add('open')}
+function openPublish(){saveDraft(false);$('publishModal').classList.add('open');const indicator=$('publishConnection');if(indicator)indicator.textContent=cloudDb?'Connected to the Atomic Magazine Firebase project.': 'Connecting to the magazine database…'}
+$('previewBtn').onclick=openPreview;$('previewTop').onclick=openPreview;$('closePreview').onclick=$('closePreview2').onclick=()=>$('previewModal').classList.remove('open');$('previewModal').addEventListener('click',e=>{if(e.target===$('previewModal'))$('previewModal').classList.remove('open')});
+$('exportBtn').onclick=$('exportTop').onclick=$('exportPreview').onclick=exportHtml;
+$('publishTop').onclick=openPublish;$('closePublish').onclick=$('publishCancel').onclick=()=>$('publishModal').classList.remove('open');$('publishModal').addEventListener('click',e=>{if(e.target===$('publishModal'))$('publishModal').classList.remove('open')});$('publishExport').onclick=()=>{$('publishModal').classList.remove('open');exportHtml()};$('publishConfirm').onclick=publishToMagazine;
+$('paperToggle').onclick=()=>{const on=!$('paper').classList.contains('dark-paper');$('paper').classList.toggle('dark-paper',on);setSwitch($('paperSwitch'),!on);scheduleSave()};
+$('paperSwitch').onclick=()=>{const on=$('paperSwitch').getAttribute('aria-checked')!=='true';setSwitch($('paperSwitch'),on);$('paper').classList.toggle('dark-paper',!on);scheduleSave()};
+$('bylineToggle').onclick=()=>{const on=$('bylineToggle').getAttribute('aria-checked')!=='true';setSwitch($('bylineToggle'),on);$('authorInline').parentElement.style.display=on?'flex':'none';scheduleSave()};
+$('readingToggle').onclick=()=>{const on=$('readingToggle').getAttribute('aria-checked')!=='true';setSwitch($('readingToggle'),on);$('readInline').style.display=on?'':'none';$('readMeta').style.display=on?'':'none';scheduleSave()};
+$('focusMode').onclick=()=>{document.body.classList.toggle('focus-mode');const focused=document.body.classList.contains('focus-mode');document.querySelector('.leftbar').style.display=focused?'none':'';document.querySelector('.rightbar').style.display=focused?'none':'';document.querySelector('.workspace').style.gridTemplateColumns=focused?'minmax(0,1fr)':'';$('focusMode').textContent=focused?'↙ Exit focus mode':'↗ Enter focus mode';showToast(focused?'Focus mode enabled':'Focus mode closed')};
+function openDrawer(){const source=$('rightbar'),target=$('drawerContent');target.innerHTML='';Array.from(source.children).forEach(el=>target.appendChild(el.cloneNode(true)));$('mobileDrawer').classList.add('open');$('mobileDrawer').setAttribute('aria-hidden','false');wireDrawer()}
+function wireDrawer(){const target=$('drawerContent');target.querySelectorAll('input,textarea,select').forEach(el=>{const original=$(el.id);if(!original)return;el.value=original.value;el.addEventListener('input',()=>{original.value=el.value;original.dispatchEvent(new Event('input',{bubbles:true}));if(el.id==='category')original.dispatchEvent(new Event('change',{bubbles:true}))});el.addEventListener('change',()=>{original.value=el.value;original.dispatchEvent(new Event('change',{bubbles:true}))})});target.querySelectorAll('.switch').forEach(el=>{const original=$(el.id);el.setAttribute('aria-checked',original.getAttribute('aria-checked'));el.onclick=()=>{original.click();el.setAttribute('aria-checked',original.getAttribute('aria-checked'))}});const add=target.querySelector('#addTag');if(add)add.onclick=()=>{const v=target.querySelector('#tagInput').value.trim();if(v&&!tags.includes(v)){tags.push(v);renderTags();scheduleSave();openDrawer()}};const cf=target.querySelector('#coverFile');if(cf)cf.onchange=handleCover}
+$('mobileMeta').onclick=openDrawer;$('closeDrawer').onclick=()=>{$('mobileDrawer').classList.remove('open');$('mobileDrawer').setAttribute('aria-hidden','true')};$('mobileDrawer').addEventListener('click',e=>{if(e.target===$('mobileDrawer'))$('mobileDrawer').classList.remove('open')});
+$('openMedia').onclick=()=>{showToast('Choose an image to add it to this article’s media');$('coverFile').click()};document.querySelectorAll('.leftbar .navitem').forEach((button,index)=>button.addEventListener('click',()=>{if(index===0||index===1){location.href='index.html';return}if(index===2){window.scrollTo({top:0,behavior:'smooth'});return}if(index===3){$('coverFile').click();return}if(index===4){window.open('https://iammdtanvirrahman.github.io/atomic-weekly/','_blank','noopener');return}if(index===5){location.href='index.html?view=submissions';return}}));
+window.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();saveDraft(true)}if(e.key==='Escape'){$('previewModal').classList.remove('open');$('publishModal').classList.remove('open');$('mobileDrawer').classList.remove('open')}});
+window.addEventListener('beforeunload',e=>{if($('saveText').textContent==='Unsaved changes'||$('saveText').textContent==='Saving…'){e.preventDefault();e.returnValue=''}});
+if(new URLSearchParams(location.search).get('new')!=='1'&&!new URLSearchParams(location.search).get('id')&&!new URLSearchParams(location.search).get('submission'))restoreDraft();updateStats();renderTags();setStatus(lastSavedAt?'Draft recovered':'Local draft ready');connectAtomicDatabase();
+})();
+document.getElementById("advancedTools")?.addEventListener("click",()=>location.href="advanced-editor.html");
 </script>
 </body>
 </html>
