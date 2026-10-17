@@ -239,7 +239,7 @@ document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()
    if(!conn){setStatus('Firebase is still connecting. Wait a moment and try again.','error');return}
    const btn=document.getElementById('heroSaveUrls');btn.disabled=true;btn.textContent='Saving…';
    try{
-     await conn.dbMod.set(conn.dbMod.ref(conn.db,'publishedArticles/_heroImageLinks'),{urls:links,updatedAt:Date.now()});
+     await conn.dbMod.set(conn.dbMod.ref(conn.db,'siteSettings/heroImageLinks'),{urls:links,updatedAt:Date.now()});
      setStatus(links.length+' image link(s) saved. Refresh the magazine homepage to see the rotation.','success');
    }catch(err){console.error(err);setStatus('Could not save links: '+(err.message||'Firebase write failed')+'. Check database rules/access.','error')}
    finally{btn.disabled=false;btn.textContent='Save links'}
@@ -247,7 +247,7 @@ document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()
  function loadSaved(){
    const conn=window.atomicHeroManagerDb;
    if(!conn){setTimeout(loadSaved,600);return}
-   conn.dbMod.get(conn.dbMod.ref(conn.db,'publishedArticles/_heroImageLinks')).then(snap=>{
+   conn.dbMod.get(conn.dbMod.ref(conn.db,'siteSettings/heroImageLinks')).then(snap=>{
      rows.innerHTML='';
      const data=snap.val(),raw=data&&data.urls;
      const list=Array.isArray(raw)?raw:(raw&&typeof raw==='object'?Object.keys(raw).sort((a,b)=>Number(a)-Number(b)).map(k=>raw[k]):[]);
