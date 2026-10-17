@@ -67,7 +67,7 @@
 </div>
 <script>
 const sidebar=document.getElementById('sidebar');document.getElementById('menu').addEventListener('click',()=>sidebar.classList.toggle('open'));
-const editorUrl='editor.html';
+const editorUrl='editor.html?new=1';
 document.getElementById('newArticle').addEventListener('click',()=>location.href=editorUrl);
 document.getElementById('openEditor').addEventListener('click',()=>location.href=editorUrl);
 let currentFilter=new URLSearchParams(location.search).get('view')==='submissions'?'In review':'All';document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter===currentFilter));
