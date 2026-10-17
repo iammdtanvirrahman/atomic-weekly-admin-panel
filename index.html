@@ -50,6 +50,38 @@ button{border-radius:9px}button:hover{transform:translateY(-1px)}.quickGrid{disp
 .attachmentFileType{padding:3px 5px;border:1px solid rgba(222,147,107,.2);border-radius:2px;color:#c7957d;font:7px var(--mono);letter-spacing:.04em;white-space:nowrap}
 .attachmentNoNames{margin:0!important;color:#b89c8d!important;font:10px/1.6 var(--mono)!important}
 @media(max-width:620px){.attachmentFileList li{grid-template-columns:12px 20px minmax(0,1fr) auto;gap:5px;padding:8px 7px}.attachmentFileName{font-size:9px}.attachmentFileType{font-size:6px}}
+
+
+/* ATOMIC 3.0 — Publisher dashboard visual system */
+:root{--bg:#08090b;--panel:#111318;--line:#2a2c33;--text:#f5f1ea;--muted:#9999a2;--red:#e34b3f;--green:#63b89a;--accent:#d7a66b}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(ellipse at 75% -20%,rgba(180,94,65,.14),transparent 48%),linear-gradient(180deg,#0b0c0f,#08090b 60%,#0d0e11);color:var(--text);letter-spacing:.005em}
+::selection{background:rgba(227,75,63,.35);color:#fff}
+.top{padding:15px clamp(16px,3vw,42px);background:rgba(9,10,12,.88);border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(22px);box-shadow:0 12px 32px rgba(0,0,0,.14)}
+.brand{font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:30px;letter-spacing:-.06em}
+.brandWord{color:#f5f1ea}.brandSlash{color:#666}.brandAccent{color:var(--red)}
+.shell{max-width:1600px;padding:22px clamp(14px,3vw,42px) 56px}
+.hero{align-items:flex-end;padding:38px 0 28px;gap:24px}
+.heroCopy{max-width:800px}
+.hero h1,.hero h2{font-family:Georgia,'Times New Roman',serif;letter-spacing:-.055em;line-height:1.02}
+.quick a{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.025);border-radius:999px;color:#b7b2ac;padding:10px 14px;transition:.2s}
+.quick a:hover{color:#fff;border-color:#9b6650;background:rgba(190,113,78,.08);transform:translateY(-1px)}
+.stats{gap:12px}
+.stat{background:linear-gradient(145deg,rgba(24,26,32,.98),rgba(15,16,20,.98));border:1px solid rgba(255,255,255,.085);border-radius:17px;box-shadow:0 16px 40px rgba(0,0,0,.14);padding:20px}
+.stat:before{background:linear-gradient(90deg,var(--red),var(--accent),transparent);opacity:.65}
+.stat strong,.stat .value{font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+section,.panel,.card,.dashboardCard{border-radius:16px}
+button{border-radius:10px;transition:transform .18s,filter .18s,box-shadow .18s}
+button:hover{transform:translateY(-1px)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+button:not(.secondary):not(.danger):not(.green){box-shadow:0 6px 16px rgba(227,75,63,.13)}
+input,select,textarea{background:#0c0d11!important;border:1px solid #30323a!important;border-radius:10px!important;color:var(--text)!important}
+input:focus,select:focus,textarea:focus{border-color:#b67b58!important;box-shadow:0 0 0 3px rgba(182,123,88,.12)!important;outline:0}
+a{transition:color .18s}
+@media(max-width:720px){.shell{padding:14px 12px 38px}.hero{padding:25px 0 18px;align-items:flex-start;flex-direction:column}.brand{font-size:25px}.stat{padding:15px;border-radius:13px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
 </style>
 
 <style id="admin-dashboard-editorial-2">
