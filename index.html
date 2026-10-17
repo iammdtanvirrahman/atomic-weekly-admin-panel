@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#090909">
+<meta name="theme-color" content="#090909">\n<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%23e84b50%22/%3E%3Ctext x=%2232%22 y=%2244%22 font-size=%2246%22 font-family=%22Georgia%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23090909%22%3EA%3C/text%3E%3C/svg%3E">
 <title>Atomic Weekly — Editorial Desk</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
@@ -182,10 +182,15 @@ const embeddedEditorHTML=decodeURIComponent(escape(atob('PCFkb2N0eXBlIGh0bWw+Cjx
 const editorModal=document.getElementById('embeddedEditorModal'),editorFrame=document.getElementById('embeddedEditorFrame');
 function openEmbeddedEditor(query){editorFrame.srcdoc=embeddedEditorHTML.replaceAll('window.__atomicEditorSearch||location.search',JSON.stringify(query||'?new=1'));editorModal.classList.add('open');editorModal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';}
 function closeEmbeddedEditor(){editorModal.classList.remove('open');editorModal.setAttribute('aria-hidden','true');editorFrame.srcdoc='';document.body.style.overflow='';}
-document.getElementById('closeEmbeddedEditor').addEventListener('click',closeEmbeddedEditor);
-document.getElementById('newArticle').addEventListener('click',()=>openEmbeddedEditor('?new=1'));
-document.getElementById('openEditor').addEventListener('click',()=>openEmbeddedEditor('?new=1'));
-document.querySelectorAll('#articleList a[href*="editor.html"]').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();const url=new URL(link.href,location.href);openEmbeddedEditor(url.search||'?new=1')}));
+document.addEventListener('DOMContentLoaded',()=>{
+ const closeEditorButton=document.getElementById('closeEmbeddedEditor');
+ const newArticleButton=document.getElementById('newArticle');
+ const openEditorButton=document.getElementById('openEditor');
+ if(closeEditorButton)closeEditorButton.addEventListener('click',closeEmbeddedEditor);
+ if(newArticleButton)newArticleButton.addEventListener('click',()=>openEmbeddedEditor('?new=1'));
+ if(openEditorButton)openEditorButton.addEventListener('click',()=>openEmbeddedEditor('?new=1'));
+ document.querySelectorAll('#articleList a[href*="editor.html"]').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();const url=new URL(link.href,location.href);openEmbeddedEditor(url.search||'?new=1')}));
+});
 let currentFilter=new URLSearchParams(location.search).get('view')==='submissions'?'In review':'All';document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter===currentFilter));
 function filterStories(){const q=document.getElementById('search').value.toLowerCase();let visible=0;document.querySelectorAll('.article').forEach(a=>{const status=a.dataset.status;const matchesFilter=currentFilter==='All'||status===currentFilter;const matchesText=a.innerText.toLowerCase().includes(q);a.style.display=matchesFilter&&matchesText?'grid':'none';if(matchesFilter&&matchesText)visible++});document.getElementById('empty').style.display=visible?'none':'block'}
 document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-filter]').forEach(x=>x.classList.remove('active'));b.classList.add('active');currentFilter=b.dataset.filter;filterStories()}));
