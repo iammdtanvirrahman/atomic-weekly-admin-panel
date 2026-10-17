@@ -204,7 +204,7 @@ window.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCa
 window.addEventListener('beforeunload',e=>{if($('saveText').textContent==='Unsaved changes'||$('saveText').textContent==='Saving…'){e.preventDefault();e.returnValue=''}});
 if(new URLSearchParams(location.search).get('new')!=='1'&&!new URLSearchParams(location.search).get('id')&&!new URLSearchParams(location.search).get('submission'))restoreDraft();updateStats();renderTags();setStatus(lastSavedAt?'Draft recovered':'Local draft ready');connectAtomicDatabase();
 })();
-document.getElementById("advancedTools")?.addEventListener("click",()=>location.href="advanced-editor.html"+location.search);
+document.getElementById("advancedTools")?.addEventListener("click",()=>location.href="advanced-editor.html");
 </script>
 </body>
 </html>
