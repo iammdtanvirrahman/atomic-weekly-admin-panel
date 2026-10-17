@@ -11,7 +11,7 @@ const AI_ALLOWED_EMAILS = defineString("AI_ALLOWED_EMAILS", {
   default: ""
 });
 
-const MODEL = "gpt-5.6-luna";
+const MODEL = "gpt-6-luna";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "https://iammdtanvirrahman.github.io",
