@@ -76,5 +76,32 @@ document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click'
 document.getElementById('search').addEventListener('input',filterStories);
 document.getElementById('viewAll').addEventListener('click',()=>{currentFilter='All';document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter==='All'));document.getElementById('search').value='';filterStories()});
 document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{const page=b.dataset.nav;if(page==='View Magazine'){window.open('https://iammdtanvirrahman.github.io/atomic-weekly/','_blank');return}document.querySelectorAll('[data-nav]').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('crumb').textContent=page;sidebar.classList.remove('open');if(page==='Articles'||page==='Review Queue'||page==='Published'){currentFilter=page==='Review Queue'?'In review':page==='Published'?'Published':'All';document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter===currentFilter));filterStories()}else if(page==='Media Library'||page==='Categories'||page==='Settings'){document.getElementById('crumb').textContent=page;document.querySelector('.hero p').textContent=page+' workspace preview — use the writing studio to create and manage article content.'}}));
+
+// Live Atomic Magazine data: the dashboard listens to the same Firebase RTDB as the public site.
+(function connectDashboard(){
+ const config={apiKey:'AIzaSyCit_SKjXRUpr8FNY1ahKHiG5sdDyOlW6k',authDomain:'atomictanvir.firebaseapp.com',projectId:'atomictanvir',storageBucket:'atomictanvir.firebasestorage.app',messagingSenderId:'140595401471',appId:'1:140595401471:web:8f92115a8c8b58d1ec32ca',databaseURL:'https://atomictanvir-default-rtdb.firebaseio.com'};
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const fmt=t=>{if(!t)return'Updated recently';const n=Number(t);const date=new Date(n<100000000000?n*1000:n);return isNaN(date.getTime())?'Updated recently':date.toLocaleDateString(undefined,{month:'short',day:'numeric'})};
+ let pub={},drafts={},subs={};
+ const all=()=>{const list=[];
+ Object.entries(drafts).forEach(([id,a])=>list.push({...a,id:id,_kind:'draft',_status:a.status==='review'?'In review':'Draft',_time:a.updatedAt||a.createdAt}));
+ Object.entries(pub).forEach(([id,a])=>{if(a&& (a.status==='published'||a.published===true))list.push({...a,id:id,_kind:'published',_status:'Published',_time:a.publishedAt||a.updatedAt||a.createdAt})});
+ Object.entries(subs).forEach(([id,a])=>{if(a&&(!a.status||/pending|review/i.test(a.status)))list.push({...a,id:id,_kind:'submission',_status:'In review',_time:a.createdAt||a.timestamp})});
+ return list.sort((a,b)=>(Number(b._time)||0)-(Number(a._time)||0));};
+ const render=()=>{const items=all();const published=items.filter(a=>a._kind==='published').length;const draftCount=items.filter(a=>a._kind==='draft'&&a._status==='Draft').length;const review=items.filter(a=>a._status==='In review').length;const total=items.filter(a=>a._kind!=='submission').length;
+ const nums=document.querySelectorAll('.statnum');if(nums.length>=4){nums[0].textContent=total;nums[1].textContent=draftCount;nums[2].textContent=review;nums[3].textContent=published}
+ const list=document.getElementById('articleList');const shown=items.slice(0,8);
+ list.innerHTML=shown.map((a,i)=>{const title=a.title||a.headline||'Untitled story';const category=a.category||a.section||'STORIES';const status=a._status;const cls=status==='Published'?'published':status==='In review'?'review':'draft';const icon=category.toLowerCase().includes('space')?'✳':category.toLowerCase().includes('phys')?'⌁':category.toLowerCase().includes('love')?'✧':'◌';const color=i%3===1?' blue':i%3===2?' gold':'';const dest=a._kind==='submission'?'editor.html?submission='+encodeURIComponent(a.id):'editor.html?id='+encodeURIComponent(a.id);return '<article class="article" data-status="'+status+'" data-title="'+esc(title.toLowerCase())+'"><div class="thumb'+color+'">'+icon+'</div><div><h3>'+esc(title)+'</h3><div class="meta"><span>'+esc(category.toUpperCase())+'</span><span>·</span><span>'+esc(fmt(a._time))+'</span></div><a href="'+dest+'" style="display:inline-block;margin-top:5px;color:#ed7478;font-size:10px;text-decoration:none">'+(a._kind==='submission'?'Review submission ↗':'Open article ↗')+'</a></div><span class="status '+cls+'">'+status+'</span></article>'}).join('');
+ document.getElementById('empty').style.display=shown.length?'none':'block';
+ document.querySelectorAll('.statfoot').forEach((el,i)=>{if(i===0)el.textContent='From the connected editorial database';if(i===1)el.textContent='Saved in the cloud';if(i===2)el.textContent='Submissions and review drafts';if(i===3)el.textContent='Live on the magazine site'});
+ filterStories();
+ };
+ import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js').then(appMod=>import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js').then(dbMod=>({appMod,dbMod}))).then(({appMod,dbMod})=>{
+ const app=appMod.getApps().length?appMod.getApp():appMod.initializeApp(config);const db=dbMod.getDatabase(app);
+ const state=document.querySelector('.live');if(state)state.innerHTML='<span class="dot"></span> LIVE FIREBASE';
+ const watch=(path,fn)=>dbMod.onValue(dbMod.ref(db,path),snap=>{fn(snap.val()||{});render()},err=>{console.warn('Atomic dashboard listener '+path,err);if(state)state.textContent='DATABASE CONNECTION ERROR'});
+ watch('publishedArticles',v=>pub=v);watch('draftArticles',v=>drafts=v);watch('submissions',v=>subs=v);
+ }).catch(err=>{console.warn('Atomic dashboard Firebase connection failed',err);const state=document.querySelector('.live');if(state)state.innerHTML='<span class="dot" style="background:#e84b50"></span> OFFLINE · DEMO VIEW'});
+})();
 </script>
 </body></html>
