@@ -110,6 +110,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
 
+
+.hero-manager{margin-top:20px;overflow:hidden}.hero-manager-badge{font:9px var(--mono);letter-spacing:.12em;color:#f08085;border:1px solid #4a292d;background:#211416;border-radius:999px;padding:8px 10px;white-space:nowrap}.hero-manager-inner{padding:20px}.hero-manager-help{font-size:12px;line-height:1.7;color:var(--muted);margin-bottom:16px}.hero-manager-help b{color:#f3f0ec}.hero-url-rows{display:grid;gap:12px}.hero-url-row{display:grid;grid-template-columns:104px minmax(0,1fr) 38px;align-items:center;gap:12px;padding:10px;border:1px solid var(--line);border-radius:11px;background:#0b0b0d}.hero-url-preview{width:104px;aspect-ratio:16/9;object-fit:cover;border-radius:7px;background:#171719;display:block}.hero-url-field{min-width:0;display:grid;gap:7px}.hero-url-field label{font:9px var(--mono);letter-spacing:.1em;color:var(--muted);text-transform:uppercase}.hero-url-field input{width:100%;min-width:0;background:#141416;border:1px solid #333337;border-radius:7px;padding:11px 12px;color:var(--text);outline:none}.hero-url-field input:focus{border-color:#a3484f;box-shadow:0 0 0 3px #e84b5014}.hero-url-delete{width:36px;height:36px;border-radius:8px;border:1px solid #482629;background:#201315;color:#ff8b90;font-size:17px}.hero-manager-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap}.hero-manager-status{font-size:11px;color:var(--muted);margin-top:14px;min-height:18px}.hero-manager-status.error{color:#ff858a}.hero-manager-status.success{color:#9ad5ad}@media(max-width:600px){.hero-manager-inner{padding:13px}.hero-manager .panelhead{align-items:flex-start}.hero-manager-badge{font-size:8px}.hero-url-row{grid-template-columns:78px minmax(0,1fr) 32px;gap:8px;padding:8px}.hero-url-preview{width:78px}.hero-url-field input{padding:10px 8px;font-size:11px}.hero-url-delete{width:31px;height:34px}}
 </style>
 </head>
 <body>
@@ -160,6 +162,14 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 </div></section>
 </div>
 </div>
+<section class="panel hero-manager" id="heroManager">
+<div class="panelhead"><div><h2>Hero Image Manager</h2><p>Homepage cover images · Add image URLs, preview them, and save to Firebase.</p></div><span class="hero-manager-badge">MAGAZINE HOME</span></div>
+<div class="hero-manager-inner">
+<div class="hero-manager-help">Paste direct <b>HTTPS image links</b> (JPG, PNG, WEBP, GIF). The magazine homepage will rotate through these saved links when refreshed.</div>
+<div id="heroUrlRows" class="hero-url-rows"></div>
+<div class="hero-manager-actions"><button class="secondary" type="button" id="heroAddUrl">＋ Add image link</button><button class="primary" type="button" id="heroSaveUrls">Save links</button></div>
+<div id="heroManagerStatus" class="hero-manager-status" role="status">Connects to the same Firebase database as the magazine.</div>
+</div></section>
 <div class="footnote"><span>ATOMIC WEEKLY · EDITORIAL DESK</span><span>BUILT FOR CURIOUS MINDS &nbsp; ✳</span></div>
 </div>
 </main>
@@ -198,9 +208,54 @@ document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()
  };
  import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js').then(appMod=>import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js').then(dbMod=>({appMod,dbMod}))).then(({appMod,dbMod})=>{
  const app=appMod.getApps().length?appMod.getApp():appMod.initializeApp(config);const db=dbMod.getDatabase(app);dashboardDbMod=dbMod;dashboardDb=db;
+ window.atomicHeroManagerDb={db:db,dbMod:dbMod};
  const state=document.querySelector('.live');if(state)state.innerHTML='<span class="dot"></span> CONNECTING FIREBASE';let successfulReads=0;const watch=(path,fn)=>dbMod.onValue(dbMod.ref(db,path),snap=>{fn(snap.val()||{});successfulReads++;if(state&&successfulReads>=3)state.innerHTML='<span class="dot"></span> LIVE FIREBASE';render()},err=>{console.warn('Atomic dashboard listener '+path,err);if(state)state.innerHTML='<span class="dot" style="background:#e84b50"></span> DATABASE ACCESS LIMITED'});
  watch('publishedArticles',v=>pub=v);watch('draftArticles',v=>drafts=v);watch('submissions',v=>subs=v);
  }).catch(err=>{console.warn('Atomic dashboard Firebase connection failed',err);const state=document.querySelector('.live');if(state)state.innerHTML='<span class="dot" style="background:#e84b50"></span> OFFLINE · DEMO VIEW'});
+})();
+
+
+/* Homepage hero cover URL manager */
+(function(){
+ const rows=document.getElementById('heroUrlRows'),status=document.getElementById('heroManagerStatus');
+ if(!rows||!status)return;
+ const escUrl=s=>String(s||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+ function setStatus(msg,type){status.textContent=msg;status.className='hero-manager-status'+(type?' '+type:'')}
+ function addRow(value){
+   const row=document.createElement('div');row.className='hero-url-row';
+   row.innerHTML='<img class="hero-url-preview" alt="Image preview" src="'+escUrl(value)+'"><div class="hero-url-field"><label>Image URL</label><input type="url" inputmode="url" placeholder="https://example.com/hero-cover.webp" value="'+escUrl(value)+'"></div><button type="button" class="hero-url-delete" aria-label="Remove image link" title="Remove link">×</button>';
+   const input=row.querySelector('input'),img=row.querySelector('img');
+   input.addEventListener('input',()=>{const v=input.value.trim();img.src=/^https:\/\//i.test(v)?v:''});
+   img.onerror=()=>{img.removeAttribute('src');img.alt='Preview unavailable'};
+   row.querySelector('button').onclick=()=>{row.remove();if(!rows.children.length)addRow('');};
+   rows.appendChild(row);
+ }
+ function readRows(){return Array.from(rows.querySelectorAll('input')).map(input=>input.value.trim()).filter(Boolean).map(url=>({url:url,rotation:0}));}
+ document.getElementById('heroAddUrl').onclick=()=>addRow('');
+ document.getElementById('heroSaveUrls').onclick=async()=>{
+   const links=readRows();
+   if(links.some(x=>{try{return new URL(x.url).protocol!=='https:'}catch(e){return true}})){setStatus('Each image must be a valid HTTPS URL.','error');return}
+   const conn=window.atomicHeroManagerDb;
+   if(!conn){setStatus('Firebase is still connecting. Wait a moment and try again.','error');return}
+   const btn=document.getElementById('heroSaveUrls');btn.disabled=true;btn.textContent='Saving…';
+   try{
+     await conn.dbMod.set(conn.dbMod.ref(conn.db,'publishedArticles/_heroImageLinks'),{urls:links,updatedAt:Date.now()});
+     setStatus(links.length+' image link(s) saved. Refresh the magazine homepage to see the rotation.','success');
+   }catch(err){console.error(err);setStatus('Could not save links: '+(err.message||'Firebase write failed')+'. Check database rules/access.','error')}
+   finally{btn.disabled=false;btn.textContent='Save links'}
+ };
+ function loadSaved(){
+   const conn=window.atomicHeroManagerDb;
+   if(!conn){setTimeout(loadSaved,600);return}
+   conn.dbMod.get(conn.dbMod.ref(conn.db,'publishedArticles/_heroImageLinks')).then(snap=>{
+     rows.innerHTML='';
+     const data=snap.val(),raw=data&&data.urls;
+     const list=Array.isArray(raw)?raw:(raw&&typeof raw==='object'?Object.keys(raw).sort((a,b)=>Number(a)-Number(b)).map(k=>raw[k]):[]);
+     if(list.length)list.forEach(item=>addRow(typeof item==='string'?item:(item&&item.url)||''));else addRow('');
+     setStatus(list.length?list.length+' saved image link(s) loaded.':'No custom links saved yet. Add URLs below.');
+   }).catch(err=>{console.warn('Could not load hero image links',err);addRow('');setStatus('Could not load saved links. Check Firebase database access.','error')});
+ }
+ loadSaved();
 })();
 
 </script>
