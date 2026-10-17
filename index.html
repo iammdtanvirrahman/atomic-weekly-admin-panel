@@ -70,7 +70,7 @@ const sidebar=document.getElementById('sidebar');document.getElementById('menu')
 const editorUrl='editor.html';
 document.getElementById('newArticle').addEventListener('click',()=>location.href=editorUrl);
 document.getElementById('openEditor').addEventListener('click',()=>location.href=editorUrl);
-let currentFilter='All';
+let currentFilter=new URLSearchParams(location.search).get('view')==='submissions'?'In review':'All';document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter===currentFilter));
 function filterStories(){const q=document.getElementById('search').value.toLowerCase();let visible=0;document.querySelectorAll('.article').forEach(a=>{const status=a.dataset.status;const matchesFilter=currentFilter==='All'||status===currentFilter;const matchesText=a.innerText.toLowerCase().includes(q);a.style.display=matchesFilter&&matchesText?'grid':'none';if(matchesFilter&&matchesText)visible++});document.getElementById('empty').style.display=visible?'none':'block'}
 document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-filter]').forEach(x=>x.classList.remove('active'));b.classList.add('active');currentFilter=b.dataset.filter;filterStories()}));
 document.getElementById('search').addEventListener('input',filterStories);
