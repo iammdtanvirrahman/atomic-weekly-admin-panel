@@ -27,7 +27,7 @@
 <button data-nav="Review Queue"><span class="ico">◷</span>Review queue <span class="count">02</span></button>
 <button data-nav="Published"><span class="ico">↗</span>Published</button>
 </nav></div>
-<div class="sidebottom"><div class="navlabel">SYSTEM</div><nav class="nav"><button data-nav="Settings"><span class="ico">⚙</span>Settings</button><button data-nav="View Magazine"><span class="ico">↗</span>View magazine</button></nav></div>
+<div class="sidebottom"><div class="navlabel">SYSTEM</div><nav class="nav"><button data-nav="Settings"><span class="ico">⚙</span>Settings</button><button data-nav="View Magazine"><span class="ico">↗</span>View magazine</button><button id="classicDesk"><span class="ico">✦</span>Classic control room</button></nav></div>
 </aside>
 <main class="workspace">
 <header class="topbar"><button class="mobile-menu" id="menu" aria-label="Open navigation">☰</button><div class="crumb">Workspace <span style="color:#555">/</span> <b id="crumb">Overview</b></div><div class="topright"><div class="live"><span class="dot"></span> EDITORIAL DESK</div><div class="avatar">TR</div></div></header>
@@ -102,5 +102,6 @@ document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()
  watch('publishedArticles',v=>pub=v);watch('draftArticles',v=>drafts=v);watch('submissions',v=>subs=v);
  }).catch(err=>{console.warn('Atomic dashboard Firebase connection failed',err);const state=document.querySelector('.live');if(state)state.innerHTML='<span class="dot" style="background:#e84b50"></span> OFFLINE · DEMO VIEW'});
 })();
+document.getElementById("classicDesk")?.addEventListener("click",()=>location.href="classic-dashboard.html");
 </script>
 </body></html>
