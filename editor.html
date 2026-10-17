@@ -23,6 +23,7 @@
  <div class="crumb">Workspace <span>／</span> <strong>Writing Studio</strong></div>
  <div class="topspacer"></div>
  <div class="save-status" id="saveStatus" aria-live="polite"><span class="dot"></span><span id="saveText">Local draft ready</span></div>
+ <button class="btn quiet desktop-only" id="advancedTools" title="Open full-featured legacy studio">Advanced tools ↗</button>
  <button class="btn quiet desktop-only" id="previewTop" title="Preview article">Preview ↗</button>
  <button class="btn primary" id="publishTop">Publish <span aria-hidden="true">↗</span></button>
 </header>
@@ -203,6 +204,7 @@ window.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCa
 window.addEventListener('beforeunload',e=>{if($('saveText').textContent==='Unsaved changes'||$('saveText').textContent==='Saving…'){e.preventDefault();e.returnValue=''}});
 if(new URLSearchParams(location.search).get('new')!=='1'&&!new URLSearchParams(location.search).get('id')&&!new URLSearchParams(location.search).get('submission'))restoreDraft();updateStats();renderTags();setStatus(lastSavedAt?'Draft recovered':'Local draft ready');connectAtomicDatabase();
 })();
+document.getElementById("advancedTools")?.addEventListener("click",()=>location.href="advanced-editor.html"+location.search);
 </script>
 </body>
 </html>
