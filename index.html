@@ -202,7 +202,7 @@ button:hover:not(:disabled){transform:translateY(-1px)}
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import{getDatabase,ref,onValue,set,remove,get}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-import{getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithRedirect,getRedirectResult,signOut}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import{getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,browserLocalPersistence,setPersistence,signOut}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 const C={apiKey:'AIzaSyCit_SKjXRUpr8FNY1ahKhiG5sdDyOlW6k',authDomain:'atomictanvir.firebaseapp.com',projectId:'atomictanvir',storageBucket:'atomictanvir.firebasestorage.app',messagingSenderId:'140595401471',appId:'1:140595401471:web:8f92115a8c8b58d1ec32ca',databaseURL:'https://atomictanvir-default-rtdb.firebaseio.com'};
 const app=initializeApp(C),db=getDatabase(app),auth=getAuth(app),PUBLIC='https://iammdtanvirrahman.github.io/atomic-weekly/',$=id=>document.getElementById(id);let published={},submissions={},drafts={},currentUser=null;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const asset=v=>{const s=String(v||'').trim();if(!s)return'';if(/^https?:\/\//i.test(s)||/^data:image\//i.test(s))return s;if(s.startsWith('assets/'))return PUBLIC+s;return PUBLIC+'assets/'+s.replace(/^\.\//,'')};
@@ -453,14 +453,31 @@ const googleProvider=new GoogleAuthProvider();googleProvider.setCustomParameters
 $('signInDashboard').onclick=openLogin;
 $('loginCancel').onclick=()=>$('loginGate').classList.remove('open');
 $('googleLogin').onclick=async()=>{
-  const btn=$('googleLogin');$('loginError').textContent='';btn.disabled=true;btn.textContent='Connecting to Google…';
-  try{await signInWithRedirect(auth,googleProvider)}
-  catch(err){
-    $('loginError').textContent=err.code==='auth/unauthorized-domain'?'This website domain is not authorised in Firebase Authentication.':(err.message||'Google sign-in failed.');
-    btn.disabled=false;btn.innerHTML='<span class="googleMark" aria-hidden="true">G</span> Continue with Google';
+  const btn=$('googleLogin');
+  $('loginError').textContent='';
+  btn.disabled=true;
+  btn.textContent='Connecting to Google…';
+  try{
+    await setPersistence(auth,browserLocalPersistence);
+    const result=await signInWithPopup(auth,googleProvider);
+    if(result.user){
+      $('loginError').textContent='';
+      $('loginGate').classList.remove('open');
+    }
+  }catch(err){
+    const messages={
+      'auth/unauthorized-domain':'এই ওয়েবসাইটের domain Firebase Authentication → Authorized domains-এ যোগ করা নেই।',
+      'auth/popup-blocked':'Browser popup block করেছে। Chrome-এ popup allow করে আবার চেষ্টা করুন।',
+      'auth/popup-closed-by-user':'Google sign-in window বন্ধ হয়ে গেছে। আবার চেষ্টা করুন।',
+      'auth/cancelled-popup-request':'আগের Google sign-in request শেষ হলে আবার চেষ্টা করুন।',
+      'auth/operation-not-allowed':'Firebase Console-এ Google sign-in provider enable করা নেই।'
+    };
+    $('loginError').textContent=messages[err.code]||('Google login failed: '+(err.code||err.message||'Unknown error'));
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='<span class="googleMark" aria-hidden="true">G</span> Continue with Google';
   }
 };
-getRedirectResult(auth).catch(err=>{if(err)$('loginError').textContent=err.message||'Google sign-in failed.'});
 $('signOutDashboard').onclick=async()=>{await signOut(auth)};
 onAuthStateChanged(auth,user=>{
   currentUser=user||null;$('signInDashboard').hidden=!!user;$('signOutDashboard').hidden=!user;
