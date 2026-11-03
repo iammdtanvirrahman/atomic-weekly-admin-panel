@@ -460,9 +460,14 @@ window.onNativeGoogleToken=async idToken=>{
     $('loginGate').classList.remove('open');
   }catch(err){
     $('loginError').textContent='Firebase sign-in failed: '+(err.code||err.message||'Unknown error');
+  }finally{
+    const btn=$('googleLogin');btn.disabled=false;btn.innerHTML='<span class="googleMark" aria-hidden="true">G</span> Continue with Google';
   }
 };
-window.onNativeGoogleSignInError=message=>{$('loginError').textContent=String(message||'Google sign-in failed')};
+window.onNativeGoogleSignInError=message=>{
+  $('loginError').textContent=String(message||'Google sign-in failed');
+  const btn=$('googleLogin');btn.disabled=false;btn.innerHTML='<span class="googleMark" aria-hidden="true">G</span> Continue with Google';
+};
 $('googleLogin').onclick=async()=>{
   const btn=$('googleLogin');
   $('loginError').textContent='';
