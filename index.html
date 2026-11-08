@@ -215,11 +215,11 @@ button:disabled{opacity:.52;cursor:not-allowed;transform:none!important}
 <section class="section" id="incoming"><div class="sectionHead"><h2>Incoming Articles</h2><div class="sectionTools"><input id="incomingSearch" class="search" placeholder="Search incoming…"><span id="incomingStatus" class="meta"></span></div></div><div id="incomingList"></div></section>
 <section class="section" id="published"><div class="sectionHead"><h2>Article library</h2><div class="libraryFilters"><input id="search" class="search" placeholder="Search articles…"><select id="statusFilter" class="search" aria-label="Filter by publishing status"><option value="published">Published</option><option value="unpublished">Unpublished</option><option value="all">All articles</option></select><select id="sectionFilter" class="search" aria-label="Filter by category"><option value="">All categories</option><option>Science</option><option>Space</option><option>Technology</option><option>Humanity</option><option>Love</option><option>Life</option><option>Philosophy</option><option>Nature</option><option>Art</option><option>Physics</option><option>Stories</option></select><select id="sortFilter" class="search" aria-label="Sort articles"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="title">Title A–Z</option></select></div></div><div id="publishedGrid" class="published"></div></section>
 </div>
-<div id="loginGate" class="login"><div class="loginBox"><div class="eyebrow">Admin authentication</div><h2>Sign in to publish.</h2><p>Use your authorised Google account to manage Atomic Weekly.</p><div id="loginError" class="loginError" aria-live="polite"></div><button id="googleLogin" class="btn googleLogin" type="button"><span class="googleMark" aria-hidden="true">G</span> Continue with Google</button><button id="loginCancel" class="secondary btn" type="button">Cancel</button></div></div>
+<div id="loginGate" class="login open"><form class="loginBox" id="adminLoginForm"><div class="eyebrow">Private admin access</div><h2>Welcome back.</h2><p>Enter the shared access password to open Atomic Editorial.</p><label for="loginPassword">Access password</label><input id="loginPassword" type="password" autocomplete="current-password" required><div id="loginError" class="loginError" aria-live="polite"></div><button id="loginSubmit" class="btn" type="submit">Enter dashboard</button></form></div>
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import{getDatabase,ref,onValue,set,remove,get}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-import{getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,signInWithCredential,browserLocalPersistence,setPersistence,signOut}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import{getAuth,onAuthStateChanged,signInWithCustomToken,signOut}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 const menuToggle=$('menuToggle'),dashboardMenu=$('dashboardMenu');if(menuToggle&&dashboardMenu){menuToggle.addEventListener('click',()=>{const expanded=menuToggle.getAttribute('aria-expanded')==='true';menuToggle.setAttribute('aria-expanded',String(!expanded));dashboardMenu.classList.toggle('isOpen',!expanded)});dashboardMenu.querySelectorAll('.quickLinks a').forEach(link=>link.addEventListener('click',()=>{menuToggle.setAttribute('aria-expanded','false');dashboardMenu.classList.remove('isOpen')}));}
 const C={apiKey:'AIzaSyCit_SKjXRUpr8FNY1ahKhiG5sdDyOlW6k',authDomain:'atomictanvir.firebaseapp.com',projectId:'atomictanvir',storageBucket:'atomictanvir.firebasestorage.app',messagingSenderId:'140595401471',appId:'1:140595401471:web:8f92115a8c8b58d1ec32ca',databaseURL:'https://atomictanvir-default-rtdb.firebaseio.com'};
 const app=initializeApp(C),db=getDatabase(app),auth=getAuth(app),PUBLIC='https://iammdtanvirrahman.github.io/atomic-weekly/',$=id=>document.getElementById(id);let published={},submissions={},drafts={},currentUser=null;
@@ -466,65 +466,20 @@ $('incomingSearch').oninput=renderIncoming;
 onValue(ref(db,'publishedArticles'),s=>{published=s.val()||{};renderPublished();renderAnalytics()});
 onValue(ref(db,'submissions'),s=>{submissions=s.val()||{};renderIncoming();renderAnalytics()});
 onValue(ref(db,'atomicWeekly/drafts'),s=>{drafts=s.val()||{};renderDrafts();renderAnalytics()});
-function openLogin(){$('loginGate').classList.add('open')}
-const googleProvider=new GoogleAuthProvider();googleProvider.setCustomParameters({prompt:'select_account'});
+function openLogin(){$('loginGate').classList.add('open');$('loginPassword').focus()}
 $('signInDashboard').onclick=openLogin;
-$('loginCancel').onclick=()=>$('loginGate').classList.remove('open');
-window.onNativeGoogleToken=async idToken=>{
-  try{
-    await setPersistence(auth,browserLocalPersistence);
-    await signInWithCredential(auth,GoogleAuthProvider.credential(idToken));
-    $('loginError').textContent='';
-    $('loginGate').classList.remove('open');
-  }catch(err){
-    $('loginError').textContent='Firebase sign-in failed: '+(err.code||err.message||'Unknown error');
-  }finally{
-    const btn=$('googleLogin');btn.disabled=false;btn.innerHTML='<span class="googleMark" aria-hidden="true">G</span> Continue with Google';
-  }
-};
-window.onNativeGoogleSignInError=message=>{
-  $('loginError').textContent=String(message||'Google sign-in failed');
-  const btn=$('googleLogin');btn.disabled=false;btn.innerHTML='<span class="googleMark" aria-hidden="true">G</span> Continue with Google';
-};
-$('googleLogin').onclick=async()=>{
-  const btn=$('googleLogin');
-  $('loginError').textContent='';
-  if(window.AndroidAuth&&typeof window.AndroidAuth.requestGoogleSignIn==='function'){
-    btn.disabled=true;
-    btn.textContent='Connecting to Google…';
-    window.AndroidAuth.requestGoogleSignIn();
-    return;
-  }
-  btn.disabled=true;
-  btn.textContent='Connecting to Google…';
-  try{
-    await setPersistence(auth,browserLocalPersistence);
-    const result=await signInWithPopup(auth,googleProvider);
-    if(result.user){
-      $('loginError').textContent='';
-      $('loginGate').classList.remove('open');
-    }
-  }catch(err){
-    const messages={
-      'auth/unauthorized-domain':'এই ওয়েবসাইটের domain Firebase Authentication → Authorized domains-এ যোগ করা নেই।',
-      'auth/popup-blocked':'Browser popup block করেছে। Chrome-এ popup allow করে আবার চেষ্টা করুন।',
-      'auth/popup-closed-by-user':'Google sign-in window বন্ধ হয়ে গেছে। আবার চেষ্টা করুন।',
-      'auth/cancelled-popup-request':'আগের Google sign-in request শেষ হলে আবার চেষ্টা করুন।',
-      'auth/operation-not-allowed':'Firebase Console-এ Google sign-in provider enable করা নেই।'
-    };
-    $('loginError').textContent=messages[err.code]||('Google login failed: '+(err.code||err.message||'Unknown error'));
-  }finally{
-    btn.disabled=false;
-    btn.innerHTML='<span class="googleMark" aria-hidden="true">G</span> Continue with Google';
-  }
-};
+$('adminLoginForm').addEventListener('submit',async e=>{
+ e.preventDefault();const btn=$('loginSubmit'),error=$('loginError'),password=$('loginPassword').value;error.textContent='';btn.disabled=true;btn.textContent='Checking…';
+ try{const response=await fetch('https://us-central1-atomictanvir.cloudfunctions.net/atomicAdminLogin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password})});const result=await response.json().catch(()=>({}));if(!response.ok||!result.customToken)throw new Error(result.error||'Access denied. Check the password.');await signInWithCustomToken(auth,result.customToken);$('loginPassword').value='';$('loginGate').classList.remove('open')}
+ catch(err){error.textContent=err.message||'Could not sign in. Try again.'}finally{btn.disabled=false;btn.textContent='Enter dashboard'}
+});
 $('signOutDashboard').onclick=async()=>{await signOut(auth)};
 onAuthStateChanged(auth,user=>{
   currentUser=user||null;$('signInDashboard').hidden=!!user;$('signOutDashboard').hidden=!user;
   $('dashboardAuthStatus').textContent=user?'Signed in as '+(user.email||'admin'):'Sign in required for publishing and cloud changes';
   document.body.classList.toggle('dashboardSignedIn',!!user);
   $('heroImageConnection').textContent=user?'Loading saved homepage image links…':'Sign in to manage homepage artwork';
-  if(user)loadHeroImageLinks();else{heroImageRows.replaceChildren();renderHeroImageRows([]);$('saveHeroImageLinks').disabled=true;$('reloadHeroImageLinks').disabled=true;setHeroImageStatus('Sign in with your editor account to load and save links.','')}
+  if(user){$('loginGate').classList.remove('open');loadHeroImageLinks()}else{openLogin();heroImageRows.replaceChildren();renderHeroImageRows([]);$('saveHeroImageLinks').disabled=true;$('reloadHeroImageLinks').disabled=true;setHeroImageStatus('Enter the admin password to manage homepage artwork.','')}
 });
 </script>
 </body>
