@@ -474,11 +474,12 @@ $('adminLoginForm').addEventListener('submit',async e=>{
  catch(err){error.textContent=err.message||'Could not sign in. Try again.'}finally{btn.disabled=false;btn.textContent='Enter dashboard'}
 });
 $('signOutDashboard').onclick=async()=>{await signOut(auth)};
-onAuthStateChanged(auth,user=>{
+onAuthStateChanged(auth,async user=>{
+  if(user){try{const token=await user.getIdTokenResult();if(token.claims.adminAccess!==true){await signOut(auth);user=null}}catch(e){await signOut(auth);user=null}}
   currentUser=user||null;$('signInDashboard').hidden=!!user;$('signOutDashboard').hidden=!user;
-  $('dashboardAuthStatus').textContent=user?'Signed in as '+(user.email||'admin'):'Sign in required for publishing and cloud changes';
+  $('dashboardAuthStatus').textContent=user?'Private admin session active':'Password required for admin access';
   document.body.classList.toggle('dashboardSignedIn',!!user);
-  $('heroImageConnection').textContent=user?'Loading saved homepage image links…':'Sign in to manage homepage artwork';
+  $('heroImageConnection').textContent=user?'Loading saved homepage image links…':'Password required to manage homepage artwork';
   if(user){$('loginGate').classList.remove('open');loadHeroImageLinks()}else{openLogin();heroImageRows.replaceChildren();renderHeroImageRows([]);$('saveHeroImageLinks').disabled=true;$('reloadHeroImageLinks').disabled=true;setHeroImageStatus('Enter the admin password to manage homepage artwork.','')}
 });
 </script>
