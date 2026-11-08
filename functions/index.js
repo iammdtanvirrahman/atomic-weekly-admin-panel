@@ -7,7 +7,6 @@ admin.initializeApp();
 
 const OPENAI_API_KEY = defineSecret("OPENAI_API_KEY");
 const GITHUB_TOKEN = defineSecret("GITHUB_TOKEN");
-const ADMIN_PASSWORD = defineSecret("ADMIN_PASSWORD");
 const AI_ALLOWED_EMAILS = defineString("AI_ALLOWED_EMAILS", {
   default: ""
 });
@@ -25,10 +24,6 @@ function send(res, status, body) {
   res.status(status).json(body);
 }
 
-function hasAdminAccess(decoded) {
-  return decoded?.adminAccess === true;
-}
-
 function allowedEmail(email) {
   const list = AI_ALLOWED_EMAILS.value()
     .split(",")
@@ -37,22 +32,6 @@ function allowedEmail(email) {
 
   return list.length > 0 && list.includes(String(email || "").toLowerCase());
 }
-
-exports.atomicAdminLogin = onRequest(
- {region:"us-central1",secrets:[ADMIN_PASSWORD],timeoutSeconds:15,memory:"256MiB"},
- async(req,res)=>{
-  if(req.method==="OPTIONS"){res.set(corsHeaders);return res.status(204).send("")}
-  if(req.method!=="POST")return send(res,405,{error:"POST required"});
-  try{
-   const supplied=String(req.body?.password||""),expected=ADMIN_PASSWORD.value(),crypto=require("crypto");
-   const a=Buffer.from(supplied),b=Buffer.from(expected);
-   const matches=a.length===b.length&&crypto.timingSafeEqual(a,b);
-   if(!matches)return send(res,401,{error:"Incorrect password."});
-   const customToken=await admin.auth().createCustomToken("atomic-weekly-admin",{adminAccess:true});
-   return send(res,200,{customToken});
-  }catch(error){console.error("Atomic admin login error:",error);return send(res,500,{error:"Admin sign-in is temporarily unavailable."})}
- }
-);
 
 exports.atomicAi = onRequest(
   {
@@ -79,12 +58,7 @@ exports.atomicAi = onRequest(
 
       const idToken = authHeader.slice(7);
       const decoded = await admin.auth().verifyIdToken(idToken);
-
-      if (!hasAdminAccess(decoded)) {
-        return send(res, 403, { error: "This Firebase account is not allowed to use Atomic AI." });
-      }
-
-      const { action, content, title, section, instruction } = req.body || {};
+const { action, content, title, section, instruction } = req.body || {};
       const source = String(content || "").trim();
 
       if (!action && !instruction) {
@@ -177,11 +151,7 @@ exports.atomicUploadAsset = onRequest(
       }
 
       const decoded = await admin.auth().verifyIdToken(authHeader.slice(7));
-      if (!hasAdminAccess(decoded)) {
-        return send(res, 403, { error: "This Firebase account is not allowed to upload assets." });
-      }
-
-      const { filename, mimeType, data } = req.body || {};
+const { filename, mimeType, data } = req.body || {};
       const allowedTypes = new Set(["image/png", "image/jpeg", "image/webp", "image/gif", "image/svg+xml"]);
       if (!allowedTypes.has(String(mimeType || ""))) {
         return send(res, 400, { error: "Unsupported image type." });
