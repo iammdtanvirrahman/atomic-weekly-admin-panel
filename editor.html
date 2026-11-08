@@ -279,7 +279,7 @@ body.assetGalleryMode .assetNote{max-width:1560px;margin:18px auto 0;border-radi
   </aside>
 </div>
 
-<div id="authGate" class="loginShade"><div class="loginCard"><div class="sectionTitle">Editorial access</div><h2>Sign in to Atomic.</h2><p>Use your authorised Google account to save drafts, publish articles and upload artwork.</p><div class="loginError" id="authError" aria-live="polite"></div><button class="primary googleLogin" id="googleAuth" type="button"><span class="googleMark" aria-hidden="true">G</span> Continue with Google</button><button type="button" class="ghost" id="authCancel">Continue editing offline</button></div></div>
+<div id="authGate" class="loginShade open"><form class="loginCard" id="adminLoginForm"><div class="sectionTitle">Private editorial access</div><h2>Welcome to Atomic.</h2><p>Enter the shared access password to open the complete Article Studio.</p><label for="adminPassword" style="display:block;margin:14px 0 6px;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)">Access password</label><input id="adminPassword" type="password" autocomplete="current-password" required style="width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#090b10;color:#fff"><div class="loginError" id="authError" aria-live="polite"></div><button class="primary" id="adminLoginSubmit" type="submit" style="width:100%;margin-top:9px">Enter Article Studio</button></form></div>
 <div id="tableModal" class="modal">
   <div class="modalBox" style="width:360px"><h3>Create Table</h3>
     <p class="tableBuilderHint">Choose how many rows and columns you need.</p>
@@ -302,7 +302,7 @@ body.assetGalleryMode .assetNote{max-width:1560px;margin:18px auto 0;border-radi
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, set, get, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getAuth, onAuthStateChanged, signInWithCustomToken, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 const cfg={
   apiKey:'AIzaSyCit_SKjXRUpr8FNY1ahKhiG5sdDyOlW6k',
@@ -1001,29 +1001,19 @@ $('mobileAssetsToggle').onclick=()=>{document.body.classList.toggle('mobileAsset
 $('closeMobileMeta').onclick=closeMobileDrawers;$('closeMobileAssets').onclick=closeMobileDrawers;
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMobileDrawers()});
 
+function openAdminLogin(){$('authGate').classList.add('open');$('adminPassword').focus()}
 onAuthStateChanged(auth,user=>{
-  authUser=user||null;
-  $('signInOpen').hidden=!!user;
-  $('signOutEditor').hidden=!user;
-  $('authSuccess').hidden=!user;
-  $('uploadAsset').disabled=!user;
-  $('uploadStatus').textContent=user?'Signed in as '+(user.email||'admin')+'. Ready to upload.':'Sign in to upload assets.';
-  if(user){$('authGate').classList.remove('open');setStatus('Admin signed in ✓','synced');recoverCloudDraft()}
-  else setStatus('Offline editing · sign in to publish','error');
+ authUser=user||null;$('signInOpen').hidden=!!user;$('signOutEditor').hidden=!user;$('authSuccess').hidden=!user;$('uploadAsset').disabled=!user;
+ $('uploadStatus').textContent=user?'Signed in with private admin access. Ready to upload.':'Enter the admin password to upload assets.';
+ if(user){$('authGate').classList.remove('open');setStatus('Admin access granted ✓','synced');recoverCloudDraft()}else{openAdminLogin();setStatus('Admin access required','error')}
 });
-const googleProvider=new GoogleAuthProvider();googleProvider.setCustomParameters({prompt:'select_account'});
-$('signInOpen').onclick=()=>{$('authGate').classList.add('open')};
-$('authCancel').onclick=()=>{$('authGate').classList.remove('open')};
-$('googleAuth').onclick=async()=>{
-  const btn=$('googleAuth');$('authError').textContent='';btn.disabled=true;btn.textContent='Connecting to Google…';
-  try{await signInWithRedirect(auth,googleProvider)}
-  catch(err){
-    $('authError').textContent=err.code==='auth/unauthorized-domain'?'This website domain is not authorised in Firebase Authentication.':(err.message||'Google sign-in failed.');
-    btn.disabled=false;btn.innerHTML='<span class="googleMark" aria-hidden="true">G</span> Continue with Google';
-  }
-};
-getRedirectResult(auth).catch(err=>{if(err)$('authError').textContent=err.message||'Google sign-in failed.'});
-$('signOutEditor').onclick=async()=>{await signOut(auth);$('authGate').classList.add('open')};
+$('signInOpen').onclick=openAdminLogin;
+$('adminLoginForm').addEventListener('submit',async e=>{
+ e.preventDefault();const btn=$('adminLoginSubmit'),error=$('authError'),password=$('adminPassword').value;error.textContent='';btn.disabled=true;btn.textContent='Checking…';
+ try{const response=await fetch('https://us-central1-atomictanvir.cloudfunctions.net/atomicAdminLogin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password})});const result=await response.json().catch(()=>({}));if(!response.ok||!result.customToken)throw new Error(result.error||'Access denied. Check the password.');await signInWithCustomToken(auth,result.customToken);$('adminPassword').value='';$('authGate').classList.remove('open')}
+ catch(err){error.textContent=err.message||'Could not sign in. Try again.'}finally{btn.disabled=false;btn.textContent='Enter Article Studio'}
+});
+$('signOutEditor').onclick=async()=>{await signOut(auth);openAdminLogin()};
 $('uploadAsset').onclick=uploadAsset;
 $('refreshAssets').onclick=loadAssets;
 async function uploadAsset(){
