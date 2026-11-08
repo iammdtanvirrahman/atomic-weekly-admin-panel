@@ -26,7 +26,7 @@ function send(res, status, body) {
 }
 
 function hasAdminAccess(decoded) {
-  return decoded?.adminAccess === true || allowedEmail(decoded?.email);
+  return decoded?.adminAccess === true;
 }
 
 function allowedEmail(email) {
