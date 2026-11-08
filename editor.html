@@ -1002,7 +1002,8 @@ $('closeMobileMeta').onclick=closeMobileDrawers;$('closeMobileAssets').onclick=c
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMobileDrawers()});
 
 function openAdminLogin(){$('authGate').classList.add('open');$('adminPassword').focus()}
-onAuthStateChanged(auth,user=>{
+onAuthStateChanged(auth,async user=>{
+ if(user){try{const token=await user.getIdTokenResult();if(token.claims.adminAccess!==true){await signOut(auth);user=null}}catch(e){await signOut(auth);user=null}}
  authUser=user||null;$('signInOpen').hidden=!!user;$('signOutEditor').hidden=!user;$('authSuccess').hidden=!user;$('uploadAsset').disabled=!user;
  $('uploadStatus').textContent=user?'Signed in with private admin access. Ready to upload.':'Enter the admin password to upload assets.';
  if(user){$('authGate').classList.remove('open');setStatus('Admin access granted ✓','synced');recoverCloudDraft()}else{openAdminLogin();setStatus('Admin access required','error')}
